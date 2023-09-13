@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using BusinessLogicLayer.Classes;
+﻿using BusinessLogicLayer.Classes;
 
 Game game = new Game();
 
@@ -40,4 +38,51 @@ foreach (Player player in game.Players)
     {
         Console.WriteLine("Heeft witte was");
     }
+}
+
+// =========================================================
+// readline
+// =========================================================
+Console.WriteLine("Available commands:");
+Console.WriteLine("---------------------");
+Console.WriteLine("vuilewas");
+Console.WriteLine("wittewas");
+Console.WriteLine("turnslaundry");
+Console.WriteLine("check");
+Console.WriteLine("fold");
+Console.WriteLine("knock");
+Console.WriteLine("---------------------");
+string? command = Console.ReadLine();
+
+switch (command)
+{
+    case "vuilewas":
+        game.DirtyLaundry(1);
+        break;
+    case "wittewas":
+        game.WhiteLaundry(1);
+        break;
+    case "turnslaundry":
+        game.TurnsLaundry(1);
+        break;
+    case "check":
+        game.Check(1);
+        break;
+    case "fold":
+        game.Fold(1);
+        break;
+    case "knock":
+        game.Knock(1);
+        break;
+    default:
+        Console.WriteLine("Incorrect commands:");
+        Console.WriteLine("---------------------");
+        Console.WriteLine("vuilewas");
+        Console.WriteLine("wittewas");
+        Console.WriteLine("turnslaundry");
+        Console.WriteLine("check");
+        Console.WriteLine("fold");
+        Console.WriteLine("knock");
+        Console.WriteLine("---------------------");
+        break;
 }

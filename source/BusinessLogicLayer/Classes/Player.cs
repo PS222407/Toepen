@@ -14,6 +14,8 @@ public class Player
 
     public int PenaltyPoints { get; private set; }
 
+    public bool Folded { get; private set; } = false;
+
     public Player(string name)
     {
         Id = Interlocked.Increment(ref _nextId);

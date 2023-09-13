@@ -8,9 +8,15 @@ public class Game
     
     private const int MaxAmountOfPlayers = 6;
 
+    public GameStates GameState { get; private set; }
+
     public List<Player> Players { get; private set; } = new();
 
     private List<Card> Deck { get; set; } = new();
+
+    public Set CurrentSet { get; private set; }
+
+    private Player _playerWhoKnocked;
 
     private void AddCard(Card card)
     {
@@ -34,7 +40,6 @@ public class Game
         DealCardsToPlayers();
 
         Set set = new Set();
-        
     }
 
     private void ShuffleDeck()
@@ -69,5 +74,38 @@ public class Game
                 Deck.Remove(nextCard);
             }   
         }
+    }
+    
+    // Player input actions
+    public void DirtyLaundry(int playerId)
+    {
+        GameState = GameStates.PlayerCalledDirtyLaundry;
+        _playerWhoKnocked = Players.Find(p => p.Id == playerId)!;
+    }
+    
+    public void WhiteLaundry(int playerId)
+    {
+        GameState = GameStates.PlayerCalledWhiteLaundry;
+        _playerWhoKnocked = Players.Find(p => p.Id == playerId)!;
+    }
+
+    public void TurnsLaundry(int playerId)
+    {
+        
+    }
+
+    public void Knock(int playerId)
+    {
+        
+    }
+
+    public void Check(int playerId)
+    {
+        
+    }
+
+    public void Fold(int playerId)
+    {
+        
     }
 }
