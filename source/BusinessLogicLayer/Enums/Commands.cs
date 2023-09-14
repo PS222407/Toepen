@@ -11,4 +11,6 @@ public enum Commands
     Check,
     Fold,
     Knock,
+    StopLaundryTurnTimerAndStartLaundryTimer,
+    StopLaundryTurnTimerAndStartRound,
 }

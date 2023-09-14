@@ -16,7 +16,7 @@ foreach (Commands command in Enum.GetValues(typeof(Commands)))
     Console.WriteLine(command);
 }
 
-
+// TODO: remove these test players
 AddPlayer(new[] { "jens", "jens" });
 AddPlayer(new[] { "sam", "sam" });
 AddPlayer(new[] { "mylo", "mylo" });
@@ -28,12 +28,18 @@ while (true)
     string? command = Console.ReadLine();
     if (command == null)
     {
-        return;
+        continue;
     }
 
     string[] inputParts = command.Split(' ');
     Enum.TryParse(typeof(Commands), inputParts[0], out object? inputCommand);
 
+    //TODO: remove in production
+    if (command == "ShowCards")
+    {
+        ShowEveryonesCards();
+        continue;
+    }
     switch (inputCommand)
     {
         case Commands.Start:
@@ -62,6 +68,12 @@ while (true)
             break;
         case Commands.Knock:
             Knock(inputParts);
+            break;
+        case Commands.StopLaundryTurnTimerAndStartLaundryTimer:
+            StopLaundryTurnTimerAndStartLaundryTimer();
+            break;
+        case Commands.StopLaundryTurnTimerAndStartRound:
+            StopLaundryTurnTimerAndStartRound();
             break;
         default:
             Console.WriteLine();
@@ -94,25 +106,32 @@ void Start()
         Console.WriteLine("---------------------");
         Console.WriteLine("GAME STARTED");
         Console.WriteLine("---------------------");
+        ShowEveryonesCards();
+    }
+}
 
-        foreach (Player player in game.Players)
+void ShowEveryonesCards()
+{
+    Console.WriteLine("---------------------");
+    Console.WriteLine("Player cards");
+    Console.WriteLine("---------------------");
+    foreach (Player player in game.Players)
+    {
+        Console.WriteLine("--------------------------");
+        Console.WriteLine($"{player.Id} {player.Name}");
+        foreach (Card card in player.Hand)
         {
-            Console.WriteLine("--------------------------");
-            Console.WriteLine($"{player.Id} {player.Name}");
-            foreach (Card card in player.Hand)
-            {
-                Console.WriteLine(card);
-            }
+            Console.WriteLine(card);
+        }
 
-            if (player.HasDirtyLaundry())
-            {
-                Console.WriteLine("Heeft vuile was");
-            }
+        if (player.HasDirtyLaundry())
+        {
+            Console.WriteLine("Heeft vuile was");
+        }
 
-            if (player.HasWhiteLaundry())
-            {
-                Console.WriteLine("Heeft witte was");
-            }
+        if (player.HasWhiteLaundry())
+        {
+            Console.WriteLine("Heeft witte was");
         }
     }
 }

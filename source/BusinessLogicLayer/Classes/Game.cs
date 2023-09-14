@@ -79,12 +79,12 @@ public class Game
         }
     }
 
-    private void PlayerHandToDeck(Player victim)
+    private void PlayerHandToDeck(Player player)
     {
-        foreach (Card card in victim.Hand)
+        foreach (Card card in new List<Card>(player.Hand))
         {
             Deck.Add(card);
-            victim.RemoveCardFromHand(card);
+            player.RemoveCardFromHand(card);
         }
         ShuffleDeck();
     }
@@ -123,12 +123,30 @@ public class Game
     // Player input actions
     public StatusMessage DirtyLaundry(int playerId)
     {
-        return CurrentSet.PlayerCallsDirtyLaundry(Players.Find(p => p.Id == playerId));
+        Player? player = Players.Find(p => p.Id == playerId);
+        if (player == null)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.PlayerNotFound,
+            };
+        }
+        return CurrentSet!.PlayerCallsDirtyLaundry(player);
     }
     
     public StatusMessage WhiteLaundry(int playerId)
     {
-        return CurrentSet.PlayerCallsWhiteLaundry(Players.Find(p => p.Id == playerId));
+        Player? player = Players.Find(p => p.Id == playerId);
+        if (player == null)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.PlayerNotFound,
+            };
+        }
+        return CurrentSet!.PlayerCallsWhiteLaundry(player);
     }
 
     public StatusMessage TurnsLaundry(int playerId, int victimId)
@@ -153,28 +171,49 @@ public class Game
             };
         }
 
-        StatusMessage statusMessage = CurrentSet.TurnsLaundry(player, victim);
+        StatusMessage statusMessage = CurrentSet!.TurnsLaundry(player, victim);
         if (statusMessage.Message == Messages.PlayerDidNotBluff)
         {
             PlayerHandToDeck(victim);
             DealCardsToPlayer(victim);
-            victim.ResetLaundryVariables();
         }
         
         return statusMessage;
     }
-
+    
     public bool StopLaundryTurnTimerAndStartLaundryTimer()
     {
-        return CurrentSet.StopLaundryTurnTimerAndStartLaundryTimer();
+        foreach (Player player in Players)
+        {
+            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
+            {
+                PlayerHandToDeck(player);
+                DealCardsToPlayer(player);
+            }
+            player.ResetLaundryVariables();
+        }
+        return CurrentSet!.StopLaundryTurnTimerAndStartLaundryTimer();
     }
 
     public bool StopLaundryTurnTimerAndStartRound()
     {
-        return CurrentSet.StopLaundryTurnTimerAndStartRound();
+        foreach (Player player in Players)
+        {
+            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
+            {
+                PlayerHandToDeck(player);
+                DealCardsToPlayer(player);
+            }
+            player.ResetLaundryVariables();
+        }
+        return CurrentSet!.StopLaundryTurnTimerAndStartRound();
     }
 
-
+    public bool StopLaundryTimer()
+    {
+        return CurrentSet!.StopLaundryTimer();
+    }
+    
     public void Knock(int playerId)
     {
         
@@ -188,10 +227,5 @@ public class Game
     public void Fold(int playerId)
     {
         
-    }
-
-    public bool StopLaundryTimer()
-    {
-        return CurrentSet.StopLaundryTimer();
     }
 }

@@ -85,7 +85,7 @@ public class Player
             }
         }
 
-        return sevenCount <= 1;
+        return sevenCount == 1;
     }
 
     public void ResetLaundryVariables()
