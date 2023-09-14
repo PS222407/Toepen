@@ -12,8 +12,6 @@ public class Set
 
     public List<Player> Players { get; private set; }
 
-    private Player _playerWhoKnocked;
-
     public Set(List<Player> players)
     {
         Players = players;
@@ -31,7 +29,7 @@ public class Set
             };
         }
 
-        if (player.HasCalledDirtyLaundry)
+        if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
         {
             return new StatusMessage
             {
@@ -48,16 +46,32 @@ public class Set
         };
     }
 
-    public bool PlayerCallsWhiteLaundry(Player player)
+    public StatusMessage PlayerCallsWhiteLaundry(Player player)
     {
         if (State != GameStates.ActiveLaundryTimer)
         {
-            return false;
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.CantPerformActionDuringThisGameState,
+            };
+        }
+        
+        if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.AlreadyCalledLaundry,
+            };
         }
 
         player.CalledWhiteLaundry();
 
-        return true;
+        return new StatusMessage
+        {
+            Success = true,
+        };
     }
 
     public bool StopLaundryTimer()
@@ -83,8 +97,6 @@ public class Set
             };
         }
         
-        //TODO: when give new cards set LaundryHasBeenTurned back to false
-        //TODO for some reason this always true idk why
         if (victim.LaundryHasBeenTurned)
         {
             return new StatusMessage
@@ -157,5 +169,29 @@ public class Set
             Success = false,
             Message = Messages.PlayerHasNotCalledForLaundry,
         };
+    }
+
+    public bool StopLaundryTurnTimerAndStartLaundryTimer()
+    {
+        if (State != GameStates.ActiveTurnLaundryTimer)
+        {
+            return false;
+        }
+
+        State = GameStates.ActiveLaundryTimer;
+
+        return true;
+    }
+    
+    public bool StopLaundryTurnTimerAndStartRound()
+    {
+        if (State != GameStates.ActiveTurnLaundryTimer)
+        {
+            return false;
+        }
+
+        State = GameStates.ActiveRound;
+
+        return true;
     }
 }

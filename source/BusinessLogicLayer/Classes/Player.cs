@@ -61,7 +61,6 @@ public class Player
 
     public bool HasDirtyLaundry()
     {
-        LaundryHasBeenTurned = true;
         return Hand.All(card => card.Value < Values.Seven);
     }
 
@@ -73,7 +72,6 @@ public class Player
     
     public bool HasWhiteLaundry()
     {
-        LaundryHasBeenTurned = true;
         int sevenCount = 0;
         foreach (Card card in Hand)
         {
@@ -88,5 +86,12 @@ public class Player
         }
 
         return sevenCount <= 1;
+    }
+
+    public void ResetLaundryVariables()
+    {
+        HasCalledDirtyLaundry = false;
+        HasCalledWhiteLaundry = false;
+        LaundryHasBeenTurned = false;
     }
 }

@@ -6,4 +6,5 @@ public enum GameStates
     // PlayerCalledDirtyLaundry,
     // PlayerCalledWhiteLaundry,
     ActiveTurnLaundryTimer,
+    ActiveRound,
 }

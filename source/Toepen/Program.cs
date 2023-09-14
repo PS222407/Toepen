@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using BusinessLogicLayer.Classes;
+﻿using BusinessLogicLayer.Classes;
 using BusinessLogicLayer.Enums;
 
 Game game = new Game();
@@ -16,6 +15,12 @@ foreach (Commands command in Enum.GetValues(typeof(Commands)))
 {
     Console.WriteLine(command);
 }
+
+
+AddPlayer(new[] { "jens", "jens" });
+AddPlayer(new[] { "sam", "sam" });
+AddPlayer(new[] { "mylo", "mylo" });
+AddPlayer(new[] { "niels", "niels" });
 
 Console.WriteLine("---------------------");
 while (true)
@@ -131,10 +136,11 @@ void DirtyLaundry(string[] args)
         Console.WriteLine($"Wrong command, please run: {Commands.DirtyLaundry.ToString()} playerid");
         return;
     }
+
     StatusMessage statusMessage = game.DirtyLaundry(int.Parse(args[1]));
     if (!statusMessage.Success)
     {
-        Console.WriteLine("Cant perform this action now");
+        Console.WriteLine($"{statusMessage.Message}");
         return;
     }
 
@@ -151,9 +157,11 @@ void WhiteLaundry(string[] args)
         Console.WriteLine($"Wrong command, please run: {Commands.WhiteLaundry.ToString()} playerid");
         return;
     }
-    if (!game.WhiteLaundry(int.Parse(args[1])))
+
+    StatusMessage statusMessage = game.WhiteLaundry(int.Parse(args[1]));
+    if (!statusMessage.Success)
     {
-        Console.WriteLine("Cant perform this action now");
+        Console.WriteLine($"{statusMessage.Message}");
         return;
     }
 
@@ -188,18 +196,43 @@ void TurnsLaundry(string[] args)
     StatusMessage statusMessage = game.TurnsLaundry(int.Parse(args[1]), int.Parse(args[2]));
     if (!statusMessage.Success)
     {
-        Console.WriteLine("Cant perform this action now");
+        Console.WriteLine($"{statusMessage.Message}");
         return;
     }
 
     Console.WriteLine();
     Console.WriteLine("---------------------");
     Console.WriteLine($"Player {args[1]} draait de was om van speler {args[2]}");
+    Console.WriteLine();
+    Console.WriteLine($"{args[2]} {statusMessage.Message}");
     Console.WriteLine("---------------------");
+}
+
+void StopLaundryTurnTimerAndStartLaundryTimer()
+{
+    if (!game.StopLaundryTurnTimerAndStartLaundryTimer())
+    {
+        Console.WriteLine("Cant perform this action now");
+        return;
+    }
 
     Console.WriteLine();
     Console.WriteLine("---------------------");
-    Console.WriteLine($"{args[2]} {statusMessage.Message}");
+    Console.WriteLine("LaundryTurn timer stopped, laundry timer started again");
+    Console.WriteLine("---------------------");
+}
+
+void StopLaundryTurnTimerAndStartRound()
+{
+    if (!game.StopLaundryTurnTimerAndStartRound())
+    {
+        Console.WriteLine("Cant perform this action now");
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine("LaundryTurn timer stopped, Round has started");
     Console.WriteLine("---------------------");
 }
 
@@ -210,7 +243,7 @@ void Check(string[] args)
         Console.WriteLine($"Wrong command, please run: {Commands.Check.ToString()} playerid");
         return;
     }
-    
+
     game.Check(int.Parse(args[1]));
     Console.WriteLine();
     Console.WriteLine("---------------------");
@@ -225,7 +258,7 @@ void Fold(string[] args)
         Console.WriteLine($"Wrong command, please run: {Commands.Fold.ToString()} playerid");
         return;
     }
-    
+
     game.Fold(int.Parse(args[1]));
     Console.WriteLine();
     Console.WriteLine("---------------------");
@@ -240,7 +273,7 @@ void Knock(string[] args)
         Console.WriteLine($"Wrong command, please run: {Commands.Knock.ToString()} playerid");
         return;
     }
-    
+
     game.Knock(int.Parse(args[1]));
     Console.WriteLine();
     Console.WriteLine("---------------------");
