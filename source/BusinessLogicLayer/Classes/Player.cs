@@ -16,15 +16,34 @@ public class Player
 
     public bool Folded { get; private set; } = false;
 
+    public bool HasCalledDirtyLaundry { get; private set; }
+    
+    public bool HasCalledWhiteLaundry { get; private set; }
+
     public Player(string name)
     {
         Id = Interlocked.Increment(ref _nextId);
         Name = name;
     }
 
+    public void AddPenaltyPoints(int points)
+    {
+        PenaltyPoints += points;
+    }
+
     public void DealCard(Card card)
     {
         Hand.Add(card);
+    }
+
+    public void CalledDirtyLaundry()
+    {
+        HasCalledDirtyLaundry = true;
+    }
+    
+    public void CalledWhiteLaundry()
+    {
+        HasCalledWhiteLaundry = true;
     }
 
     public bool HasDirtyLaundry()

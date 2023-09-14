@@ -2,6 +2,8 @@
 
 public enum GameStates
 {
-    PlayerCalledDirtyLaundry,
-    PlayerCalledWhiteLaundry,
+    ActiveLaundryTimer,
+    // PlayerCalledDirtyLaundry,
+    // PlayerCalledWhiteLaundry,
+    ActiveTurnLaundryTimer,
 }

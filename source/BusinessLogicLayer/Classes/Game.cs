@@ -7,6 +7,8 @@ public class Game
     private const int AmountStartCardsPlayer = 4;
     
     private const int MaxAmountOfPlayers = 6;
+    
+    private bool _gameHasStarted = false;
 
     public GameStates GameState { get; private set; }
 
@@ -14,10 +16,8 @@ public class Game
 
     private List<Card> Deck { get; set; } = new();
 
-    public Set CurrentSet { get; private set; }
-
-    private Player _playerWhoKnocked;
-
+    public Set? CurrentSet { get; private set; }
+    
     private void AddCard(Card card)
     {
         Deck.Add(card);
@@ -25,6 +25,10 @@ public class Game
 
     public bool AddPlayer(Player player)
     {
+        if (_gameHasStarted)
+        {
+            return false;
+        }
         if (Players.Count < MaxAmountOfPlayers)
         {
             Players.Add(player);
@@ -32,14 +36,6 @@ public class Game
         }
 
         return false;
-    }
-
-    public void Start()
-    {
-        InitializeDeck();
-        DealCardsToPlayers();
-
-        Set set = new Set();
     }
 
     private void ShuffleDeck()
@@ -76,22 +72,36 @@ public class Game
         }
     }
     
-    // Player input actions
-    public void DirtyLaundry(int playerId)
+    // System input actions
+    public bool Start()
     {
-        GameState = GameStates.PlayerCalledDirtyLaundry;
-        _playerWhoKnocked = Players.Find(p => p.Id == playerId)!;
-    }
-    
-    public void WhiteLaundry(int playerId)
-    {
-        GameState = GameStates.PlayerCalledWhiteLaundry;
-        _playerWhoKnocked = Players.Find(p => p.Id == playerId)!;
+        if (_gameHasStarted)
+        {
+            return false;
+        }
+        _gameHasStarted = true;
+        InitializeDeck();
+        DealCardsToPlayers();
+
+        CurrentSet = new Set(Players);
+
+        return true;
     }
 
-    public void TurnsLaundry(int playerId)
+    // Player input actions
+    public bool DirtyLaundry(int playerId)
     {
-        
+        return CurrentSet.PlayerCallsDirtyLaundry(Players.Find(p => p.Id == playerId));
+    }
+    
+    public bool WhiteLaundry(int playerId)
+    {
+        return CurrentSet.PlayerCallsWhiteLaundry(Players.Find(p => p.Id == playerId));
+    }
+
+    public void TurnsLaundry(int playerId, int victimId)
+    {
+        CurrentSet.TurnsLaundry(Players.Find(p => p.Id == playerId), Players.Find(p => p.Id == victimId));
     }
 
     public void Knock(int playerId)
@@ -107,5 +117,10 @@ public class Game
     public void Fold(int playerId)
     {
         
+    }
+
+    public bool LaundryTimeIsUp()
+    {
+        return CurrentSet.LaundryTimeIsUp();
     }
 }
