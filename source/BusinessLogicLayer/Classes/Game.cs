@@ -6,6 +6,8 @@ public class Game
 {
     private const int AmountStartCardsPlayer = 4;
     
+    private const int MinAmountOfPlayer = 2;
+    
     private const int MaxAmountOfPlayers = 6;
     
     private bool _gameHasStarted = false;
@@ -63,21 +65,48 @@ public class Game
 
         foreach (Player player in Players)
         {
-            for (int i = 0; i < AmountStartCardsPlayer; i++)
-            {
-                Card nextCard = Deck.First();
-                player.DealCard(nextCard);
-                Deck.Remove(nextCard);
-            }   
+            DealCardsToPlayer(player);
         }
+    }
+
+    private void DealCardsToPlayer(Player player)
+    {
+        for (int i = 0; i < AmountStartCardsPlayer; i++)
+        {
+            Card nextCard = Deck.First();
+            player.DealCard(nextCard);
+            Deck.Remove(nextCard);
+        }
+    }
+
+    private void SetPlayerCardsBackToDeck(Player victim)
+    {
+        foreach (Card card in victim.Hand)
+        {
+            Deck.Add(card);
+            victim.RemoveCardFromHand(card);
+        }
+        ShuffleDeck();
     }
     
     // System input actions
-    public bool Start()
+    public StatusMessage Start()
     {
         if (_gameHasStarted)
         {
-            return false;
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.GameAlreadyStarted,
+            };
+        }
+        if (Players.Count < MinAmountOfPlayer)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.MinimumPlayersNotReached,
+            };
         }
         _gameHasStarted = true;
         InitializeDeck();
@@ -85,11 +114,14 @@ public class Game
 
         CurrentSet = new Set(Players);
 
-        return true;
+        return new StatusMessage
+        {
+            Success = true,
+        };
     }
 
     // Player input actions
-    public bool DirtyLaundry(int playerId)
+    public StatusMessage DirtyLaundry(int playerId)
     {
         return CurrentSet.PlayerCallsDirtyLaundry(Players.Find(p => p.Id == playerId));
     }
@@ -99,9 +131,36 @@ public class Game
         return CurrentSet.PlayerCallsWhiteLaundry(Players.Find(p => p.Id == playerId));
     }
 
-    public void TurnsLaundry(int playerId, int victimId)
+    public StatusMessage TurnsLaundry(int playerId, int victimId)
     {
-        CurrentSet.TurnsLaundry(Players.Find(p => p.Id == playerId), Players.Find(p => p.Id == victimId));
+        if (playerId == victimId)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.CantDoThisActionOnYourself,
+            };
+        }
+        Player? player = Players.Find(p => p.Id == playerId);
+        Player? victim = Players.Find(p => p.Id == victimId);
+        
+        if (player == null || victim == null)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.PlayerNotFound,
+            };
+        }
+
+        StatusMessage statusMessage = CurrentSet.TurnsLaundry(player, victim);
+        if (statusMessage.Message == Messages.PlayerDidNotBluff)
+        {
+            SetPlayerCardsBackToDeck(victim);
+            DealCardsToPlayer(victim);
+        }
+        
+        return statusMessage;
     }
 
     public void Knock(int playerId)
@@ -119,8 +178,8 @@ public class Game
         
     }
 
-    public bool LaundryTimeIsUp()
+    public bool StopLaundryTimer()
     {
-        return CurrentSet.LaundryTimeIsUp();
+        return CurrentSet.StopLaundryTimer();
     }
 }

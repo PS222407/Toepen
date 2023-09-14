@@ -16,6 +16,7 @@ foreach (Commands command in Enum.GetValues(typeof(Commands)))
 {
     Console.WriteLine(command);
 }
+
 Console.WriteLine("---------------------");
 while (true)
 {
@@ -24,123 +25,38 @@ while (true)
     {
         return;
     }
+
     string[] inputParts = command.Split(' ');
     Enum.TryParse(typeof(Commands), inputParts[0], out object? inputCommand);
 
     switch (inputCommand)
     {
         case Commands.Start:
-        {
-            if (!game.Start())
-            {
-                Console.WriteLine();
-                Console.WriteLine("---------------------");
-                Console.WriteLine("Warning: the game already started");
-                Console.WriteLine("---------------------");
-            }
-            else
-            {
-                Console.WriteLine();
-                Console.WriteLine("---------------------");
-                Console.WriteLine("GAME STARTED");
-                Console.WriteLine("---------------------");
-
-                foreach (Player player in game.Players)
-                {
-                    Console.WriteLine("--------------------------");
-                    Console.WriteLine($"{player.Id} {player.Name}");
-                    foreach (Card card in player.Hand)
-                    {
-                        Console.WriteLine(card);
-                    }
-
-                    if (player.HasDirtyLaundry())
-                    {
-                        Console.WriteLine("Heeft vuile was");
-                    }
-
-                    if (player.HasWhiteLaundry())
-                    {
-                        Console.WriteLine("Heeft witte was");
-                    }
-                }
-            }
-
+            Start();
             break;
-        }
         case Commands.AddPlayer:
-        {
-            if (inputParts.Length != 2)
-            {
-                Console.WriteLine($"Wrong command, please do: {Commands.AddPlayer.ToString()} playername");
-            }
-            else if (!game.AddPlayer(new Player(inputParts[1])))
-            {
-                Console.WriteLine("Lobby is either full or the game has been started!");
-            }
-
+            AddPlayer(inputParts);
             break;
-        }
         case Commands.DirtyLaundry:
-            game.DirtyLaundry(1);
-            Console.WriteLine();
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Player 1 zegt vuilewas te hebben");
-            Console.WriteLine("---------------------");
+            DirtyLaundry(inputParts);
             break;
         case Commands.WhiteLaundry:
-            game.WhiteLaundry(1);
-            Console.WriteLine();
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Player 1 zegt wittewas te hebben");
-            Console.WriteLine("---------------------");
+            WhiteLaundry(inputParts);
             break;
         case Commands.StopLaundryTimer:
-            game.LaundryTimeIsUp();
-            Console.WriteLine();
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Laundry timer stopped");
-            Console.WriteLine("---------------------");
+            StopLaundryTimer();
             break;
         case Commands.TurnsLaundry:
-            Thread.Sleep(1000);
-            Console.WriteLine(1);
-            Thread.Sleep(1000);
-            Console.WriteLine(2);
-            Thread.Sleep(1000);
-            Console.WriteLine(3);
-            Thread.Sleep(1000);
-            Console.WriteLine(4);
-            Thread.Sleep(1000);
-            Console.WriteLine(5);
-
-            //TODO:
-            // game.TurnsLaundry(2);
-            Console.WriteLine();
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Player 2 draait de was om");
-            Console.WriteLine("---------------------");
+            TurnsLaundry(inputParts);
             break;
         case Commands.Check:
-            game.Check(2);
-            Console.WriteLine();
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Player 2 checkt");
-            Console.WriteLine("---------------------");
+            Check(inputParts);
             break;
         case Commands.Fold:
-            game.Fold(2);
-            Console.WriteLine();
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Player 2 fold");
-            Console.WriteLine("---------------------");
+            Fold(inputParts);
             break;
         case Commands.Knock:
-            game.Knock(1);
-            Console.WriteLine();
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Player 1 klopt");
-            Console.WriteLine("---------------------");
+            Knock(inputParts);
             break;
         default:
             Console.WriteLine();
@@ -151,7 +67,183 @@ while (true)
             {
                 Console.WriteLine(cmd);
             }
+
             Console.WriteLine("---------------------");
             break;
     }
+}
+
+void Start()
+{
+    StatusMessage statusMessage = game.Start();
+    if (!statusMessage.Success)
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"Warning: {statusMessage.Message}");
+        Console.WriteLine("---------------------");
+    }
+    else
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine("GAME STARTED");
+        Console.WriteLine("---------------------");
+
+        foreach (Player player in game.Players)
+        {
+            Console.WriteLine("--------------------------");
+            Console.WriteLine($"{player.Id} {player.Name}");
+            foreach (Card card in player.Hand)
+            {
+                Console.WriteLine(card);
+            }
+
+            if (player.HasDirtyLaundry())
+            {
+                Console.WriteLine("Heeft vuile was");
+            }
+
+            if (player.HasWhiteLaundry())
+            {
+                Console.WriteLine("Heeft witte was");
+            }
+        }
+    }
+}
+
+void AddPlayer(string[] args)
+{
+    if (args.Length != 2)
+    {
+        Console.WriteLine($"Wrong command, please run: {Commands.AddPlayer.ToString()} playername");
+    }
+    else if (!game.AddPlayer(new Player(args[1])))
+    {
+        Console.WriteLine("Lobby is either full or the game has been started!");
+    }
+}
+
+void DirtyLaundry(string[] args)
+{
+    if (args.Length != 2)
+    {
+        Console.WriteLine($"Wrong command, please run: {Commands.DirtyLaundry.ToString()} playerid");
+        return;
+    }
+    StatusMessage statusMessage = game.DirtyLaundry(int.Parse(args[1]));
+    if (!statusMessage.Success)
+    {
+        Console.WriteLine("Cant perform this action now");
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} zegt vuilewas te hebben");
+    Console.WriteLine("---------------------");
+}
+
+void WhiteLaundry(string[] args)
+{
+    if (args.Length != 2)
+    {
+        Console.WriteLine($"Wrong command, please run: {Commands.WhiteLaundry.ToString()} playerid");
+        return;
+    }
+    if (!game.WhiteLaundry(int.Parse(args[1])))
+    {
+        Console.WriteLine("Cant perform this action now");
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} zegt wittewas te hebben");
+    Console.WriteLine("---------------------");
+}
+
+void StopLaundryTimer()
+{
+    if (!game.StopLaundryTimer())
+    {
+        Console.WriteLine("Cant perform this action now");
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine("Laundry timer stopped");
+    Console.WriteLine("---------------------");
+}
+
+void TurnsLaundry(string[] args)
+{
+    if (args.Length != 3)
+    {
+        Console.WriteLine($"Wrong command, please do: {Commands.TurnsLaundry.ToString()} turnerId victimId");
+        return;
+    }
+
+    StatusMessage statusMessage = game.TurnsLaundry(int.Parse(args[1]), int.Parse(args[2]));
+    if (!statusMessage.Success)
+    {
+        Console.WriteLine("Cant perform this action now");
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} draait de was om van speler {args[2]}");
+    Console.WriteLine("---------------------");
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"{args[2]} {statusMessage.Message}");
+    Console.WriteLine("---------------------");
+}
+
+void Check(string[] args)
+{
+    if (args.Length != 2)
+    {
+        Console.WriteLine($"Wrong command, please run: {Commands.Check.ToString()} playerid");
+        return;
+    }
+    
+    game.Check(int.Parse(args[1]));
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} checkt");
+    Console.WriteLine("---------------------");
+}
+
+void Fold(string[] args)
+{
+    if (args.Length != 2)
+    {
+        Console.WriteLine($"Wrong command, please run: {Commands.Fold.ToString()} playerid");
+        return;
+    }
+    
+    game.Fold(int.Parse(args[1]));
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} fold");
+    Console.WriteLine("---------------------");
+}
+
+void Knock(string[] args)
+{
+    if (args.Length != 2)
+    {
+        Console.WriteLine($"Wrong command, please run: {Commands.Knock.ToString()} playerid");
+        return;
+    }
+    
+    game.Knock(int.Parse(args[1]));
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} klopt");
+    Console.WriteLine("---------------------");
 }

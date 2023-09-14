@@ -20,16 +20,32 @@ public class Set
         State = GameStates.ActiveLaundryTimer;
     }
 
-    public bool PlayerCallsDirtyLaundry(Player player)
+    public StatusMessage PlayerCallsDirtyLaundry(Player player)
     {
         if (State != GameStates.ActiveLaundryTimer)
         {
-            return false;
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.CantPerformActionDuringThisGameState
+            };
+        }
+
+        if (player.HasCalledDirtyLaundry)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.AlreadyCalledLaundry,
+            };
         }
 
         player.CalledDirtyLaundry();
 
-        return true;
+        return new StatusMessage
+        {
+            Success = true,
+        };
     }
 
     public bool PlayerCallsWhiteLaundry(Player player)
@@ -44,7 +60,7 @@ public class Set
         return true;
     }
 
-    public bool LaundryTimeIsUp()
+    public bool StopLaundryTimer()
     {
         if (State != GameStates.ActiveLaundryTimer)
         {
@@ -66,10 +82,21 @@ public class Set
                 Message = Messages.CantPerformActionDuringThisGameState
             };
         }
+        
+        //TODO: when give new cards set LaundryHasBeenTurned back to false
+        //TODO for some reason this always true idk why
+        if (victim.LaundryHasBeenTurned)
+        {
+            return new StatusMessage
+            {
+                Success = false,
+                Message = Messages.AlreadyTurnedLaundry,
+            };
+        }
 
         if (victim.HasCalledDirtyLaundry)
         {
-            if (victim.HasDirtyLaundry())
+            if (victim.TurnsAndChecksDirtyLaundry())
             {
                 turner.AddPenaltyPoints(1);
                 return new StatusMessage
@@ -77,9 +104,18 @@ public class Set
                     Success = true,
                     Message = Messages.PlayerDidNotBluff,
                 };
+            } 
+
+            if (Settings.LaundryOpenCards)
+            {
+                victim.AddPenaltyPoints(1);
+            }
+            else
+            {
+                // TODO:
+                // victim.PlayWithOpenCards(1);
             }
 
-            victim.AddPenaltyPoints(1);
             return new StatusMessage
             {
                 Success = true,
@@ -89,7 +125,7 @@ public class Set
 
         if (victim.HasCalledWhiteLaundry)
         {
-            if (victim.HasWhiteLaundry())
+            if (victim.TurnsAndChecksWhiteLaundry())
             {
                 turner.AddPenaltyPoints(1);
                 return new StatusMessage

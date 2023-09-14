@@ -8,4 +8,10 @@ public enum Messages
     PlayerHasNotCalledForLaundry,
     PlayerDidNotBluff,
     PlayerDidBluff,
+    AlreadyCalledLaundry,
+    MinimumPlayersNotReached,
+    GameAlreadyStarted,
+    AlreadyTurnedLaundry,
+    PlayerNotFound,
+    CantDoThisActionOnYourself
 }

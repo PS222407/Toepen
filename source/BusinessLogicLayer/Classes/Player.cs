@@ -19,6 +19,8 @@ public class Player
     public bool HasCalledDirtyLaundry { get; private set; }
     
     public bool HasCalledWhiteLaundry { get; private set; }
+    
+    public bool LaundryHasBeenTurned { get; private set; }
 
     public Player(string name)
     {
@@ -34,6 +36,11 @@ public class Player
     public void DealCard(Card card)
     {
         Hand.Add(card);
+    }    
+    
+    public void RemoveCardFromHand(Card card)
+    {
+        Hand.Remove(card);
     }
 
     public void CalledDirtyLaundry()
@@ -46,13 +53,27 @@ public class Player
         HasCalledWhiteLaundry = true;
     }
 
+    public bool TurnsAndChecksDirtyLaundry()
+    {
+        LaundryHasBeenTurned = true;
+        return HasDirtyLaundry();
+    }
+
     public bool HasDirtyLaundry()
     {
+        LaundryHasBeenTurned = true;
         return Hand.All(card => card.Value < Values.Seven);
     }
 
+    public bool TurnsAndChecksWhiteLaundry()
+    {
+        LaundryHasBeenTurned = true;
+        return HasWhiteLaundry();
+    }
+    
     public bool HasWhiteLaundry()
     {
+        LaundryHasBeenTurned = true;
         int sevenCount = 0;
         foreach (Card card in Hand)
         {
