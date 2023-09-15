@@ -15,14 +15,18 @@ foreach (Commands command in Enum.GetValues(typeof(Commands)))
 {
     Console.WriteLine(command);
 }
+Console.WriteLine("---------------------");
 
-// TODO: remove these test players
+// TODO: remove these test scenario's
 AddPlayer(new[] { "jens", "jens" });
 AddPlayer(new[] { "sam", "sam" });
 AddPlayer(new[] { "mylo", "mylo" });
 AddPlayer(new[] { "niels", "niels" });
 
-Console.WriteLine("---------------------");
+game.Start();
+game.StopLaundryTimer();
+game.StopLaundryTurnTimerAndStartRound();
+
 while (true)
 {
     string? command = Console.ReadLine();

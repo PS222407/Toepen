@@ -10,11 +10,11 @@ public class Round
 
     public List<Player> Players { get; private set; }
 
-    public Card RulingCard { get; private set; }
-
-    public Player ActivePlayer { get; private set; }
+    public Card StartedCard { get; private set; }
 
     public Player StartedPlayer { get; private set; }
+
+    public Player ActivePlayer { get; private set; }
 
     public Player PlayerWhoKnocked { get; private set; }
 
@@ -120,47 +120,58 @@ public class Round
             return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
         
-        //TEST
-        SetNextPlayer();
-        if (ActivePlayer == StartedPlayer)
-        {
-            //TODO: start nieuwe ronde!
-            return new StatusMessage(false,  Messages.PlayerDidStart);
-        }
-        //ENDTEST
-        
         player.PlayCard(card);
         SetNextPlayer();
 
         return new StatusMessage(true);
     }
 
-    private void SetNextPlayer(int i = 0)
+    private void SetNextPlayer()
     {
-        if (i > Players.Count)
-        {
-            //TODO: alle spelers zijn gefold
-            throw new NotImplementedException();
-        }
-
-        List<Player> playersStillInGame = Players.Where(player => !player.IsOutOfGame()).ToList();
-        if (playersStillInGame.Count == 1)
-        {
-            //TODO: handel winnaars af
-            Winner = playersStillInGame.First();
-        }
-
         int currentIndex = Players.IndexOf(ActivePlayer);
         int nextIndex = (currentIndex + 1) % Players.Count;
-        Player newActivePlayer = Players[nextIndex];
-        
-        if (newActivePlayer.IsOutOfGame())
+        Player nextPlayer = Players[nextIndex];
+
+        Player? winner = CheckRoundForAnyWinner(nextPlayer);
+        if (winner != null)
         {
-            SetNextPlayer(i + 1);
+            Winner = winner;
+            return;
+        }
+        
+        if (nextPlayer.IsOutOfGame())
+        {
+            SetNextPlayer();
         }
         else
         {
-            ActivePlayer = newActivePlayer;
+            ActivePlayer = nextPlayer;
         }
+    }
+
+    private Player? CheckRoundForAnyWinner(Player player)
+    {
+        List<Player> playersStillInGame = Players.Where(p => !p.IsOutOfGame()).ToList();
+        if (playersStillInGame.Count == 1)
+        {
+            return playersStillInGame.First();
+        }
+
+        if (StartedPlayer == player)
+        {
+            Player winner = StartedPlayer;
+            foreach (Player p in playersStillInGame)
+            {
+                Card pCard = p.PlayedCards.Last();
+                if (pCard.Suit == StartedCard.Suit && pCard.Value > StartedCard.Value)
+                {
+                    winner = p;
+                }
+            }
+
+            return winner;
+        }
+
+        return null;
     }
 }

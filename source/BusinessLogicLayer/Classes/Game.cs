@@ -205,15 +205,38 @@ public class Game
         return CurrentSet!.StopLaundryTimer();
     }
 
-    public void Knock(int playerId)
+    public StatusMessage Knock(int playerId)
     {
+        Player? player = Players.Find(p => p.Id == playerId);
+        if (player == null)
+        {
+            return new StatusMessage(false, Messages.PlayerNotFound);
+        }
+
+        return CurrentSet!.CurrentRound.Knock(player);
     }
 
-    public void Check(int playerId)
+    public StatusMessage Check(int playerId)
     {
+        Player? player = Players.Find(p => p.Id == playerId);
+        if (player == null)
+        {
+            return new StatusMessage(false, Messages.PlayerNotFound);
+        }
+
+        return CurrentSet!.CurrentRound.Check(player);
     }
 
-    public void Fold(int playerId)
+    public StatusMessage Fold(int playerId)
     {
+        Player? player = Players.Find(p => p.Id == playerId);
+        if (player == null)
+        {
+            return new StatusMessage(false, Messages.PlayerNotFound);
+        }
+
+        return CurrentSet!.CurrentRound.Fold(player);
     }
+    
+    //TODO: playcard
 }

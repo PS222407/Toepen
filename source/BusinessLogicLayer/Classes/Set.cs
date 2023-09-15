@@ -6,7 +6,7 @@ public class Set
 {
     private const int MaxRounds = 4;
 
-    public List<Round> Rounds { get; private set; }
+    public List<Round> Rounds { get; private set; } = new();
 
     public Round CurrentRound { get; private set; }
 

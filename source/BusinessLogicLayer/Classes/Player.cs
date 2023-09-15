@@ -65,7 +65,7 @@ public class Player
 
     public bool HasDirtyLaundry()
     {
-        return Hand.All(card => card.Value < Values.Seven);
+        return Hand.Count == Settings.MaxCardsPerHand && Hand.All(card => card.Value < Values.Seven);
     }
 
     public bool TurnsAndChecksWhiteLaundry()
