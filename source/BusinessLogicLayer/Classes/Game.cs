@@ -5,11 +5,11 @@ namespace BusinessLogicLayer.Classes;
 public class Game
 {
     private const int AmountStartCardsPlayer = 4;
-    
+
     private const int MinAmountOfPlayer = 2;
-    
+
     private const int MaxAmountOfPlayers = 6;
-    
+
     private bool _gameHasStarted = false;
 
     public GameStates GameState { get; private set; }
@@ -19,7 +19,9 @@ public class Game
     private List<Card> Deck { get; set; } = new();
 
     public Set? CurrentSet { get; private set; }
-    
+
+    public Player Host { get; private set; }
+
     private void AddCard(Card card)
     {
         Deck.Add(card);
@@ -31,8 +33,14 @@ public class Game
         {
             return false;
         }
+
         if (Players.Count < MaxAmountOfPlayers)
         {
+            if (!Players.Any())
+            {
+                Host = player;
+            }
+
             Players.Add(player);
             return true;
         }
@@ -86,9 +94,10 @@ public class Game
             Deck.Add(card);
             player.RemoveCardFromHand(card);
         }
+
         ShuffleDeck();
     }
-    
+
     // System input actions
     public StatusMessage Start()
     {
@@ -100,6 +109,7 @@ public class Game
                 Message = Messages.GameAlreadyStarted,
             };
         }
+
         if (Players.Count < MinAmountOfPlayer)
         {
             return new StatusMessage
@@ -108,6 +118,7 @@ public class Game
                 Message = Messages.MinimumPlayersNotReached,
             };
         }
+
         _gameHasStarted = true;
         InitializeDeck();
         DealCardsToPlayers();
@@ -132,9 +143,10 @@ public class Game
                 Message = Messages.PlayerNotFound,
             };
         }
+
         return CurrentSet!.PlayerCallsDirtyLaundry(player);
     }
-    
+
     public StatusMessage WhiteLaundry(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);
@@ -146,6 +158,7 @@ public class Game
                 Message = Messages.PlayerNotFound,
             };
         }
+
         return CurrentSet!.PlayerCallsWhiteLaundry(player);
     }
 
@@ -159,9 +172,10 @@ public class Game
                 Message = Messages.CantDoThisActionOnYourself,
             };
         }
+
         Player? player = Players.Find(p => p.Id == playerId);
         Player? victim = Players.Find(p => p.Id == victimId);
-        
+
         if (player == null || victim == null)
         {
             return new StatusMessage
@@ -177,10 +191,10 @@ public class Game
             PlayerHandToDeck(victim);
             DealCardsToPlayer(victim);
         }
-        
+
         return statusMessage;
     }
-    
+
     public bool StopLaundryTurnTimerAndStartLaundryTimer()
     {
         foreach (Player player in Players)
@@ -190,8 +204,10 @@ public class Game
                 PlayerHandToDeck(player);
                 DealCardsToPlayer(player);
             }
+
             player.ResetLaundryVariables();
         }
+
         return CurrentSet!.StopLaundryTurnTimerAndStartLaundryTimer();
     }
 
@@ -204,8 +220,10 @@ public class Game
                 PlayerHandToDeck(player);
                 DealCardsToPlayer(player);
             }
+
             player.ResetLaundryVariables();
         }
+
         return CurrentSet!.StopLaundryTurnTimerAndStartRound();
     }
 
@@ -213,19 +231,16 @@ public class Game
     {
         return CurrentSet!.StopLaundryTimer();
     }
-    
+
     public void Knock(int playerId)
     {
-        
     }
 
     public void Check(int playerId)
     {
-        
     }
 
     public void Fold(int playerId)
     {
-        
     }
 }

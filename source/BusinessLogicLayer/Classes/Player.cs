@@ -11,6 +11,8 @@ public class Player
     public string Name { get; private set; }
 
     public List<Card> Hand { get; private set; } = new();
+    
+    public List<Card> PlayedCards { get; private set; } = new();
 
     public int PenaltyPoints { get; private set; }
 
@@ -21,6 +23,8 @@ public class Player
     public bool HasCalledWhiteLaundry { get; private set; }
     
     public bool LaundryHasBeenTurned { get; private set; }
+    
+    public bool PlayWithOpenCards { get; private set; }
 
     public Player(string name)
     {
@@ -93,5 +97,21 @@ public class Player
         HasCalledDirtyLaundry = false;
         HasCalledWhiteLaundry = false;
         LaundryHasBeenTurned = false;
+    }
+
+    public void MustPlayWithOpenCards()
+    {
+        PlayWithOpenCards = true;
+    }
+
+    public void PlayCard(Card card)
+    {
+        Hand.Remove(card);
+        PlayedCards.Add(card);
+    }
+
+    public void Folds()
+    {
+        Folded = true;
     }
 }

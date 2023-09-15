@@ -3,8 +3,8 @@
 public enum GameStates
 {
     ActiveLaundryTimer,
-    // PlayerCalledDirtyLaundry,
-    // PlayerCalledWhiteLaundry,
     ActiveTurnLaundryTimer,
     ActiveRound,
+    PlayerKnocked,
+    WaitingForCardOrKnock
 }

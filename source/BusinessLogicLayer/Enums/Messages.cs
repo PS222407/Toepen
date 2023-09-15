@@ -13,5 +13,6 @@ public enum Messages
     GameAlreadyStarted,
     AlreadyTurnedLaundry,
     PlayerNotFound,
-    CantDoThisActionOnYourself
+    CantDoThisActionOnYourself,
+    NotPlayersTurn
 }

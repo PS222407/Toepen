@@ -8,6 +8,8 @@ public class Set
 
     public List<Round> Rounds { get; private set; }
 
+    public Round CurrentRound { get; private set; }
+
     public GameStates State { get; private set; }
 
     public List<Player> Players { get; private set; }
@@ -124,8 +126,7 @@ public class Set
             }
             else
             {
-                // TODO:
-                // victim.PlayWithOpenCards(1);
+                victim.MustPlayWithOpenCards();
             }
 
             return new StatusMessage
@@ -153,8 +154,7 @@ public class Set
             }
             else
             {
-                // TODO:
-                // victim.PlayWithOpenCards(1);
+                victim.MustPlayWithOpenCards();
             }
 
             return new StatusMessage
@@ -189,9 +189,16 @@ public class Set
         {
             return false;
         }
-
-        State = GameStates.ActiveRound;
+        
+        StartNewRound();
 
         return true;
+    }
+
+    private void StartNewRound()
+    {
+        State = GameStates.ActiveRound;
+        CurrentRound = new Round(Players);
+        Rounds.Add(CurrentRound);
     }
 }
