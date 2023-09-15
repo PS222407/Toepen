@@ -14,5 +14,6 @@ public enum Messages
     AlreadyTurnedLaundry,
     PlayerNotFound,
     CantDoThisActionOnYourself,
-    NotPlayersTurn
+    NotPlayersTurn,
+    AlreadyFolded
 }

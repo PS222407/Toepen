@@ -38,85 +38,92 @@ public class Round
     {
         if (player != ActivePlayer)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.NotPlayersTurn,
-            };
+            return new StatusMessage(false, Messages.NotPlayersTurn);
         }
 
         if (State != GameStates.WaitingForCardOrKnock)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.CantPerformActionDuringThisGameState,
-            };
+            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
 
         PlayerWhoKnocked = player;
         State = GameStates.PlayerKnocked;
         NextPlayer();
 
-        return new StatusMessage
-        {
-            Success = true
-        };
+        return new StatusMessage(true);
     }
 
     public StatusMessage Fold(Player player)
     {
-        if (player != ActivePlayer)
-        {
-            return new StatusMessage(false, Messages.NotPlayersTurn);
-        }
-
         if (State != GameStates.PlayerKnocked)
-        {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.CantPerformActionDuringThisGameState,
-            };
-        }
+            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+        
+        if (player != ActivePlayer)
+            return new StatusMessage(false, Messages.NotPlayersTurn);
+
+        if (player == PlayerWhoKnocked)
+            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
+        
+        if (player.Folded)
+            return new StatusMessage(false, Messages.AlreadyFolded);
 
         player.Folds();
-        return new StatusMessage();
+        NextPlayer();
+        
+        return new StatusMessage(true);
+    }
+    
+    public StatusMessage Check(Player player)
+    {
+        if (State != GameStates.PlayerKnocked)
+            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+        
+        if (player != ActivePlayer)
+            return new StatusMessage(false, Messages.NotPlayersTurn);
+
+        if (player == PlayerWhoKnocked)
+            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
+        
+        if (player.Folded)
+            return new StatusMessage(false, Messages.AlreadyFolded);
+
+        NextPlayer();
+        
+        return new StatusMessage(true);
     }
 
     public StatusMessage PlayCard(Player player, Card card)
     {
         if (player != ActivePlayer)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.NotPlayersTurn,
-            };
+            return new StatusMessage(false, Messages.NotPlayersTurn);
         }
 
         if (State != GameStates.WaitingForCardOrKnock)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.CantPerformActionDuringThisGameState,
-            };
+            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
 
         player.PlayCard(card);
         NextPlayer();
 
-        return new StatusMessage
-        {
-            Success = true,
-        };
+        return new StatusMessage(true);
     }
 
-    private void NextPlayer()
+    private void NextPlayer(int i = 0)
     {
+        if (i > Players.Count)
+        {
+            //TODO: alle spelers zijn gefold
+            throw new NotImplementedException();
+        }
+
         int currentIndex = Players.IndexOf(ActivePlayer);
         int nextIndex = (currentIndex + 1) % Players.Count;
-        ActivePlayer = Players[nextIndex];
+        Player newActivePlayer = Players[nextIndex];
+        if (newActivePlayer.Folded)
+        {
+            NextPlayer(i + 1);
+        }
     }
 }

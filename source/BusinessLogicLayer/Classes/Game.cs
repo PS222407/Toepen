@@ -103,20 +103,12 @@ public class Game
     {
         if (_gameHasStarted)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.GameAlreadyStarted,
-            };
+            return new StatusMessage(false, Messages.GameAlreadyStarted);
         }
 
         if (Players.Count < MinAmountOfPlayer)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.MinimumPlayersNotReached,
-            };
+            return new StatusMessage(false, Messages.MinimumPlayersNotReached);
         }
 
         _gameHasStarted = true;
@@ -125,10 +117,7 @@ public class Game
 
         CurrentSet = new Set(Players);
 
-        return new StatusMessage
-        {
-            Success = true,
-        };
+        return new StatusMessage(true);
     }
 
     // Player input actions
@@ -137,11 +126,7 @@ public class Game
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.PlayerNotFound,
-            };
+            return new StatusMessage(false, Messages.PlayerNotFound);
         }
 
         return CurrentSet!.PlayerCallsDirtyLaundry(player);
@@ -152,11 +137,7 @@ public class Game
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.PlayerNotFound,
-            };
+            return new StatusMessage(false, Messages.PlayerNotFound);
         }
 
         return CurrentSet!.PlayerCallsWhiteLaundry(player);
@@ -166,11 +147,7 @@ public class Game
     {
         if (playerId == victimId)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.CantDoThisActionOnYourself,
-            };
+            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
         }
 
         Player? player = Players.Find(p => p.Id == playerId);
@@ -178,11 +155,7 @@ public class Game
 
         if (player == null || victim == null)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.PlayerNotFound,
-            };
+            return new StatusMessage(false, Messages.PlayerNotFound);
         }
 
         StatusMessage statusMessage = CurrentSet!.TurnsLaundry(player, victim);

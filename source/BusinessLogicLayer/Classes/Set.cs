@@ -24,56 +24,34 @@ public class Set
     {
         if (State != GameStates.ActiveLaundryTimer)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.CantPerformActionDuringThisGameState
-            };
+            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
 
         if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.AlreadyCalledLaundry,
-            };
+            return new StatusMessage(false, Messages.AlreadyCalledLaundry);
         }
 
         player.CalledDirtyLaundry();
 
-        return new StatusMessage
-        {
-            Success = true,
-        };
+        return new StatusMessage(true);
     }
 
     public StatusMessage PlayerCallsWhiteLaundry(Player player)
     {
         if (State != GameStates.ActiveLaundryTimer)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.CantPerformActionDuringThisGameState,
-            };
+            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
-        
+
         if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.AlreadyCalledLaundry,
-            };
+            return new StatusMessage(false, Messages.AlreadyCalledLaundry);
         }
 
         player.CalledWhiteLaundry();
 
-        return new StatusMessage
-        {
-            Success = true,
-        };
+        return new StatusMessage(true);
     }
 
     public bool StopLaundryTimer()
@@ -92,20 +70,12 @@ public class Set
     {
         if (State != GameStates.ActiveTurnLaundryTimer)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.CantPerformActionDuringThisGameState
-            };
+            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
-        
+
         if (victim.LaundryHasBeenTurned)
         {
-            return new StatusMessage
-            {
-                Success = false,
-                Message = Messages.AlreadyTurnedLaundry,
-            };
+            return new StatusMessage(false, Messages.AlreadyTurnedLaundry);
         }
 
         if (victim.HasCalledDirtyLaundry)
@@ -113,12 +83,8 @@ public class Set
             if (victim.TurnsAndChecksDirtyLaundry())
             {
                 turner.AddPenaltyPoints(1);
-                return new StatusMessage
-                {
-                    Success = true,
-                    Message = Messages.PlayerDidNotBluff,
-                };
-            } 
+                return new StatusMessage(true, Messages.PlayerDidNotBluff);
+            }
 
             if (Settings.LaundryOpenCards)
             {
@@ -129,11 +95,7 @@ public class Set
                 victim.MustPlayWithOpenCards();
             }
 
-            return new StatusMessage
-            {
-                Success = true,
-                Message = Messages.PlayerDidBluff,
-            };
+            return new StatusMessage(true, Messages.PlayerDidBluff);
         }
 
         if (victim.HasCalledWhiteLaundry)
@@ -141,11 +103,7 @@ public class Set
             if (victim.TurnsAndChecksWhiteLaundry())
             {
                 turner.AddPenaltyPoints(1);
-                return new StatusMessage
-                {
-                    Success = true,
-                    Message = Messages.PlayerDidNotBluff,
-                };
+                return new StatusMessage(true, Messages.PlayerDidNotBluff);
             }
 
             if (Settings.LaundryOpenCards)
@@ -157,18 +115,10 @@ public class Set
                 victim.MustPlayWithOpenCards();
             }
 
-            return new StatusMessage
-            {
-                Success = true,
-                Message = Messages.PlayerDidBluff,
-            };
+            return new StatusMessage(true, Messages.PlayerDidBluff);
         }
 
-        return new StatusMessage
-        {
-            Success = false,
-            Message = Messages.PlayerHasNotCalledForLaundry,
-        };
+        return new StatusMessage(false, Messages.PlayerHasNotCalledForLaundry);
     }
 
     public bool StopLaundryTurnTimerAndStartLaundryTimer()
@@ -182,14 +132,14 @@ public class Set
 
         return true;
     }
-    
+
     public bool StopLaundryTurnTimerAndStartRound()
     {
         if (State != GameStates.ActiveTurnLaundryTimer)
         {
             return false;
         }
-        
+
         StartNewRound();
 
         return true;
