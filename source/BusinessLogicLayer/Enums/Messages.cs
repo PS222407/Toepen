@@ -15,5 +15,6 @@ public enum Messages
     PlayerNotFound,
     CantDoThisActionOnYourself,
     NotPlayersTurn,
-    AlreadyFolded
+    AlreadyFolded,
+    PlayerDidStart
 }

@@ -114,4 +114,14 @@ public class Player
     {
         Folded = true;
     }
+
+    public bool IsDead()
+    {
+        return PenaltyPoints >= Settings.MaxPenaltyPoints;
+    }
+
+    public bool IsOutOfGame()
+    {
+        return IsDead() || Folded;
+    }
 }

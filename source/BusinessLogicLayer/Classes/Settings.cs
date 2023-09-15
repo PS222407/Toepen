@@ -3,4 +3,6 @@
 public class Settings
 {
     public static bool LaundryOpenCards;
+    
+    public static int MaxPenaltyPoints = 10;
 }

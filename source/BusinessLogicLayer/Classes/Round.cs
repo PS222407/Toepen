@@ -14,7 +14,11 @@ public class Round
 
     public Player ActivePlayer { get; private set; }
 
+    public Player StartedPlayer { get; private set; }
+
     public Player PlayerWhoKnocked { get; private set; }
+
+    public Player Winner { get; private set; }
 
     public GameStates State { get; private set; }
 
@@ -32,6 +36,8 @@ public class Round
         {
             ActivePlayer = activePlayer;
         }
+
+        StartedPlayer = ActivePlayer;
     }
 
     public StatusMessage Knock(Player player)
@@ -45,10 +51,15 @@ public class Round
         {
             return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
+        
+        if (player == PlayerWhoKnocked)
+        {
+            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
+        }
 
         PlayerWhoKnocked = player;
         State = GameStates.PlayerKnocked;
-        NextPlayer();
+        SetNextPlayer();
 
         return new StatusMessage(true);
     }
@@ -57,38 +68,38 @@ public class Round
     {
         if (State != GameStates.PlayerKnocked)
             return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
-        
+
         if (player != ActivePlayer)
             return new StatusMessage(false, Messages.NotPlayersTurn);
 
         if (player == PlayerWhoKnocked)
             return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
-        
+
         if (player.Folded)
             return new StatusMessage(false, Messages.AlreadyFolded);
 
         player.Folds();
-        NextPlayer();
-        
+        SetNextPlayer();
+
         return new StatusMessage(true);
     }
-    
+
     public StatusMessage Check(Player player)
     {
         if (State != GameStates.PlayerKnocked)
             return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
-        
+
         if (player != ActivePlayer)
             return new StatusMessage(false, Messages.NotPlayersTurn);
 
         if (player == PlayerWhoKnocked)
             return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
-        
+
         if (player.Folded)
             return new StatusMessage(false, Messages.AlreadyFolded);
 
-        NextPlayer();
-        
+        SetNextPlayer();
+
         return new StatusMessage(true);
     }
 
@@ -99,18 +110,32 @@ public class Round
             return new StatusMessage(false, Messages.NotPlayersTurn);
         }
 
+        if (State == GameStates.PlayerKnocked && player == PlayerWhoKnocked)
+        {
+            State = GameStates.WaitingForCardOrKnock;
+        }
+
         if (State != GameStates.WaitingForCardOrKnock)
         {
             return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
         }
-
+        
+        //TEST
+        SetNextPlayer();
+        if (ActivePlayer == StartedPlayer)
+        {
+            //TODO: start nieuwe ronde!
+            return new StatusMessage(false,  Messages.PlayerDidStart);
+        }
+        //ENDTEST
+        
         player.PlayCard(card);
-        NextPlayer();
+        SetNextPlayer();
 
         return new StatusMessage(true);
     }
 
-    private void NextPlayer(int i = 0)
+    private void SetNextPlayer(int i = 0)
     {
         if (i > Players.Count)
         {
@@ -118,12 +143,24 @@ public class Round
             throw new NotImplementedException();
         }
 
+        List<Player> playersStillInGame = Players.Where(player => !player.IsOutOfGame()).ToList();
+        if (playersStillInGame.Count == 1)
+        {
+            //TODO: handel winnaars af
+            Winner = playersStillInGame.First();
+        }
+
         int currentIndex = Players.IndexOf(ActivePlayer);
         int nextIndex = (currentIndex + 1) % Players.Count;
         Player newActivePlayer = Players[nextIndex];
-        if (newActivePlayer.Folded)
+        
+        if (newActivePlayer.IsOutOfGame())
         {
-            NextPlayer(i + 1);
+            SetNextPlayer(i + 1);
+        }
+        else
+        {
+            ActivePlayer = newActivePlayer;
         }
     }
 }
