@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogicLayer.Enums;
 
-public enum Commands
+public enum Command
 {
     AddPlayer,
     Start,
@@ -8,9 +8,10 @@ public enum Commands
     WhiteLaundry,
     StopLaundryTimer,
     TurnsLaundry,
+    Knock,
     Check,
     Fold,
-    Knock,
+    PlayCard,
     StopLaundryTurnTimerAndStartLaundryTimer,
     StopLaundryTurnTimerAndStartRound,
 }

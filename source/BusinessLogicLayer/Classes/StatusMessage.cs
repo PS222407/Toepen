@@ -6,14 +6,14 @@ public class StatusMessage
 {
     public bool Success { get; private set; }
 
-    public Messages? Message { get; private set; }
+    public Message? Message { get; private set; }
 
     public StatusMessage(bool success)
     {
         Success = success;
     }
 
-    public StatusMessage(bool success, Messages message)
+    public StatusMessage(bool success, Message message)
     {
         Success = success;
         Message = message;

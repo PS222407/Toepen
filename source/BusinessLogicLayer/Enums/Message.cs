@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogicLayer.Enums;
 
-public enum Messages
+public enum Message
 {
     CantPerformActionDuringThisGameState,
     FaultyLaundry,
@@ -16,5 +16,6 @@ public enum Messages
     CantDoThisActionOnYourself,
     NotPlayersTurn,
     AlreadyFolded,
-    PlayerDidStart
+    PlayerDidStart,
+    CardNotFound
 }

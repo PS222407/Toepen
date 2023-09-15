@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogicLayer.Enums;
 
-public enum Suits
+public enum Suit
 {
     Spades,
     Diamonds,

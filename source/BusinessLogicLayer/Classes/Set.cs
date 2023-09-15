@@ -10,26 +10,28 @@ public class Set
 
     public Round CurrentRound { get; private set; }
 
-    public GameStates State { get; private set; }
+    public GameState State { get; private set; }
 
     public List<Player> Players { get; private set; }
+
+    public int PenaltyPoints { get; private set; } = 1;
 
     public Set(List<Player> players)
     {
         Players = players;
-        State = GameStates.ActiveLaundryTimer;
+        State = GameState.ActiveLaundryTimer;
     }
 
     public StatusMessage PlayerCallsDirtyLaundry(Player player)
     {
-        if (State != GameStates.ActiveLaundryTimer)
+        if (State != GameState.ActiveLaundryTimer)
         {
-            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
 
         if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
         {
-            return new StatusMessage(false, Messages.AlreadyCalledLaundry);
+            return new StatusMessage(false, Message.AlreadyCalledLaundry);
         }
 
         player.CalledDirtyLaundry();
@@ -39,14 +41,14 @@ public class Set
 
     public StatusMessage PlayerCallsWhiteLaundry(Player player)
     {
-        if (State != GameStates.ActiveLaundryTimer)
+        if (State != GameState.ActiveLaundryTimer)
         {
-            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
 
         if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
         {
-            return new StatusMessage(false, Messages.AlreadyCalledLaundry);
+            return new StatusMessage(false, Message.AlreadyCalledLaundry);
         }
 
         player.CalledWhiteLaundry();
@@ -56,26 +58,26 @@ public class Set
 
     public bool StopLaundryTimer()
     {
-        if (State != GameStates.ActiveLaundryTimer)
+        if (State != GameState.ActiveLaundryTimer)
         {
             return false;
         }
 
-        State = GameStates.ActiveTurnLaundryTimer;
+        State = GameState.ActiveTurnLaundryTimer;
 
         return true;
     }
 
     public StatusMessage TurnsLaundry(Player turner, Player victim)
     {
-        if (State != GameStates.ActiveTurnLaundryTimer)
+        if (State != GameState.ActiveTurnLaundryTimer)
         {
-            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
 
         if (victim.LaundryHasBeenTurned)
         {
-            return new StatusMessage(false, Messages.AlreadyTurnedLaundry);
+            return new StatusMessage(false, Message.AlreadyTurnedLaundry);
         }
 
         if (victim.HasCalledDirtyLaundry)
@@ -83,7 +85,7 @@ public class Set
             if (victim.TurnsAndChecksDirtyLaundry())
             {
                 turner.AddPenaltyPoints(1);
-                return new StatusMessage(true, Messages.PlayerDidNotBluff);
+                return new StatusMessage(true, Message.PlayerDidNotBluff);
             }
 
             if (Settings.LaundryOpenCards)
@@ -95,7 +97,7 @@ public class Set
                 victim.MustPlayWithOpenCards();
             }
 
-            return new StatusMessage(true, Messages.PlayerDidBluff);
+            return new StatusMessage(true, Message.PlayerDidBluff);
         }
 
         if (victim.HasCalledWhiteLaundry)
@@ -103,7 +105,7 @@ public class Set
             if (victim.TurnsAndChecksWhiteLaundry())
             {
                 turner.AddPenaltyPoints(1);
-                return new StatusMessage(true, Messages.PlayerDidNotBluff);
+                return new StatusMessage(true, Message.PlayerDidNotBluff);
             }
 
             if (Settings.LaundryOpenCards)
@@ -115,27 +117,27 @@ public class Set
                 victim.MustPlayWithOpenCards();
             }
 
-            return new StatusMessage(true, Messages.PlayerDidBluff);
+            return new StatusMessage(true, Message.PlayerDidBluff);
         }
 
-        return new StatusMessage(false, Messages.PlayerHasNotCalledForLaundry);
+        return new StatusMessage(false, Message.PlayerHasNotCalledForLaundry);
     }
 
     public bool StopLaundryTurnTimerAndStartLaundryTimer()
     {
-        if (State != GameStates.ActiveTurnLaundryTimer)
+        if (State != GameState.ActiveTurnLaundryTimer)
         {
             return false;
         }
 
-        State = GameStates.ActiveLaundryTimer;
+        State = GameState.ActiveLaundryTimer;
 
         return true;
     }
 
     public bool StopLaundryTurnTimerAndStartRound()
     {
-        if (State != GameStates.ActiveTurnLaundryTimer)
+        if (State != GameState.ActiveTurnLaundryTimer)
         {
             return false;
         }
@@ -147,8 +149,35 @@ public class Set
 
     private void StartNewRound()
     {
-        State = GameStates.ActiveRound;
+        State = GameState.ActiveRound;
         CurrentRound = new Round(Players);
         Rounds.Add(CurrentRound);
+    }
+
+    public StatusMessage PlayCard(Player player, Card card)
+    {
+        StatusMessage statusMessage = CurrentRound.PlayCard(player, card);
+        if (CurrentRound.Winner != null)
+        {
+            // TODO: check if round is won by any player
+        }
+        return statusMessage;
+    }
+
+    public StatusMessage Knock(Player player)
+    {
+        StatusMessage statusMessage = CurrentRound.Knock(player);
+        //TODO: add penalty point +1 when everyone either checked or folds
+        return statusMessage;
+    }
+
+    public StatusMessage Fold(Player player)
+    {
+        StatusMessage statusMessage = CurrentRound.Fold(player);
+        if (CurrentRound.Winner != null)
+        {
+            // TODO: check if round is won by any player
+        }
+        return statusMessage;
     }
 }

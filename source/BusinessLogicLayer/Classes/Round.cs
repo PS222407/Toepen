@@ -18,9 +18,9 @@ public class Round
 
     public Player PlayerWhoKnocked { get; private set; }
 
-    public Player Winner { get; private set; }
+    public Player? Winner { get; private set; }
 
-    public GameStates State { get; private set; }
+    public GameState State { get; private set; }
 
     public Round(List<Player> players, Player? activePlayer = null)
     {
@@ -44,21 +44,21 @@ public class Round
     {
         if (player != ActivePlayer)
         {
-            return new StatusMessage(false, Messages.NotPlayersTurn);
+            return new StatusMessage(false, Message.NotPlayersTurn);
         }
 
-        if (State != GameStates.WaitingForCardOrKnock)
+        if (State != GameState.WaitingForCardOrKnock)
         {
-            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
         
         if (player == PlayerWhoKnocked)
         {
-            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
+            return new StatusMessage(false, Message.CantDoThisActionOnYourself);
         }
 
         PlayerWhoKnocked = player;
-        State = GameStates.PlayerKnocked;
+        State = GameState.PlayerKnocked;
         SetNextPlayer();
 
         return new StatusMessage(true);
@@ -66,17 +66,17 @@ public class Round
 
     public StatusMessage Fold(Player player)
     {
-        if (State != GameStates.PlayerKnocked)
-            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+        if (State != GameState.PlayerKnocked)
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
 
         if (player != ActivePlayer)
-            return new StatusMessage(false, Messages.NotPlayersTurn);
+            return new StatusMessage(false, Message.NotPlayersTurn);
 
         if (player == PlayerWhoKnocked)
-            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
+            return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
         if (player.Folded)
-            return new StatusMessage(false, Messages.AlreadyFolded);
+            return new StatusMessage(false, Message.AlreadyFolded);
 
         player.Folds();
         SetNextPlayer();
@@ -86,17 +86,17 @@ public class Round
 
     public StatusMessage Check(Player player)
     {
-        if (State != GameStates.PlayerKnocked)
-            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+        if (State != GameState.PlayerKnocked)
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
 
         if (player != ActivePlayer)
-            return new StatusMessage(false, Messages.NotPlayersTurn);
+            return new StatusMessage(false, Message.NotPlayersTurn);
 
         if (player == PlayerWhoKnocked)
-            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
+            return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
         if (player.Folded)
-            return new StatusMessage(false, Messages.AlreadyFolded);
+            return new StatusMessage(false, Message.AlreadyFolded);
 
         SetNextPlayer();
 
@@ -107,17 +107,17 @@ public class Round
     {
         if (player != ActivePlayer)
         {
-            return new StatusMessage(false, Messages.NotPlayersTurn);
+            return new StatusMessage(false, Message.NotPlayersTurn);
         }
 
-        if (State == GameStates.PlayerKnocked && player == PlayerWhoKnocked)
+        if (State == GameState.PlayerKnocked && player == PlayerWhoKnocked)
         {
-            State = GameStates.WaitingForCardOrKnock;
+            State = GameState.WaitingForCardOrKnock;
         }
 
-        if (State != GameStates.WaitingForCardOrKnock)
+        if (State != GameState.WaitingForCardOrKnock)
         {
-            return new StatusMessage(false, Messages.CantPerformActionDuringThisGameState);
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
         
         player.PlayCard(card);

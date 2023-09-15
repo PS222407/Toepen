@@ -4,11 +4,11 @@ namespace BusinessLogicLayer.Classes;
 
 public class Card
 {
-    public Suits Suit { get; private set; }
+    public Suit Suit { get; private set; }
 
-    public Values Value { get; private set; }
+    public Value Value { get; private set; }
 
-    public Card(Suits suit, Values value)
+    public Card(Suit suit, Value value)
     {
         Suit = suit;
         Value = value;

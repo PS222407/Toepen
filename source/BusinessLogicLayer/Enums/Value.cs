@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogicLayer.Enums;
 
-public enum Values
+public enum Value
 {
     Jack = 3,
     Queen = 4,

@@ -11,10 +11,11 @@ Console.WriteLine();
 Console.WriteLine("---------------------");
 Console.WriteLine("Available commands:");
 Console.WriteLine("---------------------");
-foreach (Commands command in Enum.GetValues(typeof(Commands)))
+foreach (Command command in Enum.GetValues(typeof(Command)))
 {
     Console.WriteLine(command);
 }
+
 Console.WriteLine("---------------------");
 
 // TODO: remove these test scenario's
@@ -36,7 +37,7 @@ while (true)
     }
 
     string[] inputParts = command.Split(' ');
-    Enum.TryParse(typeof(Commands), inputParts[0], out object? inputCommand);
+    Enum.TryParse(typeof(Command), inputParts[0], out object? inputCommand);
 
     //TODO: remove in production
     if (command == "ShowCards")
@@ -44,39 +45,43 @@ while (true)
         ShowEveryonesCards();
         continue;
     }
+
     switch (inputCommand)
     {
-        case Commands.Start:
+        case Command.Start:
             Start();
             break;
-        case Commands.AddPlayer:
+        case Command.AddPlayer:
             AddPlayer(inputParts);
             break;
-        case Commands.DirtyLaundry:
+        case Command.DirtyLaundry:
             DirtyLaundry(inputParts);
             break;
-        case Commands.WhiteLaundry:
+        case Command.WhiteLaundry:
             WhiteLaundry(inputParts);
             break;
-        case Commands.StopLaundryTimer:
+        case Command.StopLaundryTimer:
             StopLaundryTimer();
             break;
-        case Commands.TurnsLaundry:
+        case Command.TurnsLaundry:
             TurnsLaundry(inputParts);
             break;
-        case Commands.Check:
+        case Command.Check:
             Check(inputParts);
             break;
-        case Commands.Fold:
+        case Command.Fold:
             Fold(inputParts);
             break;
-        case Commands.Knock:
+        case Command.Knock:
             Knock(inputParts);
             break;
-        case Commands.StopLaundryTurnTimerAndStartLaundryTimer:
+        case Command.PlayCard:
+            PlayCard(inputParts);
+            break;
+        case Command.StopLaundryTurnTimerAndStartLaundryTimer:
             StopLaundryTurnTimerAndStartLaundryTimer();
             break;
-        case Commands.StopLaundryTurnTimerAndStartRound:
+        case Command.StopLaundryTurnTimerAndStartRound:
             StopLaundryTurnTimerAndStartRound();
             break;
         default:
@@ -84,7 +89,7 @@ while (true)
             Console.WriteLine();
             Console.WriteLine("Incorrect! List of available commands:");
             Console.WriteLine("---------------------");
-            foreach (Commands cmd in Enum.GetValues(typeof(Commands)))
+            foreach (Command cmd in Enum.GetValues(typeof(Command)))
             {
                 Console.WriteLine(cmd);
             }
@@ -144,7 +149,7 @@ void AddPlayer(string[] args)
 {
     if (args.Length != 2)
     {
-        Console.WriteLine($"Wrong command, please run: {Commands.AddPlayer.ToString()} playername");
+        Console.WriteLine($"Wrong command, please run: {Command.AddPlayer.ToString()} playername");
     }
     else if (!game.AddPlayer(new Player(args[1])))
     {
@@ -156,7 +161,7 @@ void DirtyLaundry(string[] args)
 {
     if (args.Length != 2)
     {
-        Console.WriteLine($"Wrong command, please run: {Commands.DirtyLaundry.ToString()} playerid");
+        Console.WriteLine($"Wrong command, please run: {Command.DirtyLaundry.ToString()} playerid");
         return;
     }
 
@@ -177,7 +182,7 @@ void WhiteLaundry(string[] args)
 {
     if (args.Length != 2)
     {
-        Console.WriteLine($"Wrong command, please run: {Commands.WhiteLaundry.ToString()} playerid");
+        Console.WriteLine($"Wrong command, please run: {Command.WhiteLaundry.ToString()} playerid");
         return;
     }
 
@@ -212,7 +217,7 @@ void TurnsLaundry(string[] args)
 {
     if (args.Length != 3)
     {
-        Console.WriteLine($"Wrong command, please do: {Commands.TurnsLaundry.ToString()} turnerId victimId");
+        Console.WriteLine($"Wrong command, please do: {Command.TurnsLaundry.ToString()} turnerId victimId");
         return;
     }
 
@@ -263,7 +268,7 @@ void Check(string[] args)
 {
     if (args.Length != 2)
     {
-        Console.WriteLine($"Wrong command, please run: {Commands.Check.ToString()} playerid");
+        Console.WriteLine($"Wrong command, please run: {Command.Check.ToString()} playerid");
         return;
     }
 
@@ -278,7 +283,7 @@ void Fold(string[] args)
 {
     if (args.Length != 2)
     {
-        Console.WriteLine($"Wrong command, please run: {Commands.Fold.ToString()} playerid");
+        Console.WriteLine($"Wrong command, please run: {Command.Fold.ToString()} playerid");
         return;
     }
 
@@ -293,11 +298,26 @@ void Knock(string[] args)
 {
     if (args.Length != 2)
     {
-        Console.WriteLine($"Wrong command, please run: {Commands.Knock.ToString()} playerid");
+        Console.WriteLine($"Wrong command, please run: {Command.Knock.ToString()} playerid");
         return;
     }
 
     game.Knock(int.Parse(args[1]));
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} klopt");
+    Console.WriteLine("---------------------");
+}
+
+void PlayCard(string[] args)
+{
+    if (args.Length != 4)
+    {
+        Console.WriteLine($"Wrong command, please run: {Command.PlayCard.ToString()} playerid 7 c");
+        return;
+    }
+
+    game.PlayCard(int.Parse(args[1]), args[2], args[3]);
     Console.WriteLine();
     Console.WriteLine("---------------------");
     Console.WriteLine($"Player {args[1]} klopt");

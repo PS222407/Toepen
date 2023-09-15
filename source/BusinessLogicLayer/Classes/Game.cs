@@ -12,7 +12,7 @@ public class Game
 
     private bool _gameHasStarted = false;
 
-    public GameStates GameState { get; private set; }
+    public GameState GameState { get; private set; }
 
     public List<Player> Players { get; private set; } = new();
 
@@ -57,9 +57,9 @@ public class Game
 
     private void InitializeDeck()
     {
-        foreach (Suits suit in Enum.GetValues(typeof(Suits)))
+        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
         {
-            foreach (Values value in Enum.GetValues(typeof(Values)))
+            foreach (Value value in Enum.GetValues(typeof(Value)))
             {
                 Card card = new Card(suit, value);
                 AddCard(card);
@@ -103,12 +103,12 @@ public class Game
     {
         if (_gameHasStarted)
         {
-            return new StatusMessage(false, Messages.GameAlreadyStarted);
+            return new StatusMessage(false, Message.GameAlreadyStarted);
         }
 
         if (Players.Count < MinAmountOfPlayer)
         {
-            return new StatusMessage(false, Messages.MinimumPlayersNotReached);
+            return new StatusMessage(false, Message.MinimumPlayersNotReached);
         }
 
         _gameHasStarted = true;
@@ -126,7 +126,7 @@ public class Game
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
-            return new StatusMessage(false, Messages.PlayerNotFound);
+            return new StatusMessage(false, Message.PlayerNotFound);
         }
 
         return CurrentSet!.PlayerCallsDirtyLaundry(player);
@@ -137,7 +137,7 @@ public class Game
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
-            return new StatusMessage(false, Messages.PlayerNotFound);
+            return new StatusMessage(false, Message.PlayerNotFound);
         }
 
         return CurrentSet!.PlayerCallsWhiteLaundry(player);
@@ -147,7 +147,7 @@ public class Game
     {
         if (playerId == victimId)
         {
-            return new StatusMessage(false, Messages.CantDoThisActionOnYourself);
+            return new StatusMessage(false, Message.CantDoThisActionOnYourself);
         }
 
         Player? player = Players.Find(p => p.Id == playerId);
@@ -155,11 +155,11 @@ public class Game
 
         if (player == null || victim == null)
         {
-            return new StatusMessage(false, Messages.PlayerNotFound);
+            return new StatusMessage(false, Message.PlayerNotFound);
         }
 
         StatusMessage statusMessage = CurrentSet!.TurnsLaundry(player, victim);
-        if (statusMessage.Message == Messages.PlayerDidNotBluff)
+        if (statusMessage.Message == Message.PlayerDidNotBluff)
         {
             PlayerHandToDeck(victim);
             DealCardsToPlayer(victim);
@@ -210,10 +210,10 @@ public class Game
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
-            return new StatusMessage(false, Messages.PlayerNotFound);
+            return new StatusMessage(false, Message.PlayerNotFound);
         }
 
-        return CurrentSet!.CurrentRound.Knock(player);
+        return CurrentSet!.Knock(player);
     }
 
     public StatusMessage Check(int playerId)
@@ -221,7 +221,7 @@ public class Game
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
-            return new StatusMessage(false, Messages.PlayerNotFound);
+            return new StatusMessage(false, Message.PlayerNotFound);
         }
 
         return CurrentSet!.CurrentRound.Check(player);
@@ -232,11 +232,69 @@ public class Game
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
-            return new StatusMessage(false, Messages.PlayerNotFound);
+            return new StatusMessage(false, Message.PlayerNotFound);
         }
 
-        return CurrentSet!.CurrentRound.Fold(player);
+        return CurrentSet!.Fold(player);
     }
-    
-    //TODO: playcard
+
+    public StatusMessage PlayCard(int playerId, string value, string suit)
+    {
+        Player? player = Players.Find(p => p.Id == playerId);
+        if (player == null)
+        {
+            return new StatusMessage(false, Message.PlayerNotFound);
+        }
+
+        Value? cardValue = TransformValue(value);
+        Suit? cardSuit = TransformSuit(suit);
+        if (cardValue == null || cardSuit == null)
+        {
+            return new StatusMessage(false, Message.CardNotFound);
+        }
+
+        return CurrentSet!.PlayCard(player, new Card(cardSuit.Value, cardValue.Value));
+    }
+
+    private Value? TransformValue(string value)
+    {
+        switch (value.ToUpper())
+        {
+            case "J":
+                return Value.Jack;
+            case "Q":
+                return Value.Queen;
+            case "K":
+                return Value.King;
+            case "A":
+                return Value.Ace;
+            case "7":
+                return Value.Seven;
+            case "8":
+                return Value.Eight;
+            case "9":
+                return Value.Nine;
+            case "10":
+                return Value.Ten;
+        }
+
+        return null;
+    }
+
+    private Suit? TransformSuit(string suit)
+    {
+        switch (suit.ToUpper())
+        {
+            case "S":
+                return Suit.Spades;
+            case "D":
+                return Suit.Diamonds;
+            case "C":
+                return Suit.Clubs;
+            case "H":
+                return Suit.Hearts;
+        }
+
+        return null;
+    }
 }

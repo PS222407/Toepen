@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogicLayer.Enums;
 
-public enum GameStates
+public enum GameState
 {
     ActiveLaundryTimer,
     ActiveTurnLaundryTimer,
