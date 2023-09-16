@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toepen", "Toepen\Toepen.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{1339FA17-BB7F-49A1-8D2C-95B5A7F713E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C8ED905A-CB2D-4562-AEA3-FDFAFAE21658}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{1339FA17-BB7F-49A1-8D2C-95B5A7F713E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1339FA17-BB7F-49A1-8D2C-95B5A7F713E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1339FA17-BB7F-49A1-8D2C-95B5A7F713E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8ED905A-CB2D-4562-AEA3-FDFAFAE21658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8ED905A-CB2D-4562-AEA3-FDFAFAE21658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8ED905A-CB2D-4562-AEA3-FDFAFAE21658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8ED905A-CB2D-4562-AEA3-FDFAFAE21658}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

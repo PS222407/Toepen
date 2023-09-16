@@ -10,7 +10,7 @@ public class Player
 
     public string Name { get; private set; }
 
-    public List<Card> Hand { get; private set; } = new();
+    public List<Card> Hand { get; set; } = new();
     
     public List<Card> PlayedCards { get; private set; } = new();
 
