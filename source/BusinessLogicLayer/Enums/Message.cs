@@ -17,5 +17,9 @@ public enum Message
     NotPlayersTurn,
     AlreadyFolded,
     PlayerDidStart,
-    CardNotFound
+    CardNotFound,
+    APlayerHasWonRound,
+    APlayerHasWonSet,
+    CardNotInPlayersHand,
+    PlayerHasMatchingSuitCard
 }

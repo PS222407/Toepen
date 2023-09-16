@@ -106,8 +106,9 @@ public class Player
 
     public void PlayCard(Card card)
     {
-        Hand.Remove(card);
-        PlayedCards.Add(card);
+        Card cardFromPlayersHand = Hand.First(c => c.Value == card.Value && c.Suit == card.Suit);
+        Hand.Remove(cardFromPlayersHand);
+        PlayedCards.Add(cardFromPlayersHand);
     }
 
     public void Folds()

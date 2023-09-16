@@ -224,7 +224,7 @@ public class Game
             return new StatusMessage(false, Message.PlayerNotFound);
         }
 
-        return CurrentSet!.CurrentRound.Check(player);
+        return CurrentSet!.Check(player);
     }
 
     public StatusMessage Fold(int playerId)
@@ -253,7 +253,19 @@ public class Game
             return new StatusMessage(false, Message.CardNotFound);
         }
 
-        return CurrentSet!.PlayCard(player, new Card(cardSuit.Value, cardValue.Value));
+        StatusMessage statusMessage = CurrentSet!.PlayCard(player, new Card(cardSuit.Value, cardValue.Value));
+
+        if (statusMessage.Message == Message.APlayerHasWonSet)
+        {
+            StartNewSet();
+        }
+
+        return statusMessage;
+    }
+
+    private void StartNewSet()
+    {
+        throw new NotImplementedException();
     }
 
     private Value? TransformValue(string value)

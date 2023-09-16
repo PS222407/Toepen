@@ -16,6 +16,8 @@ public class Set
 
     public int PenaltyPoints { get; private set; } = 1;
 
+    public Player SetWinner { get; private set; }
+
     public Set(List<Player> players)
     {
         Players = players;
@@ -142,42 +144,94 @@ public class Set
             return false;
         }
 
-        StartNewRound();
+        StartNewRound(true, false);
 
         return true;
     }
 
-    private void StartNewRound()
+    private void StartNewRound(bool noWinner, bool roundWinner)
     {
-        State = GameState.ActiveRound;
-        CurrentRound = new Round(Players);
-        Rounds.Add(CurrentRound);
+        if (noWinner)
+        {
+            CurrentRound = new Round(Players);
+            State = GameState.ActiveRound;
+            Rounds.Add(CurrentRound);
+        }
+        else if (roundWinner)
+        {
+            CurrentRound = new Round(Players, CurrentRound.WinnerStatus!.Winner, PenaltyPoints);
+            State = GameState.ActiveRound;
+            Rounds.Add(CurrentRound);
+        }
     }
 
     public StatusMessage PlayCard(Player player, Card card)
     {
         StatusMessage statusMessage = CurrentRound.PlayCard(player, card);
-        if (CurrentRound.Winner != null)
+        if (CurrentRound.WinnerStatus?.Winner != null)
         {
-            // TODO: check if round is won by any player
+            WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
+            int roundId = CurrentRound.Id;
+            HandleWinner();
+            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundId);
         }
+
         return statusMessage;
     }
 
     public StatusMessage Knock(Player player)
     {
-        StatusMessage statusMessage = CurrentRound.Knock(player);
-        //TODO: add penalty point +1 when everyone either checked or folds
-        return statusMessage;
+        return CurrentRound.Knock(player);
     }
 
     public StatusMessage Fold(Player player)
     {
         StatusMessage statusMessage = CurrentRound.Fold(player);
-        if (CurrentRound.Winner != null)
+        if (CurrentRound.WinnerStatus?.Winner != null)
         {
-            // TODO: check if round is won by any player
+            WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
+            int roundId = CurrentRound.Id;
+            HandleWinner();
+            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundId);
         }
+
+        PenaltyPoints = CurrentRound.PenaltyPoints;
+
         return statusMessage;
+    }
+
+    public StatusMessage Check(Player player)
+    {
+        StatusMessage statusMessage = CurrentRound.Check(player);
+        if (CurrentRound.WinnerStatus?.Winner != null)
+        {
+            WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
+            int roundId = CurrentRound.Id;
+            HandleWinner();
+            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundId);
+        }
+
+        PenaltyPoints = CurrentRound.PenaltyPoints;
+
+        return statusMessage;
+    }
+
+    private void HandleWinner()
+    {
+        bool noWinner = CurrentRound.WinnerStatus?.Winner == null;
+        bool roundWinner = CurrentRound.WinnerStatus?.Winner != null && !CurrentRound.WinnerStatus.WinnerOfSet;
+        if (noWinner)
+        {
+            StartNewRound(noWinner, roundWinner);
+        }
+        else if (roundWinner && Rounds.Count < 4)
+        {
+            StartNewRound(noWinner, roundWinner);
+        }
+        else
+        {
+            State = GameState.SetHasBeenWon;
+            SetWinner = CurrentRound.WinnerStatus!.Winner;
+        }
     }
 }

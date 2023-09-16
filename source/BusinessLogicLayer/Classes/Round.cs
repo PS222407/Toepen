@@ -10,7 +10,7 @@ public class Round
 
     public List<Player> Players { get; private set; }
 
-    public Card StartedCard { get; private set; }
+    public Card? StartedCard { get; private set; }
 
     public Player StartedPlayer { get; private set; }
 
@@ -18,26 +18,41 @@ public class Round
 
     public Player PlayerWhoKnocked { get; private set; }
 
-    public Player? Winner { get; private set; }
+    public WinnerStatus? WinnerStatus { get; private set; }
 
-    public GameState State { get; private set; }
+    public GameState? State { get; private set; }
 
-    public Round(List<Player> players, Player? activePlayer = null)
+    public int PenaltyPoints { get; private set; } = 1;
+
+    public Round(List<Player> players)
     {
         Id = Interlocked.Increment(ref _nextId);
+
         Players = players;
-        if (Id == 1 || activePlayer == null)
-        {
-            Random random = new Random();
-            int randomIndex = random.Next(0, Players.Count);
-            ActivePlayer = Players[randomIndex];
-        }
-        else
-        {
-            ActivePlayer = activePlayer;
-        }
+
+        Random random = new Random();
+        int randomIndex = random.Next(0, Players.Count);
+        ActivePlayer = Players[randomIndex];
 
         StartedPlayer = ActivePlayer;
+
+        State = GameState.WaitingForCardOrKnock;
+    }
+
+    public Round(List<Player> players, Player previousWinner, int penaltyPoints)
+    {
+        Id = Interlocked.Increment(ref _nextId);
+
+        PenaltyPoints = penaltyPoints;
+
+        Players = players;
+
+        ActivePlayer = previousWinner;
+        SetNextPlayer();
+
+        StartedPlayer = ActivePlayer;
+
+        State = GameState.WaitingForCardOrKnock;
     }
 
     public StatusMessage Knock(Player player)
@@ -51,7 +66,7 @@ public class Round
         {
             return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
-        
+
         if (player == PlayerWhoKnocked)
         {
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
@@ -105,22 +120,28 @@ public class Round
 
     public StatusMessage PlayCard(Player player, Card card)
     {
+        if (State != GameState.WaitingForCardOrKnock)
+        {
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
+        }
+
         if (player != ActivePlayer)
         {
             return new StatusMessage(false, Message.NotPlayersTurn);
         }
 
-        if (State == GameState.PlayerKnocked && player == PlayerWhoKnocked)
+        if (!player.Hand.Any(c => c.Value == card.Value && c.Suit == card.Suit))
         {
-            State = GameState.WaitingForCardOrKnock;
+            return new StatusMessage(false, Message.CardNotInPlayersHand);
         }
 
-        if (State != GameState.WaitingForCardOrKnock)
+        if (StartedCard != null && player.Hand.Any(c => c.Suit == StartedCard.Suit) && card.Suit != StartedCard.Suit)
         {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
+            return new StatusMessage(false, Message.PlayerHasMatchingSuitCard);
         }
-        
+
         player.PlayCard(card);
+        StartedCard ??= card;
         SetNextPlayer();
 
         return new StatusMessage(true);
@@ -132,13 +153,15 @@ public class Round
         int nextIndex = (currentIndex + 1) % Players.Count;
         Player nextPlayer = Players[nextIndex];
 
-        Player? winner = CheckRoundForAnyWinner(nextPlayer);
-        if (winner != null)
+        WinnerStatus? winnerStatus = CheckRoundForAnyWinner(nextPlayer);
+        if (winnerStatus != null)
         {
-            Winner = winner;
+            WinnerStatus = winnerStatus;
             return;
         }
-        
+
+        CheckIfKnockRoundIsOver(nextPlayer);
+
         if (nextPlayer.IsOutOfGame())
         {
             SetNextPlayer();
@@ -149,12 +172,21 @@ public class Round
         }
     }
 
-    private Player? CheckRoundForAnyWinner(Player player)
+    private void CheckIfKnockRoundIsOver(Player nextPlayer)
+    {
+        if (State == GameState.PlayerKnocked && nextPlayer == PlayerWhoKnocked)
+        {
+            State = GameState.WaitingForCardOrKnock;
+            PenaltyPoints++;
+        }
+    }
+
+    private WinnerStatus? CheckRoundForAnyWinner(Player player)
     {
         List<Player> playersStillInGame = Players.Where(p => !p.IsOutOfGame()).ToList();
         if (playersStillInGame.Count == 1)
         {
-            return playersStillInGame.First();
+            return new WinnerStatus(playersStillInGame.First(), true);
         }
 
         if (StartedPlayer == player)
@@ -169,7 +201,7 @@ public class Round
                 }
             }
 
-            return winner;
+            return new WinnerStatus(winner, false);
         }
 
         return null;

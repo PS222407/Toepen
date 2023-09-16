@@ -22,7 +22,6 @@ Console.WriteLine("---------------------");
 AddPlayer(new[] { "jens", "jens" });
 AddPlayer(new[] { "sam", "sam" });
 AddPlayer(new[] { "mylo", "mylo" });
-AddPlayer(new[] { "niels", "niels" });
 
 game.Start();
 game.StopLaundryTimer();
@@ -272,11 +271,18 @@ void Check(string[] args)
         return;
     }
 
-    game.Check(int.Parse(args[1]));
-    Console.WriteLine();
-    Console.WriteLine("---------------------");
-    Console.WriteLine($"Player {args[1]} checkt");
-    Console.WriteLine("---------------------");
+    StatusMessage statusMessage = game.Check(int.Parse(args[1]));
+    if (!statusMessage.Success)
+    {
+        Console.WriteLine($"{statusMessage.Message}");
+    }
+    else
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"Player {args[1]} checkt");
+        Console.WriteLine("---------------------");
+    }
 }
 
 void Fold(string[] args)
@@ -287,11 +293,26 @@ void Fold(string[] args)
         return;
     }
 
-    game.Fold(int.Parse(args[1]));
-    Console.WriteLine();
-    Console.WriteLine("---------------------");
-    Console.WriteLine($"Player {args[1]} fold");
-    Console.WriteLine("---------------------");
+    StatusMessage statusMessage = game.Fold(int.Parse(args[1]));
+    if (!statusMessage.Success)
+    {
+        Console.WriteLine($"{statusMessage.Message}");
+    }
+    else
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"Player {args[1]} folds");
+        Console.WriteLine("---------------------");
+    }
+
+    if (statusMessage.Message == Message.APlayerHasWonRound)
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"{statusMessage.Winner.Name} has won round {statusMessage.RoundNumber}");
+        Console.WriteLine("---------------------");
+    }
 }
 
 void Knock(string[] args)
@@ -302,11 +323,26 @@ void Knock(string[] args)
         return;
     }
 
-    game.Knock(int.Parse(args[1]));
-    Console.WriteLine();
-    Console.WriteLine("---------------------");
-    Console.WriteLine($"Player {args[1]} klopt");
-    Console.WriteLine("---------------------");
+    StatusMessage statusMessage = game.Knock(int.Parse(args[1]));
+    if (!statusMessage.Success)
+    {
+        Console.WriteLine($"{statusMessage.Message}");
+    }
+    else
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"Player {args[1]} knocks");
+        Console.WriteLine("---------------------");
+    }
+
+    if (statusMessage.Message == Message.APlayerHasWonRound)
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"{statusMessage.Winner.Name} has won round {statusMessage.RoundNumber}");
+        Console.WriteLine("---------------------");
+    }
 }
 
 void PlayCard(string[] args)
@@ -317,9 +353,24 @@ void PlayCard(string[] args)
         return;
     }
 
-    game.PlayCard(int.Parse(args[1]), args[2], args[3]);
-    Console.WriteLine();
-    Console.WriteLine("---------------------");
-    Console.WriteLine($"Player {args[1]} klopt");
-    Console.WriteLine("---------------------");
+    StatusMessage statusMessage = game.PlayCard(int.Parse(args[1]), args[2], args[3]);
+    if (!statusMessage.Success)
+    {
+        Console.WriteLine($"{statusMessage.Message}");
+    }
+    else
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"Player {args[1]} plays {args[2]} {args[3]}");
+        Console.WriteLine("---------------------");
+    }
+
+    if (statusMessage.Message == Message.APlayerHasWonRound)
+    {
+        Console.WriteLine();
+        Console.WriteLine("---------------------");
+        Console.WriteLine($"{statusMessage.Winner.Name} has won round {statusMessage.RoundNumber}");
+        Console.WriteLine("---------------------");
+    }
 }

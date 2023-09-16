@@ -6,5 +6,6 @@ public enum GameState
     ActiveTurnLaundryTimer,
     ActiveRound,
     PlayerKnocked,
-    WaitingForCardOrKnock
+    WaitingForCardOrKnock,
+    SetHasBeenWon,
 }
