@@ -1,4 +1,5 @@
-﻿using BusinessLogicLayer.Enums;
+﻿using System.Runtime.CompilerServices;
+using BusinessLogicLayer.Enums;
 
 namespace BusinessLogicLayer.Classes;
 

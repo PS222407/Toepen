@@ -6,16 +6,17 @@ namespace UnitTests;
 [TestFixture]
 public class GameTests
 {
+    private Game _game;
+    
     [SetUp]
     public void Setup()
     {
-        
+        _game = new Game();
     }
 
     [Test]
     public void TooManyPlayersInGame_ReturnsTrue()
     {
-        Game game = new Game();
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -29,7 +30,7 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            if (!game.AddPlayer(player))
+            if (!_game.AddPlayer(player))
             {
                 Assert.Pass();
             }
@@ -41,7 +42,6 @@ public class GameTests
     [Test]
     public void MaxPlayersInGame_ReturnsTrue()
     {
-        Game game = new Game();
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -54,7 +54,7 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            if (!game.AddPlayer(player))
+            if (!_game.AddPlayer(player))
             {
                 Assert.Fail();
             }
@@ -66,7 +66,6 @@ public class GameTests
     [Test]
     public void MinPlayersInGame_ReturnsTrue()
     {
-        Game game = new Game();
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -75,13 +74,13 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            if (!game.AddPlayer(player))
+            if (!_game.AddPlayer(player))
             {
                 Assert.Fail();
             }
         }
 
-        if (game.Start().Message == Message.MinimumPlayersNotReached)
+        if (_game.Start().Message == Message.MinimumPlayersNotReached)
         {
             Assert.Fail();
         }
@@ -92,7 +91,6 @@ public class GameTests
     [Test]
     public void LessThanMinPlayersInGame_ReturnsTrue()
     {
-        Game game = new Game();
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -100,13 +98,13 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            if (!game.AddPlayer(player))
+            if (!_game.AddPlayer(player))
             {
                 Assert.Fail();
             }
         }
 
-        if (game.Start().Message == Message.MinimumPlayersNotReached)
+        if (_game.Start().Message == Message.MinimumPlayersNotReached)
         {
             Assert.Pass();
         }
@@ -117,7 +115,6 @@ public class GameTests
     [Test]
     public void GameAlreadyStarted_ReturnsTrue()
     {
-        Game game = new Game();
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -127,12 +124,12 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            game.AddPlayer(player);
+            _game.AddPlayer(player);
         }
 
-        game.Start();
+        _game.Start();
             
-        if (game.Start().Message == Message.GameAlreadyStarted)
+        if (_game.Start().Message == Message.GameAlreadyStarted)
         {
             Assert.Pass();
         }
@@ -143,7 +140,6 @@ public class GameTests
     [Test]
     public void CardDealtToPlayers_ReturnsTrue()
     {
-        Game game = new Game();
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -153,15 +149,15 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            game.AddPlayer(player);
+            _game.AddPlayer(player);
         }
 
-        if (!game.Start().Success)
+        if (!_game.Start().Success)
         {
             Assert.Fail();
         }
 
-        foreach (Player player in game.Players)
+        foreach (Player player in _game.Players)
         {
             if (player.Hand.Count != 4)
             {

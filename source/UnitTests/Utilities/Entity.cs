@@ -15,7 +15,7 @@ public static class Entity
     public static void SetHandOf(Player player, List<Card> cards)
     {
         Type playerType = player.GetType();
-        FieldInfo idProperty = playerType.GetField($"<{nameof(Player.Hand)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
-        idProperty.SetValue(player, cards);
+        FieldInfo handProperty = playerType.GetField("_hand", BindingFlags.Instance | BindingFlags.NonPublic);
+        handProperty.SetValue(player, cards);
     }
 }

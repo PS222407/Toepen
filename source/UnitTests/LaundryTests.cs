@@ -7,12 +7,12 @@ namespace UnitTests;
 [TestFixture]
 public class LaundryTests
 {
-    public Game Game { get;  set; }
+    private Game _game;
     
     [SetUp]
     public void Setup()
     {
-        Game = new();
+        _game = new();
 
         List<Player> players = new()
         {
@@ -20,18 +20,19 @@ public class LaundryTests
             new("Jens"),
             new("Mylo"),
         };
-
-        foreach (Player player in players)
+        
+        for (int i = 0; i < players.Count; i++)
         {
-            Game.AddPlayer(player);
+            Player player = players[i];
+            Entity.SetIdOf(player, i + 1);
+            _game.AddPlayer(player);
         }
 
-        Game.Start();
+        _game.Start();
 
-        //TODO: private set
-        for (int i = 0; i < Game.Players.Count; i++)
+        for (int i = 0; i < _game.Players.Count; i++)
         {
-            Player player = Game.Players[i];
+            Player player = _game.Players[i];
 
             if (i == 0)
             {
@@ -44,56 +45,54 @@ public class LaundryTests
                 };
                 Entity.SetHandOf(player, cards);
             }
-            // if (i == 1)
-            // {
-            //     player.Hand = new List<Card>
-            //     {
-            //         new(Suit.Hearts, Value.Jack),
-            //         new(Suit.Hearts, Value.King),
-            //         new(Suit.Diamonds, Value.Jack),
-            //         new(Suit.Hearts, Value.Ace),
-            //     };
-            // }
-            // if (i == 2)
-            // {
-            //     player.Hand = new List<Card>
-            //     {
-            //         new(Suit.Clubs, Value.Nine),
-            //         new(Suit.Diamonds, Value.Nine),
-            //         new(Suit.Diamonds, Value.Queen),
-            //         new(Suit.Hearts, Value.Queen),
-            //     };
-            // }
+            if (i == 1)
+            {
+                List<Card> cards = new List<Card>
+                {
+                    new(Suit.Hearts, Value.Jack),
+                    new(Suit.Hearts, Value.King),
+                    new(Suit.Diamonds, Value.Jack),
+                    new(Suit.Hearts, Value.Ace),
+                };
+                Entity.SetHandOf(player, cards);
+            }
+            if (i == 2)
+            {
+                List<Card> cards = new List<Card>
+                {
+                    new(Suit.Clubs, Value.Nine),
+                    new(Suit.Diamonds, Value.Nine),
+                    new(Suit.Diamonds, Value.Queen),
+                    new(Suit.Hearts, Value.Queen),
+                };
+                Entity.SetHandOf(player, cards);
+            }
         }
     }
-
     
-
     [Test]
     public void PlayerHasWhiteLaundry_ReturnsTrue()
     {
-        Player? playerWithWhiteLaundry = new Player("Timo");
-        Entity.SetIdOf(playerWithWhiteLaundry, 1);
-        foreach (var player in Game.Players)
-        {
-            if (player.Id == 1)
-            {
-                playerWithWhiteLaundry = player;
-            }
-        }
-        if (playerWithWhiteLaundry == null)
-        {
-            Assert.Fail();
-            return;
-        }
-        if (playerWithWhiteLaundry.HasDirtyLaundry())
-        {
-            Assert.Fail();
-            return;
-        }
-        if (playerWithWhiteLaundry.HasWhiteLaundry())
-        {
-            Assert.Pass();
-        }
+        // Arrange
+        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 1);
+        
+        // Act
+        bool result = playerWithWhiteLaundry.HasWhiteLaundry();
+        
+        // Assert
+        Assert.IsTrue(result);
+    }
+    
+    [Test]
+    public void PlayerHasDirtyLaundry_ReturnsTrue()
+    {
+        // Arrange
+        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 2);
+        
+        // Act
+        bool result = playerWithWhiteLaundry.HasDirtyLaundry();
+        
+        // Assert
+        Assert.IsTrue(result);
     }
 }
