@@ -10,12 +10,14 @@ public class Player
 
     public string Name { get; private set; }
 
-    public List<Card> Hand { get; set; } = new();
-    
-    public List<Card> PlayedCards { get; private set; } = new();
+    private List<Card> _hand = new();
+    public IReadOnlyList<Card> Hand => _hand;
+
+    private List<Card> _playedCards = new();
+    public IReadOnlyList<Card> PlayedCards => _playedCards;
 
     public int PenaltyPoints { get; private set; }
-
+    
     public bool Folded { get; private set; } = false;
 
     public bool HasCalledDirtyLaundry { get; private set; }
@@ -39,12 +41,12 @@ public class Player
 
     public void DealCard(Card card)
     {
-        Hand.Add(card);
+        _hand.Add(card);
     }    
     
     public void RemoveCardFromHand(Card card)
     {
-        Hand.Remove(card);
+        _hand.Remove(card);
     }
 
     public void CalledDirtyLaundry()
@@ -107,8 +109,8 @@ public class Player
     public void PlayCard(Card card)
     {
         Card cardFromPlayersHand = Hand.First(c => c.Value == card.Value && c.Suit == card.Suit);
-        Hand.Remove(cardFromPlayersHand);
-        PlayedCards.Add(cardFromPlayersHand);
+        _hand.Remove(cardFromPlayersHand);
+        _playedCards.Add(cardFromPlayersHand);
     }
 
     public void Folds()

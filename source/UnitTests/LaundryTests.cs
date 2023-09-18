@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using BusinessLogicLayer.Classes;
+﻿using BusinessLogicLayer.Classes;
 using BusinessLogicLayer.Enums;
 using UnitTests.Utilities;
 
@@ -36,34 +35,35 @@ public class LaundryTests
 
             if (i == 0)
             {
-                player.Hand = new List<Card>
+                List<Card> cards = new List<Card>
                 {
                     new(Suit.Spades, Value.Ace),
                     new(Suit.Diamonds, Value.King),
                     new(Suit.Clubs, Value.Seven),
                     new(Suit.Diamonds, Value.Ace),
                 };
+                Entity.SetHandOf(player, cards);
             }
-            if (i == 1)
-            {
-                player.Hand = new List<Card>
-                {
-                    new(Suit.Hearts, Value.Jack),
-                    new(Suit.Hearts, Value.King),
-                    new(Suit.Diamonds, Value.Jack),
-                    new(Suit.Hearts, Value.Ace),
-                };
-            }
-            if (i == 2)
-            {
-                player.Hand = new List<Card>
-                {
-                    new(Suit.Clubs, Value.Nine),
-                    new(Suit.Diamonds, Value.Nine),
-                    new(Suit.Diamonds, Value.Queen),
-                    new(Suit.Hearts, Value.Queen),
-                };
-            }
+            // if (i == 1)
+            // {
+            //     player.Hand = new List<Card>
+            //     {
+            //         new(Suit.Hearts, Value.Jack),
+            //         new(Suit.Hearts, Value.King),
+            //         new(Suit.Diamonds, Value.Jack),
+            //         new(Suit.Hearts, Value.Ace),
+            //     };
+            // }
+            // if (i == 2)
+            // {
+            //     player.Hand = new List<Card>
+            //     {
+            //         new(Suit.Clubs, Value.Nine),
+            //         new(Suit.Diamonds, Value.Nine),
+            //         new(Suit.Diamonds, Value.Queen),
+            //         new(Suit.Hearts, Value.Queen),
+            //     };
+            // }
         }
     }
 
@@ -72,7 +72,6 @@ public class LaundryTests
     [Test]
     public void PlayerHasWhiteLaundry_ReturnsTrue()
     {
-        
         Player? playerWithWhiteLaundry = new Player("Timo");
         Entity.SetIdOf(playerWithWhiteLaundry, 1);
         foreach (var player in Game.Players)

@@ -10,11 +10,12 @@ public class Game
 
     private const int MaxAmountOfPlayers = 6;
 
-    private bool _gameHasStarted = false;
+    private bool _gameHasStarted;
 
-    public GameState GameState { get; private set; }
+    public GameState GameState { get; }
 
-    public List<Player> Players { get; private set; } = new();
+    private List<Player> _players { get; } = new();
+    public IReadOnlyList<Player> Players => _players;
 
     private List<Card> Deck { get; set; } = new();
 
@@ -41,7 +42,7 @@ public class Game
                 Host = player;
             }
 
-            Players.Add(player);
+            _players.Add(player);
             return true;
         }
 
@@ -115,7 +116,7 @@ public class Game
         InitializeDeck();
         DealCardsToPlayers();
 
-        CurrentSet = new Set(Players);
+        CurrentSet = new Set(_players);
 
         return new StatusMessage(true);
     }
@@ -123,7 +124,7 @@ public class Game
     // Player input actions
     public StatusMessage DirtyLaundry(int playerId)
     {
-        Player? player = Players.Find(p => p.Id == playerId);
+        Player? player = _players.Find(p => p.Id == playerId);
         if (player == null)
         {
             return new StatusMessage(false, Message.PlayerNotFound);
@@ -134,7 +135,7 @@ public class Game
 
     public StatusMessage WhiteLaundry(int playerId)
     {
-        Player? player = Players.Find(p => p.Id == playerId);
+        Player? player = _players.Find(p => p.Id == playerId);
         if (player == null)
         {
             return new StatusMessage(false, Message.PlayerNotFound);
@@ -150,8 +151,8 @@ public class Game
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
         }
 
-        Player? player = Players.Find(p => p.Id == playerId);
-        Player? victim = Players.Find(p => p.Id == victimId);
+        Player? player = _players.Find(p => p.Id == playerId);
+        Player? victim = _players.Find(p => p.Id == victimId);
 
         if (player == null || victim == null)
         {
@@ -207,7 +208,7 @@ public class Game
 
     public StatusMessage Knock(int playerId)
     {
-        Player? player = Players.Find(p => p.Id == playerId);
+        Player? player = _players.Find(p => p.Id == playerId);
         if (player == null)
         {
             return new StatusMessage(false, Message.PlayerNotFound);
@@ -218,7 +219,7 @@ public class Game
 
     public StatusMessage Check(int playerId)
     {
-        Player? player = Players.Find(p => p.Id == playerId);
+        Player? player = _players.Find(p => p.Id == playerId);
         if (player == null)
         {
             return new StatusMessage(false, Message.PlayerNotFound);
@@ -229,7 +230,7 @@ public class Game
 
     public StatusMessage Fold(int playerId)
     {
-        Player? player = Players.Find(p => p.Id == playerId);
+        Player? player = _players.Find(p => p.Id == playerId);
         if (player == null)
         {
             return new StatusMessage(false, Message.PlayerNotFound);
@@ -240,7 +241,7 @@ public class Game
 
     public StatusMessage PlayCard(int playerId, string value, string suit)
     {
-        Player? player = Players.Find(p => p.Id == playerId);
+        Player? player = _players.Find(p => p.Id == playerId);
         if (player == null)
         {
             return new StatusMessage(false, Message.PlayerNotFound);
