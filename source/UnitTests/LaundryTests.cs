@@ -1,12 +1,14 @@
-﻿using BusinessLogicLayer.Classes;
+﻿using System.Reflection;
+using BusinessLogicLayer.Classes;
 using BusinessLogicLayer.Enums;
+using UnitTests.Utilities;
 
 namespace UnitTests;
 
 [TestFixture]
 public class LaundryTests
 {
-    public Game Game { get; private set; }
+    public Game Game { get;  set; }
     
     [SetUp]
     public void Setup()
@@ -22,15 +24,15 @@ public class LaundryTests
 
         foreach (Player player in players)
         {
-            game.AddPlayer(player);
+            Game.AddPlayer(player);
         }
 
-        game.Start();
+        Game.Start();
 
         //TODO: private set
-        for (int i = 0; i < game.Players.Count; i++)
+        for (int i = 0; i < Game.Players.Count; i++)
         {
-            Player player = game.Players[i];
+            Player player = Game.Players[i];
 
             if (i == 0)
             {
@@ -65,11 +67,15 @@ public class LaundryTests
         }
     }
 
+    
+
     [Test]
     public void PlayerHasWhiteLaundry_ReturnsTrue()
     {
-        Player? playerWithWhiteLaundry = null;
-        foreach (var player in game.Players)
+        
+        Player? playerWithWhiteLaundry = new Player("Timo");
+        Entity.SetIdOf(playerWithWhiteLaundry, 1);
+        foreach (var player in Game.Players)
         {
             if (player.Id == 1)
             {
@@ -89,7 +95,6 @@ public class LaundryTests
         if (playerWithWhiteLaundry.HasWhiteLaundry())
         {
             Assert.Pass();
-            return;
         }
     }
 }
