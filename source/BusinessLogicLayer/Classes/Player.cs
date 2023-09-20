@@ -18,15 +18,15 @@ public class Player
     public IReadOnlyList<Card> PlayedCards => _playedCards;
 
     public int PenaltyPoints { get; private set; }
-    
+
     public bool Folded { get; private set; } = false;
 
     public bool HasCalledDirtyLaundry { get; private set; }
-    
+
     public bool HasCalledWhiteLaundry { get; private set; }
-    
+
     public bool LaundryHasBeenTurned { get; private set; }
-    
+
     public bool PlayWithOpenCards { get; private set; }
 
     public Player(string name)
@@ -43,8 +43,8 @@ public class Player
     public void DealCard(Card card)
     {
         _hand.Add(card);
-    }    
-    
+    }
+
     public void RemoveCardFromHand(Card card)
     {
         _hand.Remove(card);
@@ -54,7 +54,7 @@ public class Player
     {
         HasCalledDirtyLaundry = true;
     }
-    
+
     public void CalledWhiteLaundry()
     {
         HasCalledWhiteLaundry = true;
@@ -76,7 +76,7 @@ public class Player
         LaundryHasBeenTurned = true;
         return HasWhiteLaundry();
     }
-    
+
     public bool HasWhiteLaundry()
     {
         int sevenCount = 0;
@@ -86,6 +86,7 @@ public class Player
             {
                 return false;
             }
+
             if (card.Value == Value.Seven)
             {
                 sevenCount++;

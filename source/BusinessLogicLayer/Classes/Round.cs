@@ -93,6 +93,7 @@ public class Round
             return new StatusMessage(false, Message.AlreadyFolded);
 
         player.Folds();
+        player.AddPenaltyPoints(PenaltyPoints);
         SetNextPlayer();
 
         return new StatusMessage(true);
@@ -193,10 +194,18 @@ public class Round
             Player winner = StartedPlayer;
             foreach (Player p in playersStillInGame)
             {
-                Card pCard = p.PlayedCards.Last();
-                if (pCard.Suit == StartedCard.Suit && pCard.Value > StartedCard.Value)
+                Card card = p.PlayedCards.Last();
+                if (card.Suit == StartedCard.Suit && card.Value > StartedCard.Value)
                 {
                     winner = p;
+                }
+            }
+
+            foreach (Player pl in playersStillInGame)
+            {
+                if (pl != winner)
+                {
+                    pl.AddPenaltyPoints(PenaltyPoints);
                 }
             }
 

@@ -14,11 +14,14 @@ public class Game
 
     public GameState GameState { get; }
 
-    private List<Player> _players { get; } = new();
+    private List<Player> _players = new();
     public IReadOnlyList<Player> Players => _players;
 
-    private List<Card> Deck { get; set; } = new();
+    private List<Card> Deck = new();
 
+    private List<Set> _sets = new();
+    public IReadOnlyList<Set> Sets => _sets;
+    
     public Set? CurrentSet { get; private set; }
 
     public Player Host { get; private set; }
@@ -117,6 +120,7 @@ public class Game
         DealCardsToPlayers();
 
         CurrentSet = new Set(_players);
+        _sets.Add(CurrentSet);
 
         return new StatusMessage(true);
     }
@@ -266,7 +270,9 @@ public class Game
 
     private void StartNewSet()
     {
-        throw new NotImplementedException();
+        // TODO: exclude dead players throughout the application (dealing cards etc)
+        CurrentSet = new Set(_players);
+        _sets.Add(CurrentSet);
     }
 
     private Value? TransformValue(string value)
