@@ -172,8 +172,9 @@ public class Set
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
             int roundId = CurrentRound.Id;
+            Message message = winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound;
             HandleWinner();
-            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundId);
+            return new StatusMessage(true, message, winnerStatus.Winner, roundId);
         }
 
         return statusMessage;

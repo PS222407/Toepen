@@ -18,4 +18,18 @@ public static class Entity
         FieldInfo handProperty = playerType.GetField("_hand", BindingFlags.Instance | BindingFlags.NonPublic);
         handProperty.SetValue(player, cards);
     }
+    
+    public static void SetActivePlayerOf(Round round, Player player)
+    {
+        Type roundType = round.GetType();
+        FieldInfo activePlayerProperty = roundType.GetField($"<{nameof(Round.ActivePlayer)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
+        activePlayerProperty.SetValue(round, player);
+    }
+    
+    public static void SetStartedPlayerOf(Round round, Player player)
+    {
+        Type roundType = round.GetType();
+        FieldInfo startedPlayerProperty = roundType.GetField($"<{nameof(Round.StartedPlayer)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
+        startedPlayerProperty.SetValue(round, player);
+    }
 }

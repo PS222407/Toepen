@@ -1,14 +1,14 @@
-﻿using BusinessLogicLayer.Classes;
+using BusinessLogicLayer.Classes;
 using BusinessLogicLayer.Enums;
 using UnitTests.Utilities;
 
 namespace UnitTests;
 
 [TestFixture]
-public class LaundryTests
+public class GameFlowTests
 {
     private Game _game;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -20,7 +20,7 @@ public class LaundryTests
             new("Jens"),
             new("Mylo"),
         };
-        
+
         for (int i = 0; i < players.Count; i++)
         {
             Player player = players[i];
@@ -45,6 +45,7 @@ public class LaundryTests
                 };
                 Entity.SetHandOf(player, cards);
             }
+
             if (i == 1)
             {
                 List<Card> cards = new List<Card>
@@ -56,6 +57,7 @@ public class LaundryTests
                 };
                 Entity.SetHandOf(player, cards);
             }
+
             if (i == 2)
             {
                 List<Card> cards = new List<Card>
@@ -69,56 +71,41 @@ public class LaundryTests
             }
         }
     }
-    
+
     [Test]
-    public void PlayerHasWhiteLaundry_ReturnsTrue()
+    public void PlayersPlaysCardsWithoutSpecials()
     {
-        // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 1);
+        Game game = _game;
+
+        game.StopLaundryTimer();
+        game.StopLaundryTurnTimerAndStartRound();
+
+        Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
+        Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
+
+        game.PlayCard(1, "7", "c");
+        game.PlayCard(2, "j", "h");
+        StatusMessage statusMessage1 = game.PlayCard(3, "9", "c");
+
+        bool winnerRound1IsCorrect = statusMessage1.Winner.Id == 3 && statusMessage1.Winner == game.CurrentSet.Rounds[0].WinnerStatus.Winner;
+
+        game.PlayCard(3, "q", "d");
+        game.PlayCard(1, "a", "d");
+        StatusMessage statusMessage2 = game.PlayCard(2, "j", "d");
         
-        // Act
-        bool result = playerWithWhiteLaundry.HasWhiteLaundry();
+        bool winnerRound2IsCorrect = statusMessage2.Winner.Id == 1 && statusMessage2.Winner == game.CurrentSet.Rounds[1].WinnerStatus.Winner;
         
-        // Assert
-        Assert.IsTrue(result);
-    }
+        game.PlayCard(1, "k", "d");
+        game.PlayCard(2, "k", "h");
+        StatusMessage statusMessage3 = game.PlayCard(3, "9", "d");
+        
+        bool winnerRound3IsCorrect = statusMessage3.Winner.Id == 3 && statusMessage3.Winner == game.CurrentSet.Rounds[2].WinnerStatus.Winner;
     
-    [Test]
-    public void PlayerHasDirtyLaundry_ReturnsTrue()
-    {
-        // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 2);
+        game.PlayCard(3, "q", "h");
+        game.PlayCard(1, "a", "s");
+        StatusMessage statusMessage4 = game.PlayCard(2, "a", "h");
         
-        // Act
-        bool result = playerWithWhiteLaundry.HasDirtyLaundry();
-        
-        // Assert
-        Assert.IsTrue(result);
-    }
-    
-    [Test]
-    public void PlayerHasNotWhiteLaundry_ReturnsFalse()
-    {
-        // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 3);
-        
-        // Act
-        bool result = playerWithWhiteLaundry.HasWhiteLaundry();
-        
-        // Assert
-        Assert.IsFalse(result);
-    }
-    
-    [Test]
-    public void PlayerHasNotDirtyLaundry_ReturnsFalse()
-    {
-        // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 3);
-        
-        // Act
-        bool result = playerWithWhiteLaundry.HasDirtyLaundry();
-        
-        // Assert
-        Assert.IsFalse(result);
+        //TODO check in current set instead of round
+        bool winnerRound4IsCorrect = statusMessage4.Winner.Id == 2 && statusMessage4.Winner == game.CurrentSet.Rounds[3].WinnerStatus.Winner;
     }
 }

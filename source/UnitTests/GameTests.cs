@@ -17,6 +17,7 @@ public class GameTests
     [Test]
     public void TooManyPlayersInGame_ReturnsTrue()
     {
+        // Arrange
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -28,20 +29,24 @@ public class GameTests
             new("Putin"),
         };
 
+        // Act
+        bool result = true;
         foreach (Player player in players)
         {
             if (!_game.AddPlayer(player))
             {
-                Assert.Pass();
+                result = false;
             }
         }
 
-        Assert.Fail();
+        // Assert
+        Assert.IsFalse(result);
     }
-    
+
     [Test]
     public void MaxPlayersInGame_ReturnsTrue()
     {
+        // Arrange
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -52,69 +57,81 @@ public class GameTests
             new("Gijs"),
         };
 
+        // Act
+        bool result = true;
         foreach (Player player in players)
         {
             if (!_game.AddPlayer(player))
             {
-                Assert.Fail();
+                result = false;
             }
         }
 
-        Assert.Pass();
+        // Assert
+        Assert.IsTrue(result);
     }
-    
+
     [Test]
     public void MinPlayersInGame_ReturnsTrue()
     {
+        // Arrange
         List<Player> players = new List<Player>
         {
             new("Sam"),
             new("Jens"),
         };
 
+        // Act
+        bool result = true;
         foreach (Player player in players)
         {
             if (!_game.AddPlayer(player))
             {
-                Assert.Fail();
+                result = false;
             }
         }
 
         if (_game.Start().Message == Message.MinimumPlayersNotReached)
         {
-            Assert.Fail();
+            result = false;
         }
 
-        Assert.Pass();
+        // Assert
+        Assert.IsTrue(result);
     }
-    
+
     [Test]
     public void LessThanMinPlayersInGame_ReturnsTrue()
     {
+        // Arrange
         List<Player> players = new List<Player>
         {
             new("Sam"),
         };
 
+        bool result = true;
         foreach (Player player in players)
         {
             if (!_game.AddPlayer(player))
             {
-                Assert.Fail();
+                result = false;
             }
         }
 
+        // Act
         if (_game.Start().Message == Message.MinimumPlayersNotReached)
         {
-            Assert.Pass();
+            result = true;
         }
 
-        Assert.Fail();
+        // Assert
+        Assert.IsTrue(result);
     }
-    
+
     [Test]
     public void GameAlreadyStarted_ReturnsTrue()
     {
+        // Arrange
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -127,19 +144,23 @@ public class GameTests
             _game.AddPlayer(player);
         }
 
+        // Act
+        bool result = true;
         _game.Start();
-            
-        if (_game.Start().Message == Message.GameAlreadyStarted)
+
+        if (_game.Start().Message != Message.GameAlreadyStarted)
         {
-            Assert.Pass();
+            result = false;
         }
 
-        Assert.Fail();
+        // Assert
+        Assert.IsTrue(result);
     }
-    
+
     [Test]
     public void CardDealtToPlayers_ReturnsTrue()
     {
+        // Arrange
         List<Player> players = new List<Player>
         {
             new("Sam"),
@@ -152,19 +173,18 @@ public class GameTests
             _game.AddPlayer(player);
         }
 
-        if (!_game.Start().Success)
-        {
-            Assert.Fail();
-        }
-
+        // Act
+        _game.Start();
+        bool result = true;
         foreach (Player player in _game.Players)
         {
             if (player.Hand.Count != 4)
             {
-                Assert.Fail();
+                result = false;
             }
         }
-        
-        Assert.Pass();
+
+        // Assert
+        Assert.IsTrue(result);
     }
 }

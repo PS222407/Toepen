@@ -48,7 +48,6 @@ public class Round
         Players = players;
 
         ActivePlayer = previousWinner;
-        SetNextPlayer();
 
         StartedPlayer = ActivePlayer;
 
