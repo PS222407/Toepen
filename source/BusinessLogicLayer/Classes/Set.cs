@@ -231,6 +231,7 @@ public class Set
         }
         else
         {
+//TODO: SET LOOP FROM ROUND HERE TO SET PENALTYPOINTS
             State = GameState.SetHasBeenWon;
             SetWinner = CurrentRound.WinnerStatus!.Winner;
         }
