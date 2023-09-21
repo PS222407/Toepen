@@ -201,6 +201,7 @@ public class Round
                 }
             }
 
+//TODO: REPLACE TO SET
             foreach (Player pl in playersStillInGame)
             {
                 if (pl != winner)
