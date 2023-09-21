@@ -4,8 +4,6 @@ namespace BusinessLogicLayer.Classes;
 
 public class Game
 {
-    private const int AmountStartCardsPlayer = 4;
-
     private const int MinAmountOfPlayer = 2;
 
     private const int MaxAmountOfPlayers = 6;
@@ -17,19 +15,10 @@ public class Game
     private List<Player> _players = new();
     public IReadOnlyList<Player> Players => _players;
 
-    private List<Card> Deck = new();
-
     private List<Set> _sets = new();
     public IReadOnlyList<Set> Sets => _sets;
     
     public Set? CurrentSet { get; private set; }
-
-    public Player Host { get; private set; }
-
-    private void AddCard(Card card)
-    {
-        Deck.Add(card);
-    }
 
     public bool AddPlayer(Player player)
     {
@@ -40,66 +29,11 @@ public class Game
 
         if (Players.Count < MaxAmountOfPlayers)
         {
-            if (!Players.Any())
-            {
-                Host = player;
-            }
-
             _players.Add(player);
             return true;
         }
 
         return false;
-    }
-
-    private void ShuffleDeck()
-    {
-        Random rnd = new Random();
-        List<Card> shuffledDeck = Deck.OrderBy(x => rnd.Next()).ToList();
-        Deck = shuffledDeck;
-    }
-
-    private void InitializeDeck()
-    {
-        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
-        {
-            foreach (Value value in Enum.GetValues(typeof(Value)))
-            {
-                Card card = new Card(suit, value);
-                AddCard(card);
-            }
-        }
-    }
-
-    private void DealCardsToPlayers()
-    {
-        ShuffleDeck();
-
-        foreach (Player player in Players)
-        {
-            DealCardsToPlayer(player);
-        }
-    }
-
-    private void DealCardsToPlayer(Player player)
-    {
-        for (int i = 0; i < AmountStartCardsPlayer; i++)
-        {
-            Card nextCard = Deck.First();
-            player.DealCard(nextCard);
-            Deck.Remove(nextCard);
-        }
-    }
-
-    private void PlayerHandToDeck(Player player)
-    {
-        foreach (Card card in new List<Card>(player.Hand))
-        {
-            Deck.Add(card);
-            player.RemoveCardFromHand(card);
-        }
-
-        ShuffleDeck();
     }
 
     // System input actions
@@ -116,11 +50,8 @@ public class Game
         }
 
         _gameHasStarted = true;
-        InitializeDeck();
-        DealCardsToPlayers();
 
-        CurrentSet = new Set(_players);
-        _sets.Add(CurrentSet);
+        StartNewSet();
 
         return new StatusMessage(true);
     }
@@ -164,44 +95,17 @@ public class Game
         }
 
         StatusMessage statusMessage = CurrentSet!.TurnsLaundry(player, victim);
-        if (statusMessage.Message == Message.PlayerDidNotBluff)
-        {
-            PlayerHandToDeck(victim);
-            DealCardsToPlayer(victim);
-        }
 
         return statusMessage;
     }
 
     public bool StopLaundryTurnTimerAndStartLaundryTimer()
     {
-        foreach (Player player in Players)
-        {
-            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
-            {
-                PlayerHandToDeck(player);
-                DealCardsToPlayer(player);
-            }
-
-            player.ResetLaundryVariables();
-        }
-
         return CurrentSet!.StopLaundryTurnTimerAndStartLaundryTimer();
     }
 
     public bool StopLaundryTurnTimerAndStartRound()
     {
-        foreach (Player player in Players)
-        {
-            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
-            {
-                PlayerHandToDeck(player);
-                DealCardsToPlayer(player);
-            }
-
-            player.ResetLaundryVariables();
-        }
-
         return CurrentSet!.StopLaundryTurnTimerAndStartRound();
     }
 
@@ -259,19 +163,40 @@ public class Game
         }
 
         StatusMessage statusMessage = CurrentSet!.PlayCard(player, new Card(cardSuit.Value, cardValue.Value));
+        if (!statusMessage.Success)
+        {
+            return statusMessage;
+        }
 
         if (statusMessage.Message == Message.APlayerHasWonSet)
         {
+            bool gameHasAWinner = Players.Where(p => !p.IsOutOfGame()).ToList().Count == 1;
+            if (gameHasAWinner)
+            {
+                return new StatusMessage(true, Message.APlayerHasWonGame);
+            }
+
             StartNewSet();
         }
 
         return statusMessage;
     }
 
+    private Player? GetWinner()
+    {
+        bool gameHasAWinner = Players.Where(p => !p.IsOutOfGame()).ToList().Count == 1;
+        if (gameHasAWinner)
+        {
+            return Players.First(p => !p.IsOutOfGame());
+        }
+
+        return null;
+    }
+
     private void StartNewSet()
     {
-        // TODO: exclude dead players throughout the application (dealing cards etc)
-        CurrentSet = new Set(_players);
+        Player? winnerOfSet = _sets.LastOrDefault()?.WinnerOfSet;
+        CurrentSet = new Set(_players.Where(p => !p.IsDead()).ToList(), winnerOfSet);
         _sets.Add(CurrentSet);
     }
 

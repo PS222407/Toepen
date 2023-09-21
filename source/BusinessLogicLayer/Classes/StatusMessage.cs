@@ -11,6 +11,8 @@ public class StatusMessage
     public Player Winner { get; private set; }
     
     public int? RoundNumber { get; private set; }
+    
+    public int? SetNumber { get; private set; }
 
     public StatusMessage(bool success)
     {

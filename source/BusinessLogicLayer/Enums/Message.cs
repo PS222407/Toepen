@@ -21,5 +21,6 @@ public enum Message
     APlayerHasWonRound,
     APlayerHasWonSet,
     CardNotInPlayersHand,
-    PlayerHasMatchingSuitCard
+    PlayerHasMatchingSuitCard,
+    APlayerHasWonGame
 }

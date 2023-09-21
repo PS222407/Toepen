@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using BusinessLogicLayer.Enums;
+﻿using BusinessLogicLayer.Enums;
 
 namespace BusinessLogicLayer.Classes;
 
@@ -33,6 +32,17 @@ public class Player
     {
         Id = Interlocked.Increment(ref _nextId);
         Name = name;
+    }
+
+    public void ResetVariablesForNewSet()
+    {
+        _hand = new List<Card>();
+        _playedCards = new List<Card>();
+        Folded = false;
+        HasCalledDirtyLaundry = false;
+        HasCalledWhiteLaundry = false;
+        LaundryHasBeenTurned = false;
+        PlayWithOpenCards = false;
     }
 
     public void AddPenaltyPoints(int points)

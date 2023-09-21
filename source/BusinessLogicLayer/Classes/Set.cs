@@ -4,8 +4,6 @@ namespace BusinessLogicLayer.Classes;
 
 public class Set
 {
-    private const int MaxRounds = 4;
-
     public List<Round> Rounds { get; private set; } = new();
 
     public Round CurrentRound { get; private set; }
@@ -16,12 +14,79 @@ public class Set
 
     public int PenaltyPoints { get; private set; } = 1;
 
-    public Player SetWinner { get; private set; }
+    public Player WinnerOfSet { get; private set; }
 
-    public Set(List<Player> players)
+    private readonly Player? _previousSetWinner;
+
+    private List<Card> _deck = new();
+
+    public Set(List<Player> players, Player? previousSetWinner = null)
     {
+        if (previousSetWinner != null)
+        {
+            _previousSetWinner = previousSetWinner;
+        }
+
         Players = players;
+        foreach (Player player in Players)
+        {
+            player.ResetVariablesForNewSet();
+        }
+
+        InitializeDeck();
+        DealCardsToPlayers();
+
         State = GameState.ActiveLaundryTimer;
+    }
+
+    private void InitializeDeck()
+    {
+        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
+        {
+            foreach (Value value in Enum.GetValues(typeof(Value)))
+            {
+                Card card = new Card(suit, value);
+                _deck.Add(card);
+            }
+        }
+    }
+
+    private void ShuffleDeck()
+    {
+        Random rnd = new Random();
+        List<Card> shuffledDeck = _deck.OrderBy(x => rnd.Next()).ToList();
+        _deck = shuffledDeck;
+    }
+
+    private void DealCardsToPlayers()
+    {
+        ShuffleDeck();
+
+        foreach (Player player in Players)
+        {
+            DealCardsToPlayer(player);
+        }
+    }
+
+    private void DealCardsToPlayer(Player player)
+    {
+        for (int i = 0; i < Settings.AmountStartCardsPlayer; i++)
+        {
+            Card nextCard = _deck.First();
+            player.DealCard(nextCard);
+            _deck.Remove(nextCard);
+        }
+    }
+
+    private void PlayerHandToDeck(Player player)
+    {
+        foreach (Card card in new List<Card>(player.Hand))
+        {
+            _deck.Add(card);
+            player.RemoveCardFromHand(card);
+        }
+
+        ShuffleDeck();
     }
 
     public StatusMessage PlayerCallsDirtyLaundry(Player player)
@@ -87,6 +152,8 @@ public class Set
             if (victim.TurnsAndChecksDirtyLaundry())
             {
                 turner.AddPenaltyPoints(1);
+                PlayerHandToDeck(victim);
+                DealCardsToPlayer(victim);
                 return new StatusMessage(true, Message.PlayerDidNotBluff);
             }
 
@@ -107,6 +174,8 @@ public class Set
             if (victim.TurnsAndChecksWhiteLaundry())
             {
                 turner.AddPenaltyPoints(1);
+                PlayerHandToDeck(victim);
+                DealCardsToPlayer(victim);
                 return new StatusMessage(true, Message.PlayerDidNotBluff);
             }
 
@@ -132,6 +201,17 @@ public class Set
             return false;
         }
 
+        foreach (Player player in Players)
+        {
+            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
+            {
+                PlayerHandToDeck(player);
+                DealCardsToPlayer(player);
+            }
+
+            player.ResetLaundryVariables();
+        }
+
         State = GameState.ActiveLaundryTimer;
 
         return true;
@@ -144,12 +224,30 @@ public class Set
             return false;
         }
 
-        StartNewRound(true, false);
+        foreach (Player player in Players)
+        {
+            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
+            {
+                PlayerHandToDeck(player);
+                DealCardsToPlayer(player);
+            }
+
+            player.ResetLaundryVariables();
+        }
+
+        if (_previousSetWinner != null)
+        {
+            StartNewRound(false, true, _previousSetWinner);
+        }
+        else
+        {
+            StartNewRound(true, true);
+        }
 
         return true;
     }
 
-    private void StartNewRound(bool noWinner, bool roundWinner)
+    private void StartNewRound(bool noWinner, bool roundWinner, Player? previousSetWinner = null)
     {
         if (noWinner)
         {
@@ -159,7 +257,8 @@ public class Set
         }
         else if (roundWinner)
         {
-            CurrentRound = new Round(Players, CurrentRound.WinnerStatus!.Winner, PenaltyPoints);
+            Player previousWinner = previousSetWinner ?? CurrentRound.WinnerStatus!.Winner;
+            CurrentRound = new Round(Players, previousWinner, PenaltyPoints);
             State = GameState.ActiveRound;
             Rounds.Add(CurrentRound);
         }
@@ -167,14 +266,19 @@ public class Set
 
     public StatusMessage PlayCard(Player player, Card card)
     {
+        if (State != GameState.ActiveRound)
+        {
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
+        }
+
         StatusMessage statusMessage = CurrentRound.PlayCard(player, card);
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
-            int roundId = CurrentRound.Id;
-            Message message = winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound;
+            int roundNumber = Rounds.Count;
+            Message message = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound;
             HandleWinner();
-            return new StatusMessage(true, message, winnerStatus.Winner, roundId);
+            return new StatusMessage(true, message, winnerStatus.Winner, roundNumber);
         }
 
         return statusMessage;
@@ -191,9 +295,9 @@ public class Set
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
-            int roundId = CurrentRound.Id;
+            int roundNumber = Rounds.Count;
             HandleWinner();
-            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundId);
+            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundNumber);
         }
 
         PenaltyPoints = CurrentRound.PenaltyPoints;
@@ -207,9 +311,9 @@ public class Set
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
-            int roundId = CurrentRound.Id;
+            int roundNumber = Rounds.Count;
             HandleWinner();
-            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundId);
+            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundNumber);
         }
 
         PenaltyPoints = CurrentRound.PenaltyPoints;
@@ -231,9 +335,16 @@ public class Set
         }
         else
         {
-//TODO: SET LOOP FROM ROUND HERE TO SET PENALTYPOINTS
             State = GameState.SetHasBeenWon;
-            SetWinner = CurrentRound.WinnerStatus!.Winner;
+            WinnerOfSet = CurrentRound.WinnerStatus!.Winner;
+
+            foreach (Player player in Players.Where(p => !p.IsOutOfGame()))
+            {
+                if (player != WinnerOfSet)
+                {
+                    player.AddPenaltyPoints(PenaltyPoints);
+                }
+            }
         }
     }
 }
