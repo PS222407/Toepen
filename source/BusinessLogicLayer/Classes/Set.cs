@@ -237,7 +237,7 @@ public class Set
 
         if (_previousSetWinner != null)
         {
-            StartNewRound(false, true, _previousSetWinner);
+            StartNewRound(false, true, _previousSetWinner, true);
         }
         else
         {
@@ -247,7 +247,7 @@ public class Set
         return true;
     }
 
-    private void StartNewRound(bool noWinner, bool roundWinner, Player? previousSetWinner = null)
+    private void StartNewRound(bool noWinner, bool roundWinner, Player? previousSetWinner = null, bool fromNewSet = false)
     {
         if (noWinner)
         {
@@ -258,7 +258,7 @@ public class Set
         else if (roundWinner)
         {
             Player previousWinner = previousSetWinner ?? CurrentRound.WinnerStatus!.Winner;
-            CurrentRound = new Round(Players, previousWinner, PenaltyPoints);
+            CurrentRound = new Round(Players, previousWinner, PenaltyPoints, fromNewSet);
             State = GameState.ActiveRound;
             Rounds.Add(CurrentRound);
         }

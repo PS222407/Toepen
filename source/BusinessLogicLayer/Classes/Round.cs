@@ -5,11 +5,11 @@ namespace BusinessLogicLayer.Classes;
 public class Round
 {
     private Card? _startedCard;
-    
+
     private Player _playerWhoKnocked;
-    
+
     private GameState? _state;
-    
+
     public List<Player> Players { get; private set; }
 
     public Player StartedPlayer { get; private set; }
@@ -33,16 +33,18 @@ public class Round
         _state = GameState.WaitingForCardOrKnock;
     }
 
-    public Round(List<Player> players, Player previousWinner, int penaltyPoints)
+    public Round(List<Player> players, Player previousWinner, int penaltyPoints, bool fromNewSet = false)
     {
         PenaltyPoints = penaltyPoints;
-
         Players = players;
-
         ActivePlayer = previousWinner;
 
-        StartedPlayer = ActivePlayer;
+        if (fromNewSet)
+        {
+            SetNextPlayer();
+        }
 
+        StartedPlayer = ActivePlayer;
         _state = GameState.WaitingForCardOrKnock;
     }
 
