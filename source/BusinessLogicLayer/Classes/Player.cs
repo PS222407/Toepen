@@ -139,4 +139,10 @@ public class Player
     {
         return IsDead() || Folded;
     }
+
+    // TODO: implement in gameflow
+    public bool HasPoverty()
+    {
+        return PenaltyPoints == Settings.MaxPenaltyPoints - 1;
+    }
 }
