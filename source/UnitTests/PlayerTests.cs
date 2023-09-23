@@ -5,7 +5,7 @@ using UnitTests.Utilities;
 namespace UnitTests;
 
 [TestFixture]
-public class LaundryTests
+public class PlayerTests
 {
     private Game _game;
     
@@ -74,7 +74,7 @@ public class LaundryTests
     public void PlayerHasWhiteLaundry_ReturnsTrue()
     {
         // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 1);
+        Player playerWithWhiteLaundry = _game.Players[0];
         
         // Act
         bool result = playerWithWhiteLaundry.HasWhiteLaundry();
@@ -87,7 +87,7 @@ public class LaundryTests
     public void PlayerHasDirtyLaundry_ReturnsTrue()
     {
         // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 2);
+        Player playerWithWhiteLaundry = _game.Players[1];
         
         // Act
         bool result = playerWithWhiteLaundry.HasDirtyLaundry();
@@ -100,7 +100,7 @@ public class LaundryTests
     public void PlayerHasNotWhiteLaundry_ReturnsFalse()
     {
         // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 3);
+        Player playerWithWhiteLaundry = _game.Players[2];
         
         // Act
         bool result = playerWithWhiteLaundry.HasWhiteLaundry();
@@ -113,7 +113,7 @@ public class LaundryTests
     public void PlayerHasNotDirtyLaundry_ReturnsFalse()
     {
         // Arrange
-        Player playerWithWhiteLaundry = _game.Players.First(p => p.Id == 3);
+        Player playerWithWhiteLaundry = _game.Players[2];
         
         // Act
         bool result = playerWithWhiteLaundry.HasDirtyLaundry();

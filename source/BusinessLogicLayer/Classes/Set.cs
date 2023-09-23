@@ -20,6 +20,8 @@ public class Set
 
     private List<Card> _deck = new();
 
+    private Player? _lastPlayerWhoKnocked;
+
     public Set(List<Player> players, Player? previousSetWinner = null)
     {
         if (previousSetWinner != null)
@@ -160,10 +162,11 @@ public class Set
             if (Settings.LaundryOpenCards)
             {
                 victim.AddPenaltyPoints(1);
+                victim.MustPlayWithOpenCards();
             }
             else
             {
-                victim.MustPlayWithOpenCards();
+                victim.AddPenaltyPoints(1);
             }
 
             return new StatusMessage(true, Message.PlayerDidBluff);
@@ -207,9 +210,8 @@ public class Set
             {
                 PlayerHandToDeck(player);
                 DealCardsToPlayer(player);
+                player.ResetLaundryVariables();
             }
-
-            player.ResetLaundryVariables();
         }
 
         State = GameState.ActiveLaundryTimer;
@@ -286,7 +288,18 @@ public class Set
 
     public StatusMessage Knock(Player player)
     {
-        return CurrentRound.Knock(player);
+        if (_lastPlayerWhoKnocked == player)
+        {
+            return new StatusMessage(false, Message.CantDoThisActionOnYourself);
+        }
+
+        StatusMessage statusMessage = CurrentRound.Knock(player);
+        if (statusMessage.Success)
+        {
+            _lastPlayerWhoKnocked = player;
+        }
+
+        return statusMessage;
     }
 
     public StatusMessage Fold(Player player)
@@ -307,13 +320,19 @@ public class Set
 
     public StatusMessage Check(Player player)
     {
+        if (State != GameState.ActiveRound)
+        {
+            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
+        }
+
         StatusMessage statusMessage = CurrentRound.Check(player);
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
             int roundNumber = Rounds.Count;
+            Message message = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound;
             HandleWinner();
-            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundNumber);
+            return new StatusMessage(true, message, winnerStatus.Winner, roundNumber);
         }
 
         PenaltyPoints = CurrentRound.PenaltyPoints;

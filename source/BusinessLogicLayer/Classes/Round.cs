@@ -20,6 +20,8 @@ public class Round
 
     public int PenaltyPoints { get; private set; } = 1;
 
+    private List<Card> _table = new();
+
     public Round(List<Player> players)
     {
         Players = players;
@@ -39,7 +41,7 @@ public class Round
         Players = players;
         ActivePlayer = previousWinner;
 
-        if (fromNewSet)
+        if (fromNewSet || ActivePlayer.IsOutOfGame())
         {
             SetNextPlayer();
         }
@@ -135,6 +137,7 @@ public class Round
         }
 
         player.PlayCard(card);
+        _table.Add(card);
         _startedCard ??= card;
         SetNextPlayer();
 
@@ -156,13 +159,10 @@ public class Round
 
         CheckIfKnockRoundIsOver(nextPlayer);
 
+        ActivePlayer = nextPlayer;
         if (nextPlayer.IsOutOfGame())
         {
             SetNextPlayer();
-        }
-        else
-        {
-            ActivePlayer = nextPlayer;
         }
     }
 
@@ -183,17 +183,10 @@ public class Round
             return new WinnerStatus(playersStillInGame.First(), true);
         }
 
-        if (StartedPlayer == player)
+        if (StartedPlayer == player && _state != GameState.PlayerKnocked)
         {
-            Player winner = StartedPlayer;
-            foreach (Player p in playersStillInGame)
-            {
-                Card card = p.PlayedCards.Last();
-                if (card.Suit == _startedCard.Suit && card.Value > _startedCard.Value)
-                {
-                    winner = p;
-                }
-            }
+            Card winningCard = _table.Where(card => card.Suit == _startedCard.Suit && card.Value >= _startedCard.Value).OrderByDescending(card => card.Value).First();
+            Player winner = Players.First(p => p.PlayedCards.Any(pc => pc.Suit == winningCard.Suit && pc.Value == winningCard.Value));
 
             return new WinnerStatus(winner, false);
         }
