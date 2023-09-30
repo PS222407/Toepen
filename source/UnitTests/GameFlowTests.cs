@@ -1,8 +1,12 @@
-using BusinessLogicLayer.Classes;
 using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Helpers;
+using BusinessLogicLayer.Models;
+using BusinessLogicLayer.States;
 using UnitTests.Utilities;
 
 namespace UnitTests;
+
+//TODO: add test where someone wins set or game when folding
 
 [TestFixture]
 public class GameFlowTests
@@ -25,7 +29,7 @@ public class GameFlowTests
         {
             Player player = players[i];
             Entity.SetIdOf(player, i + 1);
-            _game.AddPlayer(player);
+            _game.TryAddPlayer(player);
         }
 
         _game.Start();
@@ -83,35 +87,35 @@ public class GameFlowTests
         Game game = _game;
 
         // SET 1
-        _ = game.StopLaundryTimer();
-        _ = game.StopLaundryTurnTimerAndStartRound();
+        game.BlockLaundryCalls();
+        game.BlockLaundryTurnCallsAndStartRound();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
 
-        _ = game.PlayCard(1, "7", "c");
-        _ = game.PlayCard(2, "j", "h");
-        StatusMessage status1Message1 = game.PlayCard(3, "9", "c");
+        game.PlayerPlaysCard(1, "7", "c");
+        game.PlayerPlaysCard(2, "j", "h");
+        game.PlayerPlaysCard(3, "9", "c");
 
-        bool winnerSet1Round1IsCorrect = status1Message1.Winner.Id == 3 && status1Message1.Winner == game.Sets[0].Rounds[0].WinnerStatus.Winner;
+        bool winnerSet1Round1IsCorrect = 3 == game.Sets[0].Rounds[0].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(3, "q", "d");
-        _ = game.PlayCard(1, "a", "d");
-        StatusMessage status1Message2 = game.PlayCard(2, "j", "d");
+        game.PlayerPlaysCard(3, "q", "d");
+        game.PlayerPlaysCard(1, "a", "d");
+        game.PlayerPlaysCard(2, "j", "d");
 
-        bool winnerSet1Round2IsCorrect = status1Message2.Winner.Id == 1 && status1Message2.Winner == game.Sets[0].Rounds[1].WinnerStatus.Winner;
+        bool winnerSet1Round2IsCorrect = 1 == game.Sets[0].Rounds[1].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(1, "k", "d");
-        _ = game.PlayCard(2, "k", "h");
-        StatusMessage status1Message3 = game.PlayCard(3, "9", "d");
+        game.PlayerPlaysCard(1, "k", "d");
+        game.PlayerPlaysCard(2, "k", "h");
+        game.PlayerPlaysCard(3, "9", "d");
 
-        bool winnerSet1Round3IsCorrect = status1Message3.Winner.Id == 3 && status1Message3.Winner == game.Sets[0].Rounds[2].WinnerStatus.Winner;
+        bool winnerSet1Round3IsCorrect = game.Sets[0].Rounds[2].WinnerStatus.Winner.Id == 3;
 
-        _ = game.PlayCard(3, "q", "h");
-        _ = game.PlayCard(1, "a", "s");
-        StatusMessage status1Message4 = game.PlayCard(2, "a", "h");
+        game.PlayerPlaysCard(3, "q", "h");
+        game.PlayerPlaysCard(1, "a", "s");
+        game.PlayerPlaysCard(2, "a", "h");
 
-        bool winnerSet1Round4IsCorrect = status1Message4.Winner.Id == 2 && status1Message4.Winner == game.Sets[0].Rounds[3].WinnerStatus.Winner;
+        bool winnerSet1Round4IsCorrect = game.Sets[0].Rounds[3].WinnerStatus.Winner.Id == 2;
         // sam = 1, jens = 0, mylo = 1
 
 
@@ -157,32 +161,32 @@ public class GameFlowTests
             }
         }
 
-        _ = game.StopLaundryTimer();
-        _ = game.StopLaundryTurnTimerAndStartRound();
+        game.BlockLaundryCalls();
+        game.BlockLaundryTurnCallsAndStartRound();
 
-        _ = game.PlayCard(3, "a", "c");
-        _ = game.PlayCard(1, "j", "c");
-        StatusMessage status2Message1 = game.PlayCard(2, "q", "c");
+        game.PlayerPlaysCard(3, "a", "c");
+        game.PlayerPlaysCard(1, "j", "c");
+        game.PlayerPlaysCard(2, "q", "c");
 
-        bool winnerSet2Round1IsCorrect = status2Message1.Winner.Id == 3 && status2Message1.Winner == game.Sets[1].Rounds[0].WinnerStatus.Winner;
+        bool winnerSet2Round1IsCorrect = 3 == game.Sets[1].Rounds[0].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(3, "9", "h");
-        _ = game.PlayCard(1, "10", "h");
-        StatusMessage status2Message2 = game.PlayCard(2, "7", "s");
+        game.PlayerPlaysCard(3, "9", "h");
+        game.PlayerPlaysCard(1, "10", "h");
+        game.PlayerPlaysCard(2, "7", "s");
 
-        bool winnerSet2Round2IsCorrect = status2Message2.Winner.Id == 1 && status2Message2.Winner == game.Sets[1].Rounds[1].WinnerStatus.Winner;
+        bool winnerSet2Round2IsCorrect = 1 == game.Sets[1].Rounds[1].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(1, "k", "s");
-        _ = game.PlayCard(2, "8", "d");
-        StatusMessage status2Message3 = game.PlayCard(3, "9", "s");
+        game.PlayerPlaysCard(1, "k", "s");
+        game.PlayerPlaysCard(2, "8", "d");
+        game.PlayerPlaysCard(3, "9", "s");
 
-        bool winnerSet2Round3IsCorrect = status2Message3.Winner.Id == 3 && status2Message3.Winner == game.Sets[1].Rounds[2].WinnerStatus.Winner;
+        bool winnerSet2Round3IsCorrect = 3 == game.Sets[1].Rounds[2].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(3, "8", "s");
-        _ = game.PlayCard(1, "j", "s");
-        StatusMessage status2Message4 = game.PlayCard(2, "10", "d");
+        game.PlayerPlaysCard(3, "8", "s");
+        game.PlayerPlaysCard(1, "j", "s");
+        game.PlayerPlaysCard(2, "10", "d");
 
-        bool winnerSet2Round4IsCorrect = status2Message4.Winner.Id == 3 && status2Message4.Winner == game.Sets[1].Rounds[3].WinnerStatus.Winner;
+        bool winnerSet2Round4IsCorrect = 3 == game.Sets[1].Rounds[3].WinnerStatus.Winner.Id;
         // sam = 2, jens = 1, mylo = 1
 
 
@@ -228,32 +232,32 @@ public class GameFlowTests
             }
         }
 
-        _ = game.StopLaundryTimer();
-        _ = game.StopLaundryTurnTimerAndStartRound();
+        game.BlockLaundryCalls();
+        game.BlockLaundryTurnCallsAndStartRound();
 
-        _ = game.PlayCard(1, "q", "d");
-        _ = game.PlayCard(2, "a", "d");
-        StatusMessage status3Message1 = game.PlayCard(3, "j", "c");
+        game.PlayerPlaysCard(1, "q", "d");
+        game.PlayerPlaysCard(2, "a", "d");
+        game.PlayerPlaysCard(3, "j", "c");
 
-        bool winnerSet3Round1IsCorrect = status3Message1.Winner.Id == 2 && status3Message1.Winner == game.Sets[2].Rounds[0].WinnerStatus.Winner;
+        bool winnerSet3Round1IsCorrect = 2 == game.Sets[2].Rounds[0].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(2, "j", "h");
-        _ = game.PlayCard(3, "j", "s");
-        StatusMessage status3Message2 = game.PlayCard(1, "k", "h");
+        game.PlayerPlaysCard(2, "j", "h");
+        game.PlayerPlaysCard(3, "j", "s");
+        game.PlayerPlaysCard(1, "k", "h");
 
-        bool winnerSet3Round2IsCorrect = status3Message2.Winner.Id == 1 && status3Message2.Winner == game.Sets[2].Rounds[1].WinnerStatus.Winner;
+        bool winnerSet3Round2IsCorrect = 1 == game.Sets[2].Rounds[1].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(1, "9", "d");
-        _ = game.PlayCard(2, "7", "h");
-        StatusMessage status3Message3 = game.PlayCard(3, "a", "s");
+        game.PlayerPlaysCard(1, "9", "d");
+        game.PlayerPlaysCard(2, "7", "h");
+        game.PlayerPlaysCard(3, "a", "s");
 
-        bool winnerSet3Round3IsCorrect = status3Message3.Winner.Id == 1 && status3Message3.Winner == game.Sets[2].Rounds[2].WinnerStatus.Winner;
+        bool winnerSet3Round3IsCorrect = 1 == game.Sets[2].Rounds[2].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(1, "a", "h");
-        _ = game.PlayCard(2, "8", "s");
-        StatusMessage status3Message4 = game.PlayCard(3, "7", "c");
+        game.PlayerPlaysCard(1, "a", "h");
+        game.PlayerPlaysCard(2, "8", "s");
+        game.PlayerPlaysCard(3, "7", "c");
 
-        bool winnerSet3Round4IsCorrect = status3Message4.Winner.Id == 1 && status3Message4.Winner == game.Sets[2].Rounds[3].WinnerStatus.Winner;
+        bool winnerSet3Round4IsCorrect = 1 == game.Sets[2].Rounds[3].WinnerStatus.Winner.Id;
         // sam = 2, jens = 2, mylo = 2
 
         // TODO: Add more sets
@@ -279,16 +283,16 @@ public class GameFlowTests
 
         Settings.MaxPenaltyPoints = 10000;
 
-        _ = game.StopLaundryTimer();
-        _ = game.StopLaundryTurnTimerAndStartRound();
+        game.BlockLaundryCalls();
+        game.BlockLaundryTurnCallsAndStartRound();
 
         bool gameIsOver = false;
         while (!gameIsOver)
         {
             if (game.CurrentSet.CurrentRound == null)
             {
-                _ = game.StopLaundryTimer();
-                _ = game.StopLaundryTurnTimerAndStartRound();
+                game.BlockLaundryCalls();
+                game.BlockLaundryTurnCallsAndStartRound();
             }
 
             Player activePlayer = game.CurrentSet.CurrentRound.ActivePlayer;
@@ -297,10 +301,10 @@ public class GameFlowTests
                 string value = card.Value > Value.Ace ? ((int)card.Value).ToString() : card.Value.ToString().Substring(0, 1);
                 string suit = card.Suit.ToString().Substring(0, 1);
 
-                StatusMessage statusMessage = game.PlayCard(activePlayer.Id, value, suit);
-                if (statusMessage.Success)
+                game.PlayerPlaysCard(activePlayer.Id, value, suit);
+                if (game.State is GameIsWonAndOver)
                 {
-                    gameIsOver = statusMessage.Message == Message.APlayerHasWonGame;
+                    gameIsOver = true;
                     break;
                 }
             }
@@ -320,47 +324,47 @@ public class GameFlowTests
         Game game = _game;
 
         // ACT
-        _ = game.StopLaundryTimer();
-        _ = game.StopLaundryTurnTimerAndStartRound();
+        game.BlockLaundryCalls();
+        game.BlockLaundryTurnCallsAndStartRound();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
 
-        _ = game.Knock(1);
-        _ = game.Check(2);
-        _ = game.Check(3);
-        _ = game.PlayCard(1, "7", "c");
-        _ = game.PlayCard(2, "j", "h");
-        StatusMessage status1Message1 = game.PlayCard(3, "9", "c");
+        game.Knock(1);
+        game.Check(2);
+        game.Check(3);
+        game.PlayerPlaysCard(1, "7", "c");
+        game.PlayerPlaysCard(2, "j", "h");
+        game.PlayerPlaysCard(3, "9", "c");
 
-        bool winnerSet1Round1IsCorrect = status1Message1.Winner.Id == 3 && status1Message1.Winner == game.Sets[0].Rounds[0].WinnerStatus.Winner;
+        bool winnerSet1Round1IsCorrect = game.Sets[0].Rounds[0].WinnerStatus.Winner.Id == 3;
 
-        _ = game.Knock(3);
-        _ = game.Check(1);
-        _ = game.Check(2);
-        _ = game.PlayCard(3, "q", "d");
-        _ = game.PlayCard(1, "a", "d");
-        StatusMessage status1Message2 = game.PlayCard(2, "j", "d");
+        game.Knock(3);
+        game.Check(1);
+        game.Check(2);
+        game.PlayerPlaysCard(3, "q", "d");
+        game.PlayerPlaysCard(1, "a", "d");
+        game.PlayerPlaysCard(2, "j", "d");
 
-        bool winnerSet1Round2IsCorrect = status1Message2.Winner.Id == 1 && status1Message2.Winner == game.Sets[0].Rounds[1].WinnerStatus.Winner;
+        bool winnerSet1Round2IsCorrect = game.Sets[0].Rounds[1].WinnerStatus.Winner.Id == 1;
 
-        _ = game.Knock(1);
-        _ = game.Check(2);
-        _ = game.Check(3);
-        _ = game.PlayCard(1, "k", "d");
-        _ = game.PlayCard(2, "k", "h");
-        StatusMessage status1Message3 = game.PlayCard(3, "9", "d");
+        game.Knock(1);
+        game.Check(2);
+        game.Check(3);
+        game.PlayerPlaysCard(1, "k", "d");
+        game.PlayerPlaysCard(2, "k", "h");
+        game.PlayerPlaysCard(3, "9", "d");
 
-        bool winnerSet1Round3IsCorrect = status1Message3.Winner.Id == 3 && status1Message3.Winner == game.Sets[0].Rounds[2].WinnerStatus.Winner;
+        bool winnerSet1Round3IsCorrect = game.Sets[0].Rounds[2].WinnerStatus.Winner.Id == 3;
 
-        _ = game.Knock(3);
-        _ = game.Check(1);
-        _ = game.Check(2);
-        _ = game.PlayCard(3, "q", "h");
-        _ = game.PlayCard(1, "a", "s");
-        StatusMessage status1Message4 = game.PlayCard(2, "a", "h");
+        game.Knock(3);
+        game.Check(1);
+        game.Check(2);
+        game.PlayerPlaysCard(3, "q", "h");
+        game.PlayerPlaysCard(1, "a", "s");
+        game.PlayerPlaysCard(2, "a", "h");
 
-        bool winnerSet1Round4IsCorrect = status1Message4.Winner.Id == 2 && status1Message4.Winner == game.Sets[0].Rounds[3].WinnerStatus.Winner;
+        bool winnerSet1Round4IsCorrect = 2 == game.Sets[0].Rounds[3].WinnerStatus.Winner.Id;
 
         // sam = 5, jens = 0, mylo = 5
         // ASSERT
@@ -377,43 +381,43 @@ public class GameFlowTests
         Game game = _game;
 
         // ACT
-        _ = game.StopLaundryTimer();
-        _ = game.StopLaundryTurnTimerAndStartRound();
+        game.BlockLaundryCalls();
+        game.BlockLaundryTurnCallsAndStartRound();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
 
-        _ = game.Knock(1);
-        _ = game.Check(2);
-        _ = game.Check(3);
-        _ = game.PlayCard(1, "7", "c");
-        _ = game.PlayCard(2, "j", "h");
-        StatusMessage status1Message1 = game.PlayCard(3, "9", "c");
+        game.Knock(1);
+        game.Check(2);
+        game.Check(3);
+        game.PlayerPlaysCard(1, "7", "c");
+        game.PlayerPlaysCard(2, "j", "h");
+        game.PlayerPlaysCard(3, "9", "c");
 
-        bool winnerSet1Round1IsCorrect = status1Message1.Winner.Id == 3 && status1Message1.Winner == game.Sets[0].Rounds[0].WinnerStatus.Winner;
+        bool winnerSet1Round1IsCorrect = 3 == game.Sets[0].Rounds[0].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(3, "q", "d");
-        _ = game.PlayCard(1, "a", "d");
-        _ = game.Knock(2);
-        _ = game.Check(3);
-        _ = game.Fold(1);
-        StatusMessage status1Message2 = game.PlayCard(2, "j", "d");
+        game.PlayerPlaysCard(3, "q", "d");
+        game.PlayerPlaysCard(1, "a", "d");
+        game.Knock(2);
+        game.Check(3);
+        game.Fold(1);
+        game.PlayerPlaysCard(2, "j", "d");
 
-        bool winnerSet1Round2IsCorrect = status1Message2.Winner.Id == 1 && status1Message2.Winner == game.Sets[0].Rounds[1].WinnerStatus.Winner;
+        bool winnerSet1Round2IsCorrect = 1 == game.Sets[0].Rounds[1].WinnerStatus.Winner.Id;
 
-        _ = game.PlayCard(2, "a", "h");
-        _ = game.Knock(3);
-        _ = game.Check(2);
-        StatusMessage status1Message3 = game.PlayCard(3, "q", "h");
+        game.PlayerPlaysCard(2, "a", "h");
+        game.Knock(3);
+        game.Check(2);
+        game.PlayerPlaysCard(3, "q", "h");
 
-        bool winnerSet1Round3IsCorrect = status1Message3.Winner.Id == 2 && status1Message3.Winner == game.Sets[0].Rounds[2].WinnerStatus.Winner;
+        bool winnerSet1Round3IsCorrect = 2 == game.Sets[0].Rounds[2].WinnerStatus.Winner.Id;
 
-        _ = game.Knock(2);
-        _ = game.Check(3);
-        _ = game.PlayCard(2, "k", "h");
-        StatusMessage status1Message4 = game.PlayCard(3, "9", "d");
+        game.Knock(2);
+        game.Check(3);
+        game.PlayerPlaysCard(2, "k", "h");
+        game.PlayerPlaysCard(3, "9", "d");
 
-        bool winnerSet1Round4IsCorrect = status1Message4.Winner.Id == 2 && status1Message4.Winner == game.Sets[0].Rounds[3].WinnerStatus.Winner;
+        bool winnerSet1Round4IsCorrect = 2 == game.Sets[0].Rounds[3].WinnerStatus.Winner.Id;
 
         // sam = 2, jens = 0, mylo = 5
         // ASSERT
@@ -421,65 +425,65 @@ public class GameFlowTests
     }
 
     [Test]
-    public void AllPlayersCallLaundry_PlayersGetNewCardsAndPenaltyPoints()
+    public void  AllPlayersCallLaundry_PlayersGetNewCardsAndPenaltyPoints()
     {
         // ARRANGE
         Game game = _game;
 
         // ACT
-        _ = game.WhiteLaundry(1);
-        _ = game.DirtyLaundry(2);
-        _ = game.DirtyLaundry(3);
-        _ = game.StopLaundryTimer();
-        _ = game.TurnsLaundry(1, 2);
-        _ = game.TurnsLaundry(1, 3);
-        _ = game.TurnsLaundry(2, 1);
-        _ = game.StopLaundryTurnTimerAndStartLaundryTimer();
-        StatusMessage statusMessageAlreadyCalledLaundry = game.DirtyLaundry(3);
-        _ = game.StopLaundryTimer();
-        StatusMessage statusMessageAlreadyBeenTurned = game.TurnsLaundry(1, 3);
-        _ = game.StopLaundryTurnTimerAndStartRound();
+        game.PlayerCallsWhiteLaundry(1);
+        game.PlayerCallsDirtyLaundry(2);
+        game.PlayerCallsDirtyLaundry(3);
+        game.BlockLaundryCalls();
+        game.PlayerTurnsLaundry(1, 2);
+        game.PlayerTurnsLaundry(1, 3);
+        game.PlayerTurnsLaundry(2, 1);
+        game.BlockLaundryTurnCallsAndWaitForLaundryCalls();
+        game.PlayerCallsDirtyLaundry(3);
+        game.BlockLaundryCalls();
+        game.PlayerTurnsLaundry(1, 3);
+        game.BlockLaundryTurnCallsAndStartRound();
 
         // ASSERT
         bool penaltyPointsAreCorrect = _game.Players[0].PenaltyPoints == 1 && _game.Players[1].PenaltyPoints == 1 && _game.Players[2].PenaltyPoints == 1;
-        Assert.That(penaltyPointsAreCorrect && statusMessageAlreadyBeenTurned.Message == Message.AlreadyTurnedLaundry && statusMessageAlreadyCalledLaundry.Message == Message.AlreadyCalledLaundry);
+        Assert.That(penaltyPointsAreCorrect);
 
         GivePlayerHardCodedSetOfCards();
 
-        Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
-        Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
+        Entity.SetActivePlayerOf(game.CurrentSet!.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1)!);
+        Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1)!);
 
-        _ = game.Knock(1);
-        _ = game.Check(2);
-        _ = game.Check(3);
-        _ = game.PlayCard(1, "7", "c");
-        _ = game.PlayCard(2, "j", "h");
-        StatusMessage status1Message1 = game.PlayCard(3, "9", "c");
+        game.Knock(1);
+        game.Check(2);
+        game.Check(3);
+        game.PlayerPlaysCard(1, "7", "c");
+        game.PlayerPlaysCard(2, "j", "h");
+        game.PlayerPlaysCard(3, "9", "c");
 
-        bool winnerSet1Round1IsCorrect = status1Message1.Winner.Id == 3 && status1Message1.Winner == game.Sets[0].Rounds[0].WinnerStatus.Winner;
+        bool winnerSet1Round1IsCorrect = 3 == game.Sets[0].Rounds[0].WinnerStatus!.Winner.Id;
 
-        _ = game.PlayCard(3, "q", "d");
-        _ = game.PlayCard(1, "a", "d");
-        _ = game.Knock(2);
-        _ = game.Check(3);
-        _ = game.Fold(1);
-        StatusMessage status1Message2 = game.PlayCard(2, "j", "d");
+        game.PlayerPlaysCard(3, "q", "d");
+        game.PlayerPlaysCard(1, "a", "d");
+        game.Knock(2);
+        game.Check(3);
+        game.Fold(1);
+        game.PlayerPlaysCard(2, "j", "d");
 
-        bool winnerSet1Round2IsCorrect = status1Message2.Winner.Id == 1 && status1Message2.Winner == game.Sets[0].Rounds[1].WinnerStatus.Winner;
+        bool winnerSet1Round2IsCorrect = 1 == game.Sets[0].Rounds[1].WinnerStatus!.Winner.Id;
 
-        _ = game.PlayCard(2, "a", "h");
-        _ = game.Knock(3);
-        _ = game.Check(2);
-        StatusMessage status1Message3 = game.PlayCard(3, "q", "h");
+        game.PlayerPlaysCard(2, "a", "h");
+        game.Knock(3);
+        game.Check(2);
+        game.PlayerPlaysCard(3, "q", "h");
 
-        bool winnerSet1Round3IsCorrect = status1Message3.Winner.Id == 2 && status1Message3.Winner == game.Sets[0].Rounds[2].WinnerStatus.Winner;
+        bool winnerSet1Round3IsCorrect = 2 == game.Sets[0].Rounds[2].WinnerStatus!.Winner.Id;
 
-        _ = game.Knock(2);
-        _ = game.Check(3);
-        _ = game.PlayCard(2, "k", "h");
-        StatusMessage status1Message4 = game.PlayCard(3, "9", "d");
+        game.Knock(2);
+        game.Check(3);
+        game.PlayerPlaysCard(2, "k", "h");
+        game.PlayerPlaysCard(3, "9", "d");
 
-        bool winnerSet1Round4IsCorrect = status1Message4.Winner.Id == 2 && status1Message4.Winner == game.Sets[0].Rounds[3].WinnerStatus.Winner;
+        bool winnerSet1Round4IsCorrect = 2 == game.Sets[0].Rounds[3].WinnerStatus!.Winner.Id;
 
         // sam = 2, jens = 0, mylo = 5
         // ASSERT

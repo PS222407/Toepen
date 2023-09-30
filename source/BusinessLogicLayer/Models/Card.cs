@@ -1,6 +1,6 @@
 ﻿using BusinessLogicLayer.Enums;
 
-namespace BusinessLogicLayer.Classes;
+namespace BusinessLogicLayer.Models;
 
 public class Card
 {

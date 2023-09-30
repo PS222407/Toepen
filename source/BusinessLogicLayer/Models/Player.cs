@@ -1,6 +1,7 @@
 ﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Helpers;
 
-namespace BusinessLogicLayer.Classes;
+namespace BusinessLogicLayer.Models;
 
 public class Player
 {

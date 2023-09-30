@@ -1,5 +1,5 @@
 using System.Reflection;
-using BusinessLogicLayer.Classes;
+using BusinessLogicLayer.Models;
 
 namespace UnitTests.Utilities;
 

@@ -1,5 +1,5 @@
-﻿using BusinessLogicLayer.Classes;
-using BusinessLogicLayer.Enums;
+﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Models;
 using UnitTests.Utilities;
 
 namespace UnitTests;
@@ -25,7 +25,7 @@ public class PlayerTests
         {
             Player player = players[i];
             Entity.SetIdOf(player, i + 1);
-            _game.AddPlayer(player);
+            _game.TryAddPlayer(player);
         }
 
         _game.Start();
@@ -121,4 +121,42 @@ public class PlayerTests
         // Assert
         Assert.IsFalse(result);
     }
+    
+    // [Test]
+    // public void PlayerResetVariablesForNewSet_ReturnsTrue()
+    // {
+    //     // Arrange
+    //     Player playerWithWhiteLaundry = _game.Players[0];
+    //     _game.Players
+    //     _game.PlayerPlaysCard(1, "A", "S");
+    //     Folded = false;
+    //     HasCalledDirtyLaundry = false;
+    //     HasCalledWhiteLaundry = false;
+    //     LaundryHasBeenTurned = false;
+    //     PlayWithOpenCards = false;
+    //     
+    //     // Act
+    //     bool result = playerWithWhiteLaundry.HasDirtyLaundry();
+    //     
+    //     // Assert
+    //     Assert.IsFalse(result);
+    // }
+    
+    // ResetVariablesForNewSet():void
+    // AddPenaltyPoints(int points):void
+    // DealCard(Card card):void
+    // RemoveCardFromHand(Card card):void
+    // CalledDirtyLaundry():void
+    // CalledWhiteLaundry():void
+    // TurnsAndChecksDirtyLaundry():bool
+    // HasDirtyLaundry():bool
+    // TurnsAndChecksWhiteLaundry():bool
+    // HasWhiteLaundry():bool
+    // ResetLaundryVariables():void
+    // MustPlayWithOpenCards():void
+    // PlayCard(Card card):void
+    // Folds():void
+    // IsDead():bool
+    // IsOutOfGame():bool
+    // HasPoverty():bool
 }

@@ -1,6 +1,7 @@
 ﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Models;
 
-namespace BusinessLogicLayer.Classes;
+namespace BusinessLogicLayer.Helpers;
 
 public class StatusMessage
 {

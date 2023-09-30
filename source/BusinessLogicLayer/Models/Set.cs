@@ -1,6 +1,8 @@
 ﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Exceptions;
+using BusinessLogicLayer.Helpers;
 
-namespace BusinessLogicLayer.Classes;
+namespace BusinessLogicLayer.Models;
 
 public class Set
 {
@@ -125,7 +127,7 @@ public class Set
         return new StatusMessage(true);
     }
 
-    public bool StopLaundryTimer()
+    public bool BlockLaundryCalls()
     {
         if (State != GameState.ActiveLaundryTimer)
         {
@@ -197,7 +199,7 @@ public class Set
         return new StatusMessage(false, Message.PlayerHasNotCalledForLaundry);
     }
 
-    public bool StopLaundryTurnTimerAndStartLaundryTimer()
+    public bool BlockLaundryTurnCallsAndWaitForLaundryCalls()
     {
         if (State != GameState.ActiveTurnLaundryTimer)
         {
@@ -219,7 +221,7 @@ public class Set
         return true;
     }
 
-    public bool StopLaundryTurnTimerAndStartRound()
+    public bool BlockLaundryTurnCallsAndStartRound()
     {
         if (State != GameState.ActiveTurnLaundryTimer)
         {
@@ -266,31 +268,28 @@ public class Set
         }
     }
 
-    public StatusMessage PlayCard(Player player, Card card)
+    public WinnerStatus? PlayCard(Player player, Card card)
     {
-        if (State != GameState.ActiveRound)
-        {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
-        }
-
-        StatusMessage statusMessage = CurrentRound.PlayCard(player, card);
+        CurrentRound.PlayCard(player, card);
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
-            int roundNumber = Rounds.Count;
-            Message message = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound;
+            winnerStatus.WinnerOfSet = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds;
+            winnerStatus.RoundNumber = Rounds.Count;
+            
             HandleWinner();
-            return new StatusMessage(true, message, winnerStatus.Winner, roundNumber);
+            
+            return winnerStatus;
         }
 
-        return statusMessage;
+        return null;
     }
 
-    public StatusMessage Knock(Player player)
+    public void Knock(Player player)
     {
         if (_lastPlayerWhoKnocked == player)
         {
-            return new StatusMessage(false, Message.CantDoThisActionOnYourself);
+            throw new CantPerformToSelfException();
         }
 
         StatusMessage statusMessage = CurrentRound.Knock(player);
@@ -298,46 +297,44 @@ public class Set
         {
             _lastPlayerWhoKnocked = player;
         }
-
-        return statusMessage;
     }
 
-    public StatusMessage Fold(Player player)
+    public WinnerStatus? Fold(Player player)
     {
-        StatusMessage statusMessage = CurrentRound.Fold(player);
+        CurrentRound.Fold(player);
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
-            int roundNumber = Rounds.Count;
+            winnerStatus.WinnerOfSet = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds;
+            winnerStatus.RoundNumber = Rounds.Count;
+            
             HandleWinner();
-            return new StatusMessage(true, winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound, winnerStatus.Winner, roundNumber);
+            
+            return winnerStatus;
         }
 
         PenaltyPoints = CurrentRound.PenaltyPoints;
 
-        return statusMessage;
+        return null;
     }
 
-    public StatusMessage Check(Player player)
+    public WinnerStatus? Check(Player player)
     {
-        if (State != GameState.ActiveRound)
-        {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
-        }
-
-        StatusMessage statusMessage = CurrentRound.Check(player);
+        CurrentRound.Check(player);
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
-            int roundNumber = Rounds.Count;
-            Message message = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds ? Message.APlayerHasWonSet : Message.APlayerHasWonRound;
+            winnerStatus.WinnerOfSet = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds;
+            winnerStatus.RoundNumber = Rounds.Count;
+
             HandleWinner();
-            return new StatusMessage(true, message, winnerStatus.Winner, roundNumber);
+            
+            return winnerStatus;
         }
 
         PenaltyPoints = CurrentRound.PenaltyPoints;
 
-        return statusMessage;
+        return null;
     }
 
     private void HandleWinner()

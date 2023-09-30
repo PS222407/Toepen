@@ -1,4 +1,4 @@
-﻿namespace BusinessLogicLayer.Classes;
+﻿namespace BusinessLogicLayer.Helpers;
 
 public class Settings
 {
