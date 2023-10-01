@@ -19,7 +19,7 @@ public class Player
 
     public int PenaltyPoints { get; private set; }
 
-    public bool Folded { get; private set; } = false;
+    public bool HasFolded { get; private set; }
 
     public bool HasCalledDirtyLaundry { get; private set; }
 
@@ -39,7 +39,7 @@ public class Player
     {
         _hand = new List<Card>();
         _playedCards = new List<Card>();
-        Folded = false;
+        HasFolded = false;
         HasCalledDirtyLaundry = false;
         HasCalledWhiteLaundry = false;
         LaundryHasBeenTurned = false;
@@ -128,7 +128,7 @@ public class Player
 
     public void Folds()
     {
-        Folded = true;
+        HasFolded = true;
     }
 
     public bool IsDead()
@@ -138,7 +138,7 @@ public class Player
 
     public bool IsOutOfGame()
     {
-        return IsDead() || Folded;
+        return IsDead() || HasFolded;
     }
 
     // TODO: implement in gameflow

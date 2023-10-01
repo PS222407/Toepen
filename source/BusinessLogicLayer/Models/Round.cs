@@ -86,7 +86,7 @@ public class Round
         if (player == _playerWhoKnocked)
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
-        if (player.Folded)
+        if (player.HasFolded)
             return new StatusMessage(false, Message.AlreadyFolded);
 
         player.Folds();
@@ -107,7 +107,7 @@ public class Round
         if (player == _playerWhoKnocked)
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
-        if (player.Folded)
+        if (player.HasFolded)
             return new StatusMessage(false, Message.AlreadyFolded);
 
         SetNextPlayer();
