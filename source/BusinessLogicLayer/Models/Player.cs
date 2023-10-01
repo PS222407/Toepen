@@ -1,4 +1,5 @@
 ﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Exceptions;
 using BusinessLogicLayer.Helpers;
 
 namespace BusinessLogicLayer.Models;
@@ -58,7 +59,13 @@ public class Player
 
     public void RemoveCardFromHand(Card card)
     {
-        _hand.Remove(card);
+        Card? cardFromHand = _hand.FirstOrDefault(c => c.Suit == card.Suit && c.Value == card.Value);
+        if (cardFromHand == null)
+        {
+            throw new CardNotFoundException();
+        }
+
+        _hand.Remove(cardFromHand);
     }
 
     public void CalledDirtyLaundry()
