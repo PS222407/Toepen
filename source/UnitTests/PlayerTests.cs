@@ -230,9 +230,49 @@ public class PlayerTests
         // Assert
         Assert.IsTrue(player.HasCalledWhiteLaundry);
     }
+    
+    [Test]
+    public void PlayerDirtyLaundryGetsTurned_ReturnsTrue()
+    {
+        // Arrange
+        Player player = new Player("Test Player");
+        List<Card> cards = new List<Card>
+        {
+            new(Suit.Clubs, Value.Jack),
+            new(Suit.Spades, Value.Jack),
+            new(Suit.Diamonds, Value.Jack),
+            new(Suit.Hearts, Value.Jack),
+        };
+        Entity.SetHandOf(player, cards);
 
-    // TurnsAndChecksDirtyLaundry():bool
-    // TurnsAndChecksWhiteLaundry():bool
+        // Act
+        bool result = player.TurnsAndChecksDirtyLaundry();
+
+        // Assert
+        Assert.IsTrue(player.LaundryHasBeenTurned && result);
+    }
+    
+    [Test]
+    public void PlayerWhiteLaundryGetsTurned_ReturnsTrue()
+    {
+        // Arrange
+        Player player = new Player("Test Player");
+        List<Card> cards = new List<Card>
+        {
+            new(Suit.Clubs, Value.Jack),
+            new(Suit.Spades, Value.Jack),
+            new(Suit.Diamonds, Value.Seven),
+            new(Suit.Hearts, Value.Jack),
+        };
+        Entity.SetHandOf(player, cards);
+
+        // Act
+        bool result = player.TurnsAndChecksWhiteLaundry();
+
+        // Assert
+        Assert.IsTrue(player.LaundryHasBeenTurned && result);
+    }
+
     // MustPlayWithOpenCards():void
     // PlayCard(Card card):void
     // Folds():void
