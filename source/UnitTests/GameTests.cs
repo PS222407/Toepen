@@ -1,5 +1,6 @@
-﻿using BusinessLogicLayer.Classes;
-using BusinessLogicLayer.Enums;
+﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Exceptions;
+using BusinessLogicLayer.Models;
 
 namespace UnitTests;
 
@@ -33,7 +34,7 @@ public class GameTests
         bool result = true;
         foreach (Player player in players)
         {
-            if (!_game.AddPlayer(player))
+            if (!_game.TryAddPlayer(player))
             {
                 result = false;
             }
@@ -61,7 +62,7 @@ public class GameTests
         bool result = true;
         foreach (Player player in players)
         {
-            if (!_game.AddPlayer(player))
+            if (!_game.TryAddPlayer(player))
             {
                 result = false;
             }
@@ -85,17 +86,12 @@ public class GameTests
         bool result = true;
         foreach (Player player in players)
         {
-            if (!_game.AddPlayer(player))
+            if (!_game.TryAddPlayer(player))
             {
                 result = false;
             }
         }
-
-        if (_game.Start().Message == Message.MinimumPlayersNotReached)
-        {
-            result = false;
-        }
-
+        
         // Assert
         Assert.IsTrue(result);
     }
@@ -112,20 +108,15 @@ public class GameTests
         bool result = true;
         foreach (Player player in players)
         {
-            if (!_game.AddPlayer(player))
+            if (!_game.TryAddPlayer(player))
             {
                 result = false;
             }
         }
 
         // Act
-        if (_game.Start().Message == Message.MinimumPlayersNotReached)
-        {
-            result = true;
-        }
-
         // Assert
-        Assert.IsTrue(result);
+        Assert.Throws<NotEnoughPlayersException>(() => _game.Start());
     }
 
     [Test]
@@ -141,20 +132,14 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            _game.AddPlayer(player);
+            _game.TryAddPlayer(player);
         }
 
         // Act
-        bool result = true;
         _game.Start();
 
-        if (_game.Start().Message != Message.GameAlreadyStarted)
-        {
-            result = false;
-        }
-
         // Assert
-        Assert.IsTrue(result);
+        Assert.Throws<InvalidOperationException>(() => _game.Start());
     }
 
     [Test]
@@ -170,7 +155,7 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            _game.AddPlayer(player);
+            _game.TryAddPlayer(player);
         }
 
         // Act

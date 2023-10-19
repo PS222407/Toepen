@@ -1,6 +1,7 @@
 ﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Helpers;
 
-namespace BusinessLogicLayer.Classes;
+namespace BusinessLogicLayer.Models;
 
 public class Round
 {
@@ -8,7 +9,7 @@ public class Round
 
     private Player _playerWhoKnocked;
 
-    private GameState? _state;
+    public GameState? State;
 
     public List<Player> Players { get; private set; }
 
@@ -32,7 +33,7 @@ public class Round
 
         StartedPlayer = ActivePlayer;
 
-        _state = GameState.WaitingForCardOrKnock;
+        State = GameState.WaitingForCardOrKnock;
     }
 
     public Round(List<Player> players, Player previousWinner, int penaltyPoints, bool fromNewSet = false)
@@ -47,7 +48,7 @@ public class Round
         }
 
         StartedPlayer = ActivePlayer;
-        _state = GameState.WaitingForCardOrKnock;
+        State = GameState.WaitingForCardOrKnock;
     }
 
     public StatusMessage Knock(Player player)
@@ -57,7 +58,7 @@ public class Round
             return new StatusMessage(false, Message.NotPlayersTurn);
         }
 
-        if (_state != GameState.WaitingForCardOrKnock)
+        if (State != GameState.WaitingForCardOrKnock)
         {
             return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
@@ -68,7 +69,7 @@ public class Round
         }
 
         _playerWhoKnocked = player;
-        _state = GameState.PlayerKnocked;
+        State = GameState.PlayerKnocked;
         SetNextPlayer();
 
         return new StatusMessage(true);
@@ -76,7 +77,7 @@ public class Round
 
     public StatusMessage Fold(Player player)
     {
-        if (_state != GameState.PlayerKnocked)
+        if (State != GameState.PlayerKnocked)
             return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
 
         if (player != ActivePlayer)
@@ -85,7 +86,7 @@ public class Round
         if (player == _playerWhoKnocked)
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
-        if (player.Folded)
+        if (player.HasFolded)
             return new StatusMessage(false, Message.AlreadyFolded);
 
         player.Folds();
@@ -97,7 +98,7 @@ public class Round
 
     public StatusMessage Check(Player player)
     {
-        if (_state != GameState.PlayerKnocked)
+        if (State != GameState.PlayerKnocked)
             return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
 
         if (player != ActivePlayer)
@@ -106,7 +107,7 @@ public class Round
         if (player == _playerWhoKnocked)
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
-        if (player.Folded)
+        if (player.HasFolded)
             return new StatusMessage(false, Message.AlreadyFolded);
 
         SetNextPlayer();
@@ -116,7 +117,7 @@ public class Round
 
     public StatusMessage PlayCard(Player player, Card card)
     {
-        if (_state != GameState.WaitingForCardOrKnock)
+        if (State != GameState.WaitingForCardOrKnock)
         {
             return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
@@ -168,9 +169,9 @@ public class Round
 
     private void CheckIfKnockRoundIsOver(Player nextPlayer)
     {
-        if (_state == GameState.PlayerKnocked && nextPlayer == _playerWhoKnocked)
+        if (State == GameState.PlayerKnocked && nextPlayer == _playerWhoKnocked)
         {
-            _state = GameState.WaitingForCardOrKnock;
+            State = GameState.WaitingForCardOrKnock;
             PenaltyPoints++;
         }
     }
@@ -180,15 +181,15 @@ public class Round
         List<Player> playersStillInGame = Players.Where(p => !p.IsOutOfGame()).ToList();
         if (playersStillInGame.Count == 1)
         {
-            return new WinnerStatus(playersStillInGame.First(), true);
+            return new WinnerStatus { Winner = playersStillInGame.First(), WinnerOfSet = true };
         }
 
-        if (StartedPlayer == player && _state != GameState.PlayerKnocked)
+        if (StartedPlayer == player && State != GameState.PlayerKnocked)
         {
             Card winningCard = _table.Where(card => card.Suit == _startedCard.Suit && card.Value >= _startedCard.Value).OrderByDescending(card => card.Value).First();
             Player winner = Players.First(p => p.PlayedCards.Any(pc => pc.Suit == winningCard.Suit && pc.Value == winningCard.Value));
 
-            return new WinnerStatus(winner, false);
+            return new WinnerStatus { Winner = winner, WinnerOfSet = false };
         }
 
         return null;

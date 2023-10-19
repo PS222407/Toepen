@@ -1,5 +1,6 @@
-﻿using BusinessLogicLayer.Classes;
-using BusinessLogicLayer.Enums;
+﻿using BusinessLogicLayer.Enums;
+using BusinessLogicLayer.Helpers;
+using BusinessLogicLayer.Models;
 
 Game game = new Game();
 
@@ -24,8 +25,8 @@ AddPlayer(new[] { "sam", "sam" });
 AddPlayer(new[] { "mylo", "mylo" });
 
 game.Start();
-game.StopLaundryTimer();
-game.StopLaundryTurnTimerAndStartRound();
+game.BlockLaundryCalls();
+game.BlockLaundryTurnCallsAndStartRound();
 
 while (true)
 {
@@ -100,22 +101,21 @@ while (true)
 
 void Start()
 {
-    StatusMessage statusMessage = game.Start();
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"Warning: {statusMessage.Message}");
-        Console.WriteLine("---------------------");
+        game.Start();
     }
-    else
+    catch (InvalidOperationException e)
     {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine("GAME STARTED");
-        Console.WriteLine("---------------------");
-        ShowEveryonesCards();
+        Console.WriteLine("Cant perform this action now");
+        return;
     }
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine("GAME STARTED");
+    Console.WriteLine("---------------------");
+    ShowEveryonesCards();
 }
 
 void ShowEveryonesCards()
@@ -150,7 +150,7 @@ void AddPlayer(string[] args)
     {
         Console.WriteLine($"Wrong command, please run: {Command.AddPlayer.ToString()} playername");
     }
-    else if (!game.AddPlayer(new Player(args[1])))
+    else if (!game.TryAddPlayer(new Player(args[1])))
     {
         Console.WriteLine("Lobby is either full or the game has been started!");
     }
@@ -164,10 +164,13 @@ void DirtyLaundry(string[] args)
         return;
     }
 
-    StatusMessage statusMessage = game.DirtyLaundry(int.Parse(args[1]));
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine($"{statusMessage.Message}");
+        game.PlayerCallsDirtyLaundry(int.Parse(args[1]));
+    }
+    catch (InvalidOperationException e)
+    {
+        Console.WriteLine(e);
         return;
     }
 
@@ -185,10 +188,13 @@ void WhiteLaundry(string[] args)
         return;
     }
 
-    StatusMessage statusMessage = game.WhiteLaundry(int.Parse(args[1]));
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine($"{statusMessage.Message}");
+        game.PlayerCallsWhiteLaundry(int.Parse(args[1]));
+    }
+    catch (InvalidOperationException e)
+    {
+        Console.WriteLine("Cant perform this action now");
         return;
     }
 
@@ -200,10 +206,13 @@ void WhiteLaundry(string[] args)
 
 void StopLaundryTimer()
 {
-    if (!game.StopLaundryTimer())
+    try
+    {
+        game.BlockLaundryCalls();
+    }
+    catch (InvalidOperationException e)
     {
         Console.WriteLine("Cant perform this action now");
-        return;
     }
 
     Console.WriteLine();
@@ -220,24 +229,29 @@ void TurnsLaundry(string[] args)
         return;
     }
 
-    StatusMessage statusMessage = game.TurnsLaundry(int.Parse(args[1]), int.Parse(args[2]));
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine($"{statusMessage.Message}");
+        game.PlayerTurnsLaundry(int.Parse(args[1]), int.Parse(args[2]));
+    }
+    catch (InvalidOperationException e)
+    {
+        Console.WriteLine("Cant perform this action now");
         return;
     }
 
     Console.WriteLine();
     Console.WriteLine("---------------------");
     Console.WriteLine($"Player {args[1]} draait de was om van speler {args[2]}");
-    Console.WriteLine();
-    Console.WriteLine($"{args[2]} {statusMessage.Message}");
     Console.WriteLine("---------------------");
 }
 
 void StopLaundryTurnTimerAndStartLaundryTimer()
 {
-    if (!game.StopLaundryTurnTimerAndStartLaundryTimer())
+    try
+    {
+        game.BlockLaundryTurnCallsAndWaitForLaundryCalls();
+    }
+    catch (InvalidOperationException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -251,7 +265,11 @@ void StopLaundryTurnTimerAndStartLaundryTimer()
 
 void StopLaundryTurnTimerAndStartRound()
 {
-    if (!game.StopLaundryTurnTimerAndStartRound())
+    try
+    {
+        game.BlockLaundryTurnCallsAndStartRound();
+    }
+    catch (InvalidOperationException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -271,18 +289,20 @@ void Check(string[] args)
         return;
     }
 
-    StatusMessage statusMessage = game.Check(int.Parse(args[1]));
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine($"{statusMessage.Message}");
+        game.Check(int.Parse(args[1]));
     }
-    else
+    catch (InvalidOperationException e)
     {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"Player {args[1]} checkt");
-        Console.WriteLine("---------------------");
+        Console.WriteLine("Cant perform this action now");
+        return;
     }
+
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} checkt");
+    Console.WriteLine("---------------------");
 }
 
 void Fold(string[] args)
@@ -293,26 +313,20 @@ void Fold(string[] args)
         return;
     }
 
-    StatusMessage statusMessage = game.Fold(int.Parse(args[1]));
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine($"{statusMessage.Message}");
+        game.Fold(int.Parse(args[1]));
     }
-    else
+    catch (InvalidOperationException e)
     {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"Player {args[1]} folds");
-        Console.WriteLine("---------------------");
+        Console.WriteLine("Cant perform this action now");
+        return;
     }
 
-    if (statusMessage.Message == Message.APlayerHasWonRound)
-    {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"{statusMessage.Winner.Name} has won round {statusMessage.RoundNumber}");
-        Console.WriteLine("---------------------");
-    }
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} folds");
+    Console.WriteLine("---------------------");
 }
 
 void Knock(string[] args)
@@ -323,26 +337,20 @@ void Knock(string[] args)
         return;
     }
 
-    StatusMessage statusMessage = game.Knock(int.Parse(args[1]));
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine($"{statusMessage.Message}");
+        game.Knock(int.Parse(args[1]));
     }
-    else
+    catch (InvalidOperationException e)
     {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"Player {args[1]} knocks");
-        Console.WriteLine("---------------------");
+        Console.WriteLine("Cant perform this action now");
+        return;
     }
 
-    if (statusMessage.Message == Message.APlayerHasWonRound)
-    {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"{statusMessage.Winner.Name} has won round {statusMessage.RoundNumber}");
-        Console.WriteLine("---------------------");
-    }
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} knocks");
+    Console.WriteLine("---------------------");
 }
 
 void PlayCard(string[] args)
@@ -353,24 +361,18 @@ void PlayCard(string[] args)
         return;
     }
 
-    StatusMessage statusMessage = game.PlayCard(int.Parse(args[1]), args[2], args[3]);
-    if (!statusMessage.Success)
+    try
     {
-        Console.WriteLine($"{statusMessage.Message}");
+        game.PlayerPlaysCard(int.Parse(args[1]), args[2], args[3]);
     }
-    else
+    catch (InvalidOperationException e)
     {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"Player {args[1]} plays {args[2]} {args[3]}");
-        Console.WriteLine("---------------------");
+        Console.WriteLine("Cant perform this action now");
+        return;
     }
 
-    if (statusMessage.Message == Message.APlayerHasWonRound)
-    {
-        Console.WriteLine();
-        Console.WriteLine("---------------------");
-        Console.WriteLine($"{statusMessage.Winner.Name} has won round {statusMessage.RoundNumber}");
-        Console.WriteLine("---------------------");
-    }
+    Console.WriteLine();
+    Console.WriteLine("---------------------");
+    Console.WriteLine($"Player {args[1]} plays {args[2]} {args[3]}");
+    Console.WriteLine("---------------------");
 }
