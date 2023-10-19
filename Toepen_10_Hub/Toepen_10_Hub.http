@@ -1,0 +1,6 @@
+@Toepen_10_Hub_HostAddress = http://localhost:5273
+
+GET {{Toepen_10_Hub_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
