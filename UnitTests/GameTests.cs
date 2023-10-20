@@ -138,7 +138,7 @@ public class GameTests
         _game.Start();
 
         // Assert
-        Assert.Throws<InvalidOperationException>(() => _game.Start());
+        Assert.Throws<AlreadyStartedException>(() => _game.Start());
     }
 
     [Test]

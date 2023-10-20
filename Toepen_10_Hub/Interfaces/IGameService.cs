@@ -1,8 +1,12 @@
-﻿using Toepen_10_Hub.ViewModels;
+﻿using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_10_Hub.Interfaces;
 
 public interface IGameService
 {
-    public List<GameViewModel> Games { get; set; }
+    public IReadOnlyList<Game> Games { get; }
+    
+    public void AddGame(Game game);
+    
+    public void RemoveGame(string roomCode);
 }

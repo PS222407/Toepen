@@ -105,7 +105,7 @@ public class Set
             return new StatusMessage(false, Message.AlreadyCalledLaundry);
         }
 
-        player.CalledDirtyLaundry();
+        player.CallsDirtyLaundry();
 
         return new StatusMessage(true);
     }
@@ -122,7 +122,7 @@ public class Set
             return new StatusMessage(false, Message.AlreadyCalledLaundry);
         }
 
-        player.CalledWhiteLaundry();
+        player.CallsWhiteLaundry();
 
         return new StatusMessage(true);
     }

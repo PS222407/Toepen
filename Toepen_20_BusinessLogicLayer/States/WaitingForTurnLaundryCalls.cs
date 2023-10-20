@@ -1,4 +1,5 @@
-﻿using Toepen_20_BusinessLogicLayer.Models;
+﻿using Toepen_20_BusinessLogicLayer.Exceptions;
+using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
 
@@ -11,7 +12,7 @@ public class WaitingForTurnLaundryCalls : IState
 
     public void Start(Game game)
     {
-        throw new InvalidOperationException();
+        throw new AlreadyStartedException();
     }
 
     public void PlayerCallsDirtyLaundry(Game game, Player player)

@@ -6,6 +6,8 @@ namespace Toepen_20_BusinessLogicLayer.Models;
 
 public class Game
 {
+    public string RoomId { get; }
+
     public const int MinAmountOfPlayer = 2;
 
     public const int MaxAmountOfPlayers = 6;
@@ -20,6 +22,16 @@ public class Game
     public Set? CurrentSet { get; private set; }
 
     public IState State { get; set; } = new Initialized();
+
+    public Game()
+    {
+        
+    }
+
+    public Game(string roomId)
+    {
+        RoomId = roomId;
+    }
 
     public bool TryAddPlayer(Player player)
     {

@@ -7,7 +7,7 @@ public class Round
 {
     private Card? _startedCard;
 
-    private Player _playerWhoKnocked;
+    public Player PlayerWhoKnocked { get; private set; }
 
     public GameState? State;
 
@@ -63,12 +63,12 @@ public class Round
             return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
         }
 
-        if (player == _playerWhoKnocked)
+        if (player == PlayerWhoKnocked)
         {
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
         }
 
-        _playerWhoKnocked = player;
+        PlayerWhoKnocked = player;
         State = GameState.PlayerKnocked;
         SetNextPlayer();
 
@@ -83,7 +83,7 @@ public class Round
         if (player != ActivePlayer)
             return new StatusMessage(false, Message.NotPlayersTurn);
 
-        if (player == _playerWhoKnocked)
+        if (player == PlayerWhoKnocked)
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
         if (player.HasFolded)
@@ -104,7 +104,7 @@ public class Round
         if (player != ActivePlayer)
             return new StatusMessage(false, Message.NotPlayersTurn);
 
-        if (player == _playerWhoKnocked)
+        if (player == PlayerWhoKnocked)
             return new StatusMessage(false, Message.CantDoThisActionOnYourself);
 
         if (player.HasFolded)
@@ -169,7 +169,7 @@ public class Round
 
     private void CheckIfKnockRoundIsOver(Player nextPlayer)
     {
-        if (State == GameState.PlayerKnocked && nextPlayer == _playerWhoKnocked)
+        if (State == GameState.PlayerKnocked && nextPlayer == PlayerWhoKnocked)
         {
             State = GameState.WaitingForCardOrKnock;
             PenaltyPoints++;

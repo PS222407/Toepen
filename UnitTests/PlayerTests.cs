@@ -212,7 +212,7 @@ public class PlayerTests
         Player player = new Player("Test Player");
 
         // Act
-        player.CalledDirtyLaundry();
+        player.CallsDirtyLaundry();
 
         // Assert
         Assert.IsTrue(player.HasCalledDirtyLaundry);
@@ -225,7 +225,7 @@ public class PlayerTests
         Player player = new Player("Test Player");
 
         // Act
-        player.CalledWhiteLaundry();
+        player.CallsWhiteLaundry();
 
         // Assert
         Assert.IsTrue(player.HasCalledWhiteLaundry);

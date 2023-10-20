@@ -9,6 +9,8 @@ public class Player
     static int _nextId;
 
     public int Id { get; }
+    
+    public string ConnectionId { get; private set; }
 
     public string Name { get; private set; }
 
@@ -33,6 +35,13 @@ public class Player
     public Player(string name)
     {
         Id = Interlocked.Increment(ref _nextId);
+        Name = name;
+    }
+    
+    public Player(string connectionId, string name)
+    {
+        Id = Interlocked.Increment(ref _nextId);
+        ConnectionId = connectionId;
         Name = name;
     }
 
@@ -68,31 +77,19 @@ public class Player
         _hand.Remove(cardFromHand);
     }
 
-    public void CalledDirtyLaundry()
+    public void CallsDirtyLaundry()
     {
         HasCalledDirtyLaundry = true;
     }
 
-    public void CalledWhiteLaundry()
+    public void CallsWhiteLaundry()
     {
         HasCalledWhiteLaundry = true;
-    }
-
-    public bool TurnsAndChecksDirtyLaundry()
-    {
-        LaundryHasBeenTurned = true;
-        return HasDirtyLaundry();
     }
 
     public bool HasDirtyLaundry()
     {
         return Hand.Count == Settings.MaxCardsPerHand && Hand.All(card => card.Value < Value.Seven);
-    }
-
-    public bool TurnsAndChecksWhiteLaundry()
-    {
-        LaundryHasBeenTurned = true;
-        return HasWhiteLaundry();
     }
 
     public bool HasWhiteLaundry()
@@ -112,6 +109,18 @@ public class Player
         }
 
         return sevenCount == 1;
+    }
+    
+    public bool TurnsAndChecksDirtyLaundry()
+    {
+        LaundryHasBeenTurned = true;
+        return HasDirtyLaundry();
+    }
+
+    public bool TurnsAndChecksWhiteLaundry()
+    {
+        LaundryHasBeenTurned = true;
+        return HasWhiteLaundry();
     }
 
     public void ResetLaundryVariables()

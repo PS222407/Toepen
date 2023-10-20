@@ -1,4 +1,5 @@
 ﻿using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
 using Toepen_20_BusinessLogicLayer.Models;
 
@@ -13,7 +14,7 @@ public class PlayerKnocked : IState
 
     public void Start(Game game)
     {
-        throw new InvalidOperationException();
+        throw new AlreadyStartedException();
     }
 
     public void PlayerCallsDirtyLaundry(Game game, Player player)
