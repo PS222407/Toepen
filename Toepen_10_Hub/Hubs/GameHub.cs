@@ -87,6 +87,10 @@ public class GameHub : Hub
             {
                 await Clients.Caller.SendAsync("ReceiveMessage", null, "Warning! Game already started");
             }
+            catch (NotEnoughPlayersException e)
+            {
+                await Clients.Caller.SendAsync("ReceiveMessage", null, "Warning! Not enough players");
+            }
         }
     }
 
