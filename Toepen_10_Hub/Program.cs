@@ -12,6 +12,18 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<IDictionary<string, UserConnection>>(_ => new Dictionary<string, UserConnection>());
 builder.Services.AddSingleton<IGameService, GameService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
+
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -23,5 +35,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
     
 app.MapHub<GameHub>("/chatHubApi");
+
+app.UseCors();
 
 app.Run();
