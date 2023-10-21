@@ -23,7 +23,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -33,7 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-    
+
 app.MapHub<GameHub>("/chatHubApi");
 
 app.UseCors();

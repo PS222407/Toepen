@@ -15,8 +15,8 @@ public class GameTransformer
             // TODO: player play with open cards
             List<CardViewModel> cardViewModels = new();
             cardViewModels.AddRange(player.ConnectionId == connectionId
-                ? player.Hand.Select(card => new CardViewModel { Suit = card.Suit.ToString(), Value = (int)card.Value })
-                : player.Hand.Select(_ => new CardViewModel { Suit = "x", Value = 0 }));
+                ? player.Hand.Select(card => new CardViewModel { Suit = card.Suit.ToString(), Value = card.Value.ToString() })
+                : player.Hand.Select(_ => new CardViewModel { Suit = "x", Value = "X" }));
 
             PlayerViewModel playerViewModel = new()
             {
