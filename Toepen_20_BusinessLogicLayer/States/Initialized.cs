@@ -5,15 +5,14 @@ namespace Toepen_20_BusinessLogicLayer.States;
 
 public class Initialized : IState
 {
-    public bool TryAddPlayer(Game game, Player player)
+    public void AddPlayer(Game game, Player player)
     {
-        if (game.Players.Count < Game.MaxAmountOfPlayers)
+        if (game.Players.Count >= Game.MaxAmountOfPlayers)
         {
-            game.Players.Add(player);
-            return true;
+            throw new TooManyPlayersException();
         }
-
-        return false;
+        
+        game.Players.Add(player);
     }
 
     public void Start(Game game)

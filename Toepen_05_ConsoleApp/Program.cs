@@ -1,7 +1,8 @@
 ﻿using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
 
-Game game = new Game();
+Game game = new();
 
 // =========================================================
 // readline
@@ -149,9 +150,18 @@ void AddPlayer(string[] args)
     {
         Console.WriteLine($"Wrong command, please run: {Command.AddPlayer.ToString()} playername");
     }
-    else if (!game.TryAddPlayer(new Player(args[1])))
+
+    try
     {
-        Console.WriteLine("Lobby is either full or the game has been started!");
+        game.AddPlayer(new Player(args[1]));
+    }
+    catch (TooManyPlayersException e)
+    {
+        Console.WriteLine("Lobby is full");
+    }
+    catch (AlreadyStartedException e)
+    {
+        Console.WriteLine("Game has already been started!");
     }
 }
 

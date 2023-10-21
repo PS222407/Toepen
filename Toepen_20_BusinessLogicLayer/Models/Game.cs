@@ -33,19 +33,9 @@ public class Game
         RoomId = roomId;
     }
 
-    public bool TryAddPlayer(Player player)
+    public void AddPlayer(Player player)
     {
-        bool isSuccess = false;
-        try
-        {
-            isSuccess = State.TryAddPlayer(this, player);
-        }
-        catch (InvalidOperationException e)
-        {
-            Console.WriteLine("Cant perform this action right now");
-        }
-
-        return isSuccess;
+        State.AddPlayer(this, player);
     }
 
     // System input actions

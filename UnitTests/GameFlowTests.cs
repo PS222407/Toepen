@@ -29,7 +29,7 @@ public class GameFlowTests
         {
             Player player = players[i];
             Entity.SetIdOf(player, i + 1);
-            _game.TryAddPlayer(player);
+            _game.AddPlayer(player);
         }
 
         _game.Start();

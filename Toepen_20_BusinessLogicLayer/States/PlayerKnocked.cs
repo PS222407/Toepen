@@ -7,9 +7,9 @@ namespace Toepen_20_BusinessLogicLayer.States;
 
 public class PlayerKnocked : IState
 {
-    public bool TryAddPlayer(Game game, Player player)
+    public void AddPlayer(Game game, Player player)
     {
-        throw new InvalidOperationException();
+        throw new AlreadyStartedException();
     }
 
     public void Start(Game game)

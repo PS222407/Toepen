@@ -18,100 +18,77 @@ public class GameTests
     public void TooManyPlayersInGame_ReturnsTrue()
     {
         // Arrange
-        List<Player> players = new List<Player>
+        List<Player> players = new()
         {
-            new("Sam"),
-            new("Jens"),
-            new("Mylo"),
-            new("Niels"),
-            new("Bas"),
-            new("Gijs"),
-            new("Putin"),
+            new Player("Sam"),
+            new Player("Jens"),
+            new Player("Mylo"),
+            new Player("Niels"),
+            new Player("Bas"),
+            new Player("Gijs"),
+            new Player("Putin"),
         };
 
         // Act
-        bool result = true;
-        foreach (Player player in players)
-        {
-            if (!_game.TryAddPlayer(player))
-            {
-                result = false;
-            }
-        }
-
         // Assert
-        Assert.IsFalse(result);
+        Assert.Throws<TooManyPlayersException>(() =>
+        {
+            foreach (Player player in players)
+            {
+                _game.AddPlayer(player);
+            }            
+        });
     }
 
     [Test]
     public void MaxPlayersInGame_ReturnsTrue()
     {
         // Arrange
-        List<Player> players = new List<Player>
+        List<Player> players = new()
         {
-            new("Sam"),
-            new("Jens"),
-            new("Mylo"),
-            new("Niels"),
-            new("Bas"),
-            new("Gijs"),
+            new Player("Sam"),
+            new Player("Jens"),
+            new Player("Mylo"),
+            new Player("Niels"),
+            new Player("Bas"),
+            new Player("Gijs"),
         };
 
         // Act
-        bool result = true;
         foreach (Player player in players)
         {
-            if (!_game.TryAddPlayer(player))
-            {
-                result = false;
-            }
+            _game.AddPlayer(player);
         }
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.That(_game.Players, Has.Count.EqualTo(6));
     }
 
     [Test]
     public void MinPlayersInGame_ReturnsTrue()
     {
         // Arrange
-        List<Player> players = new List<Player>
+        List<Player> players = new()
         {
-            new("Sam"),
-            new("Jens"),
+            new Player("Sam"),
+            new Player("Jens"),
         };
 
         // Act
-        bool result = true;
         foreach (Player player in players)
         {
-            if (!_game.TryAddPlayer(player))
-            {
-                result = false;
-            }
+            _game.AddPlayer(player);
         }
         
         // Assert
-        Assert.IsTrue(result);
+        Assert.That(_game.Players, Has.Count.EqualTo(2));
     }
 
     [Test]
     public void LessThanMinPlayersInGame_ReturnsTrue()
     {
         // Arrange
-        List<Player> players = new List<Player>
-        {
-            new("Sam"),
-        };
-
-        bool result = true;
-        foreach (Player player in players)
-        {
-            if (!_game.TryAddPlayer(player))
-            {
-                result = false;
-            }
-        }
+        _game.AddPlayer(new Player("Sam"));
 
         // Act
         // Assert
@@ -131,7 +108,7 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            _game.TryAddPlayer(player);
+            _game.AddPlayer(player);
         }
 
         // Act
@@ -154,7 +131,7 @@ public class GameTests
 
         foreach (Player player in players)
         {
-            _game.TryAddPlayer(player);
+            _game.AddPlayer(player);
         }
 
         // Act

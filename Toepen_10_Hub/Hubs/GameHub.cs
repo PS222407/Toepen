@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
+using Toepen_10_Hub.Enums;
 using Toepen_10_Hub.Interfaces;
 using Toepen_10_Hub.Services;
 using Toepen_10_Hub.ViewModels;
@@ -32,7 +33,7 @@ public class GameHub : Hub
 
             Clients.Group(userConnection.RoomCode).SendAsync("ReceiveMessage", null, $"{userConnection.UserName} has left");
             SendConnectedUsers(userConnection.RoomCode);
-            
+
             return base.OnDisconnectedAsync(exception);
         }
 
@@ -49,22 +50,27 @@ public class GameHub : Hub
 
     public async Task JoinRoom(UserConnection userConnection)
     {
-        string message;
         bool roomExists = _connections.Any(c => c.Value.RoomCode == userConnection.RoomCode);
-        if (roomExists)
+        Game game = roomExists ? _gameService.Games.First(g => g.RoomId == userConnection.RoomCode) : new Game(userConnection.RoomCode);
+        if (!roomExists)
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
-            bool isSuccess = game.TryAddPlayer(new Player(Context.ConnectionId, userConnection.UserName));
-            // TODO: handle failure
-            message = $"{userConnection.UserName} has joined the room";
-        }
-        else
-        {
-            Game game = new(userConnection.RoomCode);
-            bool isSuccess = game.TryAddPlayer(new Player(Context.ConnectionId, userConnection.UserName));
-            // TODO: handle failure
             _gameService.AddGame(game);
-            message = $"A new room has been created: {userConnection.RoomCode}";
+        }
+        string message = roomExists ? $"{userConnection.UserName} has joined the room" : $"A new room has been created: {userConnection.RoomCode}";
+        
+        try
+        {
+            game.AddPlayer(new Player(Context.ConnectionId, userConnection.UserName));
+        }
+        catch (AlreadyStartedException e)
+        {
+            await SendFlashMessage(FlashType.Error, "Game already started");
+            return;
+        }
+        catch (TooManyPlayersException e)
+        {
+            await SendFlashMessage(FlashType.Error, "Game is full");
+            return;
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.RoomCode);
@@ -73,7 +79,7 @@ public class GameHub : Hub
         await Clients.Group(userConnection.RoomCode).SendAsync("ReceiveMessage", null, message);
         await SendConnectedUsers(userConnection.RoomCode);
     }
-    
+
     public Task SendConnectedUsers(string room)
     {
         IEnumerable<string> users = _connections.Values
@@ -96,13 +102,18 @@ public class GameHub : Hub
             }
             catch (AlreadyStartedException e)
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", null, "Warning! Game already started");
+                await SendFlashMessage(FlashType.Error, "Game already started");
             }
             catch (NotEnoughPlayersException e)
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", null, "Warning! Not enough players");
+                await SendFlashMessage(FlashType.Warning, "Not enough players");
             }
         }
+    }
+
+    private async Task SendFlashMessage(FlashType type, string message)
+    {
+        await Clients.Caller.SendAsync("ReceiveFlashMessage", type.ToString(), message);
     }
 
     private async Task SendCurrentGameInfo()
@@ -120,7 +131,7 @@ public class GameHub : Hub
                 SetUserOrder(gameViewModel);
                 
                 // TODO: Send Names values instead of integers
-                
+
                 await Clients.Client(connectionId).SendAsync(
                     "ReceiveGame",
                     null,

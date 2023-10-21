@@ -4,7 +4,7 @@ namespace Toepen_20_BusinessLogicLayer.States;
 
 public interface IState
 {
-    public bool TryAddPlayer(Game game, Player player);
+    public void AddPlayer(Game game, Player player);
     
     public void Start(Game game);
     
