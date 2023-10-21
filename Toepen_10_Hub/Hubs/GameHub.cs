@@ -117,7 +117,7 @@ public class GameHub : Hub
             foreach (string connectionId in usersInRoom)
             {
                 GameViewModel gameViewModel = gameTransformer.GameToViewModel(game, connectionId);
-                gameViewModel.Players.Sort((a, b) => (a.IsYou ? -1 : 0) - (b.IsYou ? -1 : 0));
+                SetUserOrder(gameViewModel);
                 
                 // TODO: Send Names values instead of integers
                 
@@ -128,6 +128,22 @@ public class GameHub : Hub
                     JsonSerializer.Serialize(gameViewModel)
                 );
             }
+        }
+    }
+    
+    private static void SetUserOrder(GameViewModel gameViewModel)
+    {
+        int playersIndex = gameViewModel.Players.FindIndex(user => user.IsYou);
+
+        if (playersIndex != -1)
+        {
+            List<PlayerViewModel> firstPart = gameViewModel.Players.GetRange(playersIndex, gameViewModel.Players.Count - playersIndex);
+            List<PlayerViewModel> secondPart = gameViewModel.Players.GetRange(0, playersIndex);
+
+            gameViewModel.Players.Clear();
+
+            gameViewModel.Players.AddRange(firstPart);
+            gameViewModel.Players.AddRange(secondPart);
         }
     }
 }
