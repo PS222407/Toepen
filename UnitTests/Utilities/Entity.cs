@@ -18,7 +18,7 @@ public static class Entity
         FieldInfo handProperty = playerType.GetField("_hand", BindingFlags.Instance | BindingFlags.NonPublic);
         handProperty.SetValue(player, cards);
     }
-    
+
     public static void SetPlayedCardsOf(Player player, List<Card> cards)
     {
         Type playerType = player.GetType();
@@ -49,7 +49,6 @@ public static class Entity
 
     public static void SetHasCalledDirtyLaundryOf(Player player, bool status)
     {
-        
         Type roundType = player.GetType();
         FieldInfo fi = roundType.GetField($"<{nameof(Player.HasCalledDirtyLaundry)}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
         fi.SetValue(player, status);

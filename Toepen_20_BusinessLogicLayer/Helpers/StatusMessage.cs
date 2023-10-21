@@ -8,11 +8,11 @@ public class StatusMessage
     public bool Success { get; private set; }
 
     public Message? Message { get; private set; }
-    
+
     public Player Winner { get; private set; }
-    
+
     public int? RoundNumber { get; private set; }
-    
+
     public int? SetNumber { get; private set; }
 
     public StatusMessage(bool success)
@@ -25,7 +25,7 @@ public class StatusMessage
         Success = success;
         Message = message;
     }
-    
+
     public StatusMessage(bool success, Message message, Player winner, int roundNumber)
     {
         Success = success;

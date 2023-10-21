@@ -7,7 +7,7 @@ namespace UnitTests;
 public class GameTests
 {
     private Game _game;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -26,7 +26,7 @@ public class GameTests
             new Player("Niels"),
             new Player("Bas"),
             new Player("Gijs"),
-            new Player("Putin"),
+            new Player("Putin")
         };
 
         // Act
@@ -36,7 +36,7 @@ public class GameTests
             foreach (Player player in players)
             {
                 _game.AddPlayer(player);
-            }            
+            }
         });
     }
 
@@ -51,7 +51,7 @@ public class GameTests
             new Player("Mylo"),
             new Player("Niels"),
             new Player("Bas"),
-            new Player("Gijs"),
+            new Player("Gijs")
         };
 
         // Act
@@ -71,7 +71,7 @@ public class GameTests
         List<Player> players = new()
         {
             new Player("Sam"),
-            new Player("Jens"),
+            new Player("Jens")
         };
 
         // Act
@@ -79,7 +79,7 @@ public class GameTests
         {
             _game.AddPlayer(player);
         }
-        
+
         // Assert
         Assert.That(_game.Players, Has.Count.EqualTo(2));
     }
@@ -99,11 +99,11 @@ public class GameTests
     public void GameAlreadyStarted_ReturnsTrue()
     {
         // Arrange
-        List<Player> players = new List<Player>
+        List<Player> players = new()
         {
-            new("Sam"),
-            new("Jens"),
-            new("Mylo"),
+            new Player("Sam"),
+            new Player("Jens"),
+            new Player("Mylo")
         };
 
         foreach (Player player in players)
@@ -122,11 +122,11 @@ public class GameTests
     public void CardDealtToPlayers_ReturnsTrue()
     {
         // Arrange
-        List<Player> players = new List<Player>
+        List<Player> players = new()
         {
             new("Sam"),
             new("Jens"),
-            new("Mylo"),
+            new("Mylo")
         };
 
         foreach (Player player in players)
@@ -146,6 +146,6 @@ public class GameTests
         }
 
         // Assert
-        Assert.IsTrue(result);
+        Assert.That(result, Is.True);
     }
 }

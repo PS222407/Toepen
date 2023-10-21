@@ -25,7 +25,6 @@ public class Game
 
     public Game()
     {
-        
     }
 
     public Game(string roomId)

@@ -11,7 +11,7 @@ public class Initialized : IState
         {
             throw new TooManyPlayersException();
         }
-        
+
         game.Players.Add(player);
     }
 

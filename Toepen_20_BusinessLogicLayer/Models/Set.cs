@@ -49,7 +49,7 @@ public class Set
         {
             foreach (Value value in Enum.GetValues(typeof(Value)))
             {
-                Card card = new Card(suit, value);
+                Card card = new(suit, value);
                 _deck.Add(card);
             }
         }
@@ -57,7 +57,7 @@ public class Set
 
     private void ShuffleDeck()
     {
-        Random rnd = new Random();
+        Random rnd = new();
         List<Card> shuffledDeck = _deck.OrderBy(x => rnd.Next()).ToList();
         _deck = shuffledDeck;
     }
@@ -276,9 +276,9 @@ public class Set
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
             winnerStatus.WinnerOfSet = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds;
             winnerStatus.RoundNumber = Rounds.Count;
-            
+
             HandleWinner();
-            
+
             return winnerStatus;
         }
 
@@ -307,9 +307,9 @@ public class Set
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;
             winnerStatus.WinnerOfSet = winnerStatus.WinnerOfSet || Rounds.Count == Settings.MaxRounds;
             winnerStatus.RoundNumber = Rounds.Count;
-            
+
             HandleWinner();
-            
+
             return winnerStatus;
         }
 
@@ -328,7 +328,7 @@ public class Set
             winnerStatus.RoundNumber = Rounds.Count;
 
             HandleWinner();
-            
+
             return winnerStatus;
         }
 

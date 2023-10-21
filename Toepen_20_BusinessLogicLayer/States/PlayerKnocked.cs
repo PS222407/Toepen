@@ -62,45 +62,47 @@ public class PlayerKnocked : IState
             {
                 game.State = new ActiveRound();
             }
+
             return;
         }
-        
+
         if (winnerStatus.WinnerOfSet)
         {
             if (game.GetWinner() != null)
             {
                 return;
             }
-                
+
             return;
         }
-            
+
         game.State = new GameIsWonAndOver();
     }
 
     public void PlayerFolds(Game game, Player player)
     {
         WinnerStatus? winnerStatus = game.CurrentSet!.Fold(player);
-        
+
         if (winnerStatus == null)
         {
             if (game.CurrentSet.CurrentRound.State == GameState.WaitingForCardOrKnock)
             {
                 game.State = new ActiveRound();
             }
+
             return;
         }
-        
+
         if (winnerStatus.WinnerOfSet)
         {
             if (game.GetWinner() != null)
             {
                 return;
             }
-                
+
             return;
         }
-            
+
         game.State = new GameIsWonAndOver();
     }
 

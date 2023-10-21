@@ -56,8 +56,9 @@ public class GameHub : Hub
         {
             _gameService.AddGame(game);
         }
+
         string message = roomExists ? $"{userConnection.UserName} has joined the room" : $"A new room has been created: {userConnection.RoomCode}";
-        
+
         try
         {
             game.AddPlayer(new Player(Context.ConnectionId, userConnection.UserName));
@@ -129,7 +130,7 @@ public class GameHub : Hub
             {
                 GameViewModel gameViewModel = gameTransformer.GameToViewModel(game, connectionId);
                 SetUserOrder(gameViewModel);
-                
+
                 // TODO: Send Names values instead of integers
 
                 await Clients.Client(connectionId).SendAsync(
@@ -141,7 +142,7 @@ public class GameHub : Hub
             }
         }
     }
-    
+
     private static void SetUserOrder(GameViewModel gameViewModel)
     {
         int playersIndex = gameViewModel.Players.FindIndex(user => user.IsYou);

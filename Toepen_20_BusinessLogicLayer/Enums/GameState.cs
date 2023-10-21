@@ -7,5 +7,5 @@ public enum GameState
     ActiveRound,
     PlayerKnocked,
     WaitingForCardOrKnock,
-    SetHasBeenWon,
+    SetHasBeenWon
 }

@@ -13,5 +13,5 @@ public enum Command
     Fold,
     PlayCard,
     StopLaundryTurnTimerAndStartLaundryTimer,
-    StopLaundryTurnTimerAndStartRound,
+    StopLaundryTurnTimerAndStartRound
 }

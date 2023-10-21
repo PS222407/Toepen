@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Toepen_20_BusinessLogicLayer\Toepen_20_BusinessLogicLayer.csproj" />
+        <ProjectReference Include="..\Toepen_20_BusinessLogicLayer\Toepen_20_BusinessLogicLayer.csproj"/>
     </ItemGroup>
 
 </Project>

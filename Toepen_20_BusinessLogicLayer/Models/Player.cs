@@ -6,10 +6,10 @@ namespace Toepen_20_BusinessLogicLayer.Models;
 
 public class Player
 {
-    static int _nextId;
+    private static int _nextId;
 
     public int Id { get; }
-    
+
     public string ConnectionId { get; private set; }
 
     public string Name { get; private set; }
@@ -37,7 +37,7 @@ public class Player
         Id = Interlocked.Increment(ref _nextId);
         Name = name;
     }
-    
+
     public Player(string connectionId, string name)
     {
         Id = Interlocked.Increment(ref _nextId);
@@ -110,7 +110,7 @@ public class Player
 
         return sevenCount == 1;
     }
-    
+
     public bool TurnsAndChecksDirtyLaundry()
     {
         LaundryHasBeenTurned = true;

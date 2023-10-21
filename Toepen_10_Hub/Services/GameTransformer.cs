@@ -30,6 +30,7 @@ public class GameTransformer
             };
             playerViewModels.Add(playerViewModel);
         }
+
         gameViewModel.Players = playerViewModels;
         gameViewModel.SetNumber = game.Sets.Count;
         gameViewModel.RoundNumber = game.CurrentSet?.Rounds.Count ?? 0;

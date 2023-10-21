@@ -16,13 +16,13 @@ public class GameFlowTests
     [SetUp]
     public void Setup()
     {
-        _game = new();
+        _game = new Game();
 
         List<Player> players = new()
         {
-            new("Sam"),
-            new("Jens"),
-            new("Mylo"),
+            new Player("Sam"),
+            new Player("Jens"),
+            new Player("Mylo")
         };
 
         for (int i = 0; i < players.Count; i++)
@@ -45,36 +45,36 @@ public class GameFlowTests
 
             if (i == 0)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Spades, Value.Ace),
-                    new(Suit.Diamonds, Value.King),
-                    new(Suit.Clubs, Value.Seven),
-                    new(Suit.Diamonds, Value.Ace),
+                    new Card(Suit.Spades, Value.Ace),
+                    new Card(Suit.Diamonds, Value.King),
+                    new Card(Suit.Clubs, Value.Seven),
+                    new Card(Suit.Diamonds, Value.Ace)
                 };
                 Entity.SetHandOf(player, cards);
             }
 
             if (i == 1)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Hearts, Value.Jack),
-                    new(Suit.Hearts, Value.King),
-                    new(Suit.Diamonds, Value.Jack),
-                    new(Suit.Hearts, Value.Ace),
+                    new Card(Suit.Hearts, Value.Jack),
+                    new Card(Suit.Hearts, Value.King),
+                    new Card(Suit.Diamonds, Value.Jack),
+                    new Card(Suit.Hearts, Value.Ace)
                 };
                 Entity.SetHandOf(player, cards);
             }
 
             if (i == 2)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Clubs, Value.Nine),
-                    new(Suit.Diamonds, Value.Nine),
-                    new(Suit.Diamonds, Value.Queen),
-                    new(Suit.Hearts, Value.Queen),
+                    new Card(Suit.Clubs, Value.Nine),
+                    new Card(Suit.Diamonds, Value.Nine),
+                    new Card(Suit.Diamonds, Value.Queen),
+                    new Card(Suit.Hearts, Value.Queen)
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -126,36 +126,36 @@ public class GameFlowTests
 
             if (i == 0)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Hearts, Value.Ten),
-                    new(Suit.Spades, Value.Jack),
-                    new(Suit.Spades, Value.King),
-                    new(Suit.Clubs, Value.Jack),
+                    new Card(Suit.Hearts, Value.Ten),
+                    new Card(Suit.Spades, Value.Jack),
+                    new Card(Suit.Spades, Value.King),
+                    new Card(Suit.Clubs, Value.Jack)
                 };
                 Entity.SetHandOf(player, cards);
             }
 
             if (i == 1)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Diamonds, Value.Eight),
-                    new(Suit.Spades, Value.Seven),
-                    new(Suit.Clubs, Value.Queen),
-                    new(Suit.Diamonds, Value.Ten),
+                    new Card(Suit.Diamonds, Value.Eight),
+                    new Card(Suit.Spades, Value.Seven),
+                    new Card(Suit.Clubs, Value.Queen),
+                    new Card(Suit.Diamonds, Value.Ten)
                 };
                 Entity.SetHandOf(player, cards);
             }
 
             if (i == 2)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Spades, Value.Nine),
-                    new(Suit.Spades, Value.Eight),
-                    new(Suit.Clubs, Value.Ace),
-                    new(Suit.Hearts, Value.Nine),
+                    new Card(Suit.Spades, Value.Nine),
+                    new Card(Suit.Spades, Value.Eight),
+                    new Card(Suit.Clubs, Value.Ace),
+                    new Card(Suit.Hearts, Value.Nine)
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -197,36 +197,36 @@ public class GameFlowTests
 
             if (i == 0)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Hearts, Value.Ace),
-                    new(Suit.Diamonds, Value.Nine),
-                    new(Suit.Hearts, Value.King),
-                    new(Suit.Diamonds, Value.Queen),
+                    new Card(Suit.Hearts, Value.Ace),
+                    new Card(Suit.Diamonds, Value.Nine),
+                    new Card(Suit.Hearts, Value.King),
+                    new Card(Suit.Diamonds, Value.Queen)
                 };
                 Entity.SetHandOf(player, cards);
             }
 
             if (i == 1)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Hearts, Value.Jack),
-                    new(Suit.Spades, Value.Eight),
-                    new(Suit.Diamonds, Value.Ace),
-                    new(Suit.Hearts, Value.Seven),
+                    new Card(Suit.Hearts, Value.Jack),
+                    new Card(Suit.Spades, Value.Eight),
+                    new Card(Suit.Diamonds, Value.Ace),
+                    new Card(Suit.Hearts, Value.Seven)
                 };
                 Entity.SetHandOf(player, cards);
             }
 
             if (i == 2)
             {
-                List<Card> cards = new List<Card>
+                List<Card> cards = new()
                 {
-                    new(Suit.Clubs, Value.Seven),
-                    new(Suit.Clubs, Value.Jack),
-                    new(Suit.Spades, Value.Jack),
-                    new(Suit.Spades, Value.Ace),
+                    new Card(Suit.Clubs, Value.Seven),
+                    new Card(Suit.Clubs, Value.Jack),
+                    new Card(Suit.Spades, Value.Jack),
+                    new Card(Suit.Spades, Value.Ace)
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -261,19 +261,19 @@ public class GameFlowTests
         // sam = 2, jens = 2, mylo = 2
 
         // TODO: Add more sets
-        Assert.IsTrue(winnerSet1Round1IsCorrect &&
-                      winnerSet1Round2IsCorrect &&
-                      winnerSet1Round3IsCorrect &&
-                      winnerSet1Round4IsCorrect &&
-                      winnerSet2Round1IsCorrect &&
-                      winnerSet2Round2IsCorrect &&
-                      winnerSet2Round3IsCorrect &&
-                      winnerSet2Round4IsCorrect &&
-                      winnerSet3Round1IsCorrect &&
-                      winnerSet3Round2IsCorrect &&
-                      winnerSet3Round3IsCorrect &&
-                      winnerSet3Round4IsCorrect
-        );
+        Assert.That(winnerSet1Round1IsCorrect &&
+                    winnerSet1Round2IsCorrect &&
+                    winnerSet1Round3IsCorrect &&
+                    winnerSet1Round4IsCorrect &&
+                    winnerSet2Round1IsCorrect &&
+                    winnerSet2Round2IsCorrect &&
+                    winnerSet2Round3IsCorrect &&
+                    winnerSet2Round4IsCorrect &&
+                    winnerSet3Round1IsCorrect &&
+                    winnerSet3Round2IsCorrect &&
+                    winnerSet3Round3IsCorrect &&
+                    winnerSet3Round4IsCorrect
+            , Is.True);
     }
 
     [Test]
@@ -425,7 +425,7 @@ public class GameFlowTests
     }
 
     [Test]
-    public void  AllPlayersCallLaundry_PlayersGetNewCardsAndPenaltyPoints()
+    public void AllPlayersCallLaundry_PlayersGetNewCardsAndPenaltyPoints()
     {
         // ARRANGE
         Game game = _game;

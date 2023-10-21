@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Toepen_20_BusinessLogicLayer\Toepen_20_BusinessLogicLayer.csproj" />
+        <ProjectReference Include="..\Toepen_20_BusinessLogicLayer\Toepen_20_BusinessLogicLayer.csproj"/>
     </ItemGroup>
 
 
