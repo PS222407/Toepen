@@ -31,7 +31,8 @@ public class GameHub : Hub
             }
 
             Clients.Group(userConnection.RoomCode).SendAsync("ReceiveMessage", null, $"{userConnection.UserName} has left");
-
+            SendConnectedUsers(userConnection.RoomCode);
+            
             return base.OnDisconnectedAsync(exception);
         }
 
@@ -70,6 +71,16 @@ public class GameHub : Hub
         _connections[Context.ConnectionId] = userConnection;
 
         await Clients.Group(userConnection.RoomCode).SendAsync("ReceiveMessage", null, message);
+        await SendConnectedUsers(userConnection.RoomCode);
+    }
+    
+    public Task SendConnectedUsers(string room)
+    {
+        IEnumerable<string> users = _connections.Values
+            .Where(c => c.RoomCode == room)
+            .Select(c => c.UserName);
+
+        return Clients.Group(room).SendAsync("UsersInRoom", users);
     }
 
     public async Task StartGame()
@@ -106,9 +117,12 @@ public class GameHub : Hub
             foreach (string connectionId in usersInRoom)
             {
                 GameViewModel gameViewModel = gameTransformer.GameToViewModel(game, connectionId);
-
+                gameViewModel.Players.Sort((a, b) => (a.IsYou ? -1 : 0) - (b.IsYou ? -1 : 0));
+                
+                // TODO: Send Names values instead of integers
+                
                 await Clients.Client(connectionId).SendAsync(
-                    "ReceiveMessage",
+                    "ReceiveGame",
                     null,
                     null,
                     JsonSerializer.Serialize(gameViewModel)
