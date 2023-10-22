@@ -26,7 +26,7 @@ public class GameTests
             new Player("Niels"),
             new Player("Bas"),
             new Player("Gijs"),
-            new Player("Putin")
+            new Player("Putin"),
         };
 
         // Act
@@ -51,7 +51,7 @@ public class GameTests
             new Player("Mylo"),
             new Player("Niels"),
             new Player("Bas"),
-            new Player("Gijs")
+            new Player("Gijs"),
         };
 
         // Act
@@ -71,7 +71,7 @@ public class GameTests
         List<Player> players = new()
         {
             new Player("Sam"),
-            new Player("Jens")
+            new Player("Jens"),
         };
 
         // Act
@@ -103,7 +103,7 @@ public class GameTests
         {
             new Player("Sam"),
             new Player("Jens"),
-            new Player("Mylo")
+            new Player("Mylo"),
         };
 
         foreach (Player player in players)
@@ -124,9 +124,9 @@ public class GameTests
         // Arrange
         List<Player> players = new()
         {
-            new("Sam"),
-            new("Jens"),
-            new("Mylo")
+            new Player("Sam"),
+            new Player("Jens"),
+            new Player("Mylo"),
         };
 
         foreach (Player player in players)

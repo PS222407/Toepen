@@ -15,9 +15,11 @@ public class Player
     public string Name { get; private set; }
 
     private List<Card> _hand = new();
+
     public IReadOnlyList<Card> Hand => _hand;
 
     private List<Card> _playedCards = new();
+
     public IReadOnlyList<Card> PlayedCards => _playedCards;
 
     public int PenaltyPoints { get; private set; }
@@ -84,6 +86,7 @@ public class Player
         {
             throw new AlreadyCalledLaundryException();
         }
+
         HasCalledDirtyLaundry = true;
     }
 
@@ -94,6 +97,7 @@ public class Player
         {
             throw new AlreadyCalledLaundryException();
         }
+
         HasCalledWhiteLaundry = true;
     }
 
@@ -153,7 +157,7 @@ public class Player
         {
             throw new CardNotFoundException();
         }
-        
+
         _hand.Remove(cardFromHand);
         _playedCards.Add(cardFromHand);
     }

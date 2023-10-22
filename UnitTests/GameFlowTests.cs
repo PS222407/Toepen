@@ -23,7 +23,7 @@ public class GameFlowTests
         {
             new Player("Sam"),
             new Player("Jens"),
-            new Player("Mylo")
+            new Player("Mylo"),
         };
 
         for (int i = 0; i < players.Count; i++)
@@ -51,7 +51,7 @@ public class GameFlowTests
                     new Card(Suit.Spades, Value.Ace),
                     new Card(Suit.Diamonds, Value.King),
                     new Card(Suit.Clubs, Value.Seven),
-                    new Card(Suit.Diamonds, Value.Ace)
+                    new Card(Suit.Diamonds, Value.Ace),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -63,7 +63,7 @@ public class GameFlowTests
                     new Card(Suit.Hearts, Value.Jack),
                     new Card(Suit.Hearts, Value.King),
                     new Card(Suit.Diamonds, Value.Jack),
-                    new Card(Suit.Hearts, Value.Ace)
+                    new Card(Suit.Hearts, Value.Ace),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -75,7 +75,7 @@ public class GameFlowTests
                     new Card(Suit.Clubs, Value.Nine),
                     new Card(Suit.Diamonds, Value.Nine),
                     new Card(Suit.Diamonds, Value.Queen),
-                    new Card(Suit.Hearts, Value.Queen)
+                    new Card(Suit.Hearts, Value.Queen),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -118,7 +118,7 @@ public class GameFlowTests
 
         bool winnerSet1Round4IsCorrect = game.Sets[0].Rounds[3].WinnerStatus.Winner.Id == 2;
         // sam = 1, jens = 0, mylo = 1
-        var a = game.GetActivePlayer();
+        Player? a = game.GetActivePlayer();
 
         // SET 2
         for (int i = 0; i < _game.Players.Count; i++)
@@ -132,7 +132,7 @@ public class GameFlowTests
                     new Card(Suit.Hearts, Value.Ten),
                     new Card(Suit.Spades, Value.Jack),
                     new Card(Suit.Spades, Value.King),
-                    new Card(Suit.Clubs, Value.Jack)
+                    new Card(Suit.Clubs, Value.Jack),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -144,7 +144,7 @@ public class GameFlowTests
                     new Card(Suit.Diamonds, Value.Eight),
                     new Card(Suit.Spades, Value.Seven),
                     new Card(Suit.Clubs, Value.Queen),
-                    new Card(Suit.Diamonds, Value.Ten)
+                    new Card(Suit.Diamonds, Value.Ten),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -156,7 +156,7 @@ public class GameFlowTests
                     new Card(Suit.Spades, Value.Nine),
                     new Card(Suit.Spades, Value.Eight),
                     new Card(Suit.Clubs, Value.Ace),
-                    new Card(Suit.Hearts, Value.Nine)
+                    new Card(Suit.Hearts, Value.Nine),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -190,7 +190,6 @@ public class GameFlowTests
         bool winnerSet2Round4IsCorrect = 3 == game.Sets[1].Rounds[3].WinnerStatus.Winner.Id;
         // sam = 2, jens = 1, mylo = 1
 
-
         // SET 3
         for (int i = 0; i < _game.Players.Count; i++)
         {
@@ -203,7 +202,7 @@ public class GameFlowTests
                     new Card(Suit.Hearts, Value.Ace),
                     new Card(Suit.Diamonds, Value.Nine),
                     new Card(Suit.Hearts, Value.King),
-                    new Card(Suit.Diamonds, Value.Queen)
+                    new Card(Suit.Diamonds, Value.Queen),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -215,7 +214,7 @@ public class GameFlowTests
                     new Card(Suit.Hearts, Value.Jack),
                     new Card(Suit.Spades, Value.Eight),
                     new Card(Suit.Diamonds, Value.Ace),
-                    new Card(Suit.Hearts, Value.Seven)
+                    new Card(Suit.Hearts, Value.Seven),
                 };
                 Entity.SetHandOf(player, cards);
             }
@@ -227,7 +226,7 @@ public class GameFlowTests
                     new Card(Suit.Clubs, Value.Seven),
                     new Card(Suit.Clubs, Value.Jack),
                     new Card(Suit.Spades, Value.Jack),
-                    new Card(Suit.Spades, Value.Ace)
+                    new Card(Suit.Spades, Value.Ace),
                 };
                 Entity.SetHandOf(player, cards);
             }

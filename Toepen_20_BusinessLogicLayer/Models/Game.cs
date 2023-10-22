@@ -17,6 +17,7 @@ public class Game
     public List<Player> Players { get; set; } = new();
 
     private List<Set> _sets = new();
+
     public IReadOnlyList<Set> Sets => _sets;
 
     public Set? CurrentSet { get; private set; }
@@ -27,7 +28,7 @@ public class Game
     {
         RoomId = roomId;
     }
-    
+
     public Player? FindPlayerByConnectionId(string connectionId)
     {
         return Players.Find(p => p.ConnectionId == connectionId);
@@ -42,7 +43,7 @@ public class Game
     {
         State.AddPlayer(this, player);
     }
-    
+
     public Player? GetActivePlayer()
     {
         return CurrentSet?.CurrentRound?.ActivePlayer;
@@ -54,6 +55,7 @@ public class Game
     }
 
     #region Player input actions
+
     /// <exception cref="AlreadyStartedException"></exception>
     /// <exception cref="NotEnoughPlayersException"></exception>
     public void Start()
@@ -61,7 +63,7 @@ public class Game
         State.Start(this);
         StartNewSet();
     }
-    
+
     /// <exception cref="PlayerNotFoundException"></exception>
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="AlreadyCalledLaundryException"></exception>
@@ -89,7 +91,7 @@ public class Game
 
         State.PlayerCallsWhiteLaundry(this, player);
     }
-    
+
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="PlayerNotFoundException"></exception>
     /// <exception cref="InvalidStateException"></exception>
@@ -134,7 +136,6 @@ public class Game
             throw new PlayerNotFoundException();
         }
 
-
         State.PlayerChecks(this, player);
     }
 
@@ -147,7 +148,7 @@ public class Game
         {
             throw new PlayerNotFoundException();
         }
-        
+
         State.PlayerFolds(this, player);
     }
 
@@ -161,11 +162,12 @@ public class Game
         {
             throw new PlayerNotFoundException();
         }
-        
+
         State.PlayerPlaysCard(this, player, new Card(card.Suit, card.Value));
     }
+
     #endregion
-    
+
     /// <exception cref="InvalidStateException"></exception>
     public void BlockLaundryTurnCallsAndWaitForLaundryCalls()
     {

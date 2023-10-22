@@ -378,7 +378,7 @@ void PlayCard(string[] args)
         {
             Console.WriteLine("Cant create card with those values");
         }
-        
+
         game.PlayerPlaysCard(int.Parse(args[1]), new Card(cardSuit.Value, cardValue.Value));
     }
     catch (InvalidStateException e)
@@ -392,7 +392,6 @@ void PlayCard(string[] args)
     Console.WriteLine($"Player {args[1]} plays {args[2]} {args[3]}");
     Console.WriteLine("---------------------");
 }
-
 
 Value? TransformValue(string value)
 {

@@ -17,7 +17,7 @@ public class PlayerTests
             new Card(Suit.Spades, Value.Ace),
             new Card(Suit.Diamonds, Value.King),
             new Card(Suit.Clubs, Value.Seven),
-            new Card(Suit.Diamonds, Value.Ace)
+            new Card(Suit.Diamonds, Value.Ace),
         };
         Entity.SetHandOf(playerWithWhiteLaundry, cards);
 
@@ -38,7 +38,7 @@ public class PlayerTests
             new Card(Suit.Hearts, Value.Jack),
             new Card(Suit.Hearts, Value.King),
             new Card(Suit.Diamonds, Value.Jack),
-            new Card(Suit.Hearts, Value.Ace)
+            new Card(Suit.Hearts, Value.Ace),
         };
         Entity.SetHandOf(playerWithDirtyLaundry, cards);
 
@@ -59,7 +59,7 @@ public class PlayerTests
             new Card(Suit.Clubs, Value.Nine),
             new Card(Suit.Diamonds, Value.Nine),
             new Card(Suit.Diamonds, Value.Queen),
-            new Card(Suit.Hearts, Value.Queen)
+            new Card(Suit.Hearts, Value.Queen),
         };
         Entity.SetHandOf(playerWithoutWhiteLaundry, cards);
 
@@ -80,7 +80,7 @@ public class PlayerTests
             new Card(Suit.Clubs, Value.Nine),
             new Card(Suit.Diamonds, Value.Nine),
             new Card(Suit.Diamonds, Value.Queen),
-            new Card(Suit.Hearts, Value.Queen)
+            new Card(Suit.Hearts, Value.Queen),
         };
         Entity.SetHandOf(playerWithoutDirtyLaundry, cards);
 
@@ -102,14 +102,14 @@ public class PlayerTests
             new(Suit.Clubs, Value.Ace),
             new(Suit.Diamonds, Value.Ace),
             new(Suit.Spades, Value.Ace),
-            new(Suit.Hearts, Value.Ace)
+            new(Suit.Hearts, Value.Ace),
         });
         Entity.SetPlayedCardsOf(player, new List<Card>
         {
             new(Suit.Clubs, Value.Ace),
             new(Suit.Diamonds, Value.Ace),
             new(Suit.Spades, Value.Ace),
-            new(Suit.Hearts, Value.Ace)
+            new(Suit.Hearts, Value.Ace),
         });
         Entity.SetHasFoldedOf(player, true);
         Entity.SetHasCalledDirtyLaundryOf(player, true);
@@ -241,7 +241,7 @@ public class PlayerTests
             new Card(Suit.Clubs, Value.Jack),
             new Card(Suit.Spades, Value.Jack),
             new Card(Suit.Diamonds, Value.Jack),
-            new Card(Suit.Hearts, Value.Jack)
+            new Card(Suit.Hearts, Value.Jack),
         };
         Entity.SetHandOf(player, cards);
 
@@ -262,7 +262,7 @@ public class PlayerTests
             new Card(Suit.Clubs, Value.Jack),
             new Card(Suit.Spades, Value.Jack),
             new Card(Suit.Diamonds, Value.Seven),
-            new Card(Suit.Hearts, Value.Jack)
+            new Card(Suit.Hearts, Value.Jack),
         };
         Entity.SetHandOf(player, cards);
 

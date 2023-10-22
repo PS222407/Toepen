@@ -28,7 +28,7 @@ public class GameTransformer
                 HasKnocked = game.GetPlayerWhoKnocked()?.ConnectionId == connectionId,
                 CalledDirtyLaundry = player.HasCalledDirtyLaundry,
                 CalledWhiteLaundry = player.HasCalledWhiteLaundry,
-                Hand = cardViewModels
+                Hand = cardViewModels,
             };
             playerViewModels.Add(playerViewModel);
         }
@@ -40,7 +40,7 @@ public class GameTransformer
 
         return gameViewModel;
     }
-    
+
     /// <exception cref="CardNotFoundException"></exception>
     public static Card CardViewModelToCard(CardViewModel cardViewModel)
     {

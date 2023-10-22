@@ -207,7 +207,7 @@ public class GameHub : Hub<IGameClient>
             }
         }
     }
-    
+
     public async Task TurnLaundry(int victimId)
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
@@ -235,7 +235,7 @@ public class GameHub : Hub<IGameClient>
             }
         }
     }
-    
+
     public async Task Knock()
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
@@ -258,7 +258,7 @@ public class GameHub : Hub<IGameClient>
             }
         }
     }
-    
+
     public async Task Check()
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
@@ -281,7 +281,7 @@ public class GameHub : Hub<IGameClient>
             }
         }
     }
-    
+
     public async Task Fold()
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
@@ -304,7 +304,7 @@ public class GameHub : Hub<IGameClient>
             }
         }
     }
-    
+
     public async Task PlayCard(CardViewModel cardViewModel)
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))

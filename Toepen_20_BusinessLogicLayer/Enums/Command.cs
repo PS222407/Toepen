@@ -3,15 +3,26 @@
 public enum Command
 {
     AddPlayer,
+
     Start,
+
     DirtyLaundry,
+
     WhiteLaundry,
+
     StopLaundryTimer,
+
     TurnsLaundry,
+
     Knock,
+
     Check,
+
     Fold,
+
     PlayCard,
+
     StopLaundryTurnTimerAndStartLaundryTimer,
-    StopLaundryTurnTimerAndStartRound
+
+    StopLaundryTurnTimerAndStartRound,
 }
