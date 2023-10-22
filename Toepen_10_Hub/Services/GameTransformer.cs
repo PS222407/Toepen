@@ -18,6 +18,12 @@ public class GameTransformer
             cardViewModels.AddRange(player.ConnectionId == connectionId || player.PlayWithOpenCards
                 ? player.Hand.Select(card => new CardViewModel { Suit = card.Suit.ToString(), Value = card.Value.ToString() })
                 : player.Hand.Select(_ => new CardViewModel { Suit = "x", Value = "X" }));
+            
+            CardViewModel? lastPlayedCardViewModel = player.PlayedCards.Count > 0 ? new CardViewModel
+            {
+                Suit = player.PlayedCards.Last().Suit.ToString(),
+                Value = player.PlayedCards.Last().Value.ToString()
+            } : null;
 
             PlayerViewModel playerViewModel = new()
             {
@@ -29,6 +35,7 @@ public class GameTransformer
                 CalledDirtyLaundry = player.HasCalledDirtyLaundry,
                 CalledWhiteLaundry = player.HasCalledWhiteLaundry,
                 Hand = cardViewModels,
+                LastPlayedCard = lastPlayedCardViewModel,
             };
             playerViewModels.Add(playerViewModel);
         }

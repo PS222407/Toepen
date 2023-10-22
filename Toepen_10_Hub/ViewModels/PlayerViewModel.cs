@@ -17,4 +17,6 @@ public class PlayerViewModel
     public bool CalledDirtyLaundry { get; set; }
 
     public List<CardViewModel> Hand { get; set; } = new();
+
+    public CardViewModel? LastPlayedCard { get; set; } = new();
 }
