@@ -15,11 +15,13 @@ public class WaitingForLaundryCalls : IState
         throw new AlreadyStartedException();
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsDirtyLaundry(Game game, Player player)
     {
         game.CurrentSet!.PlayerCallsDirtyLaundry(player);
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsWhiteLaundry(Game game, Player player)
     {
         game.CurrentSet!.PlayerCallsWhiteLaundry(player);

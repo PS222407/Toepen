@@ -12,9 +12,11 @@ public interface IState
     public void Start(Game game);
 
     /// <exception cref="InvalidStateException"></exception>>
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsDirtyLaundry(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>>
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsWhiteLaundry(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>>

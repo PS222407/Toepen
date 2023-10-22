@@ -170,6 +170,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
             }
+            catch (AlreadyCalledLaundryException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je hebt al een was aangegeven");
+            }
             catch (PlayerNotFoundException)
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
@@ -192,6 +196,10 @@ public class GameHub : Hub<IGameClient>
             catch (InvalidStateException)
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+            catch (AlreadyCalledLaundryException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je hebt al een was aangegeven");
             }
             catch (PlayerNotFoundException)
             {
@@ -305,8 +313,6 @@ public class GameHub : Hub<IGameClient>
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             try
             {
-                game.BlockLaundryCalls();
-                game.BlockLaundryTurnCallsAndStartRound();
                 game.PlayerPlaysCard(player?.Id ?? 0, GameTransformer.CardViewModelToCard(cardViewModel));
 
                 await SendCurrentGameInfo();

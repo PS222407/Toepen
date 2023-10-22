@@ -64,6 +64,7 @@ public class Game
     
     /// <exception cref="PlayerNotFoundException"></exception>
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsDirtyLaundry(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);
@@ -77,6 +78,7 @@ public class Game
 
     /// <exception cref="PlayerNotFoundException"></exception>
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsWhiteLaundry(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);

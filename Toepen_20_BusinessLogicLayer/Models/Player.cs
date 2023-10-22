@@ -77,13 +77,23 @@ public class Player
         _hand.Remove(cardFromHand);
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void CallsDirtyLaundry()
     {
+        if (HasCalledWhiteLaundry || HasCalledDirtyLaundry)
+        {
+            throw new AlreadyCalledLaundryException();
+        }
         HasCalledDirtyLaundry = true;
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void CallsWhiteLaundry()
     {
+        if (HasCalledWhiteLaundry || HasCalledDirtyLaundry)
+        {
+            throw new AlreadyCalledLaundryException();
+        }
         HasCalledWhiteLaundry = true;
     }
 

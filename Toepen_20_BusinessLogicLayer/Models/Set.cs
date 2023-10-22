@@ -93,11 +93,13 @@ public class Set
         ShuffleDeck();
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsDirtyLaundry(Player player)
     {
         player.CallsDirtyLaundry();
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsWhiteLaundry(Player player)
     {
         player.CallsWhiteLaundry();
