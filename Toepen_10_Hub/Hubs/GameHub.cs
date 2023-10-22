@@ -330,6 +330,7 @@ public class GameHub : Hub<IGameClient>
         }
     }
 
+    // TODO: remove or handle exceptions
     public async Task SkipLaundry()
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
