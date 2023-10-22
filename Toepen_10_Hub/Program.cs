@@ -4,7 +4,6 @@ using Toepen_10_Hub.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -15,9 +14,9 @@ builder.Services.AddSingleton<IGameService, GameService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(corsPolicyBuilder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        corsPolicyBuilder.WithOrigins(builder.Configuration.GetValue<string>("FrontendUrl"))
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
