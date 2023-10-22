@@ -183,8 +183,9 @@ public class Set
             {
                 PlayerHandToDeck(player);
                 DealCardsToPlayer(player);
-                player.ResetLaundryVariables();
             }
+
+            player.ResetLaundryVariables();
         }
 
         State = GameState.ActiveLaundryTimer;

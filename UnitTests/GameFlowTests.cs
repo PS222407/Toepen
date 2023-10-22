@@ -1,5 +1,4 @@
 using Toepen_20_BusinessLogicLayer.Enums;
-using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
 using Toepen_20_BusinessLogicLayer.Models;
 using Toepen_20_BusinessLogicLayer.States;
@@ -435,14 +434,16 @@ public class GameFlowTests
         game.PlayerTurnsLaundry(1, 2);
         game.PlayerTurnsLaundry(1, 3);
         game.PlayerTurnsLaundry(2, 1);
+        // sam = 1, jens = 1, mylo = 1
         game.BlockLaundryTurnCallsAndWaitForLaundryCalls();
         game.PlayerCallsDirtyLaundry(3);
         game.BlockLaundryCalls();
         game.PlayerTurnsLaundry(1, 3);
+        // sam = 1, jens = 1, mylo = 2
         game.BlockLaundryTurnCallsAndStartRound();
 
         // ASSERT
-        bool penaltyPointsAreCorrect = _game.Players[0].PenaltyPoints == 1 && _game.Players[1].PenaltyPoints == 1 && _game.Players[2].PenaltyPoints == 1;
+        bool penaltyPointsAreCorrect = _game.Players[0].PenaltyPoints == 1 && _game.Players[1].PenaltyPoints == 1 && _game.Players[2].PenaltyPoints == 2;
         Assert.That(penaltyPointsAreCorrect);
 
         GivePlayerHardCodedSetOfCards();
@@ -482,8 +483,8 @@ public class GameFlowTests
 
         bool winnerSet1Round4IsCorrect = 2 == game.Sets[0].Rounds[3].WinnerStatus!.Winner.Id;
 
-        // sam = 2, jens = 0, mylo = 5
         // ASSERT
-        Assert.That(_game.Players[0].PenaltyPoints == 3 && _game.Players[1].PenaltyPoints == 1 && _game.Players[2].PenaltyPoints == 6);
+        // sam = 3, jens = 1, mylo = 7
+        Assert.That(_game.Players[0].PenaltyPoints == 3 && _game.Players[1].PenaltyPoints == 1 && _game.Players[2].PenaltyPoints == 7);
     }
 }
