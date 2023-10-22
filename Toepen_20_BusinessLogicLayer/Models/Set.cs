@@ -93,50 +93,19 @@ public class Set
         ShuffleDeck();
     }
 
-    public StatusMessage PlayerCallsDirtyLaundry(Player player)
+    public void PlayerCallsDirtyLaundry(Player player)
     {
-        if (State != GameState.ActiveLaundryTimer)
-        {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
-        }
-
-        if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
-        {
-            return new StatusMessage(false, Message.AlreadyCalledLaundry);
-        }
-
         player.CallsDirtyLaundry();
-
-        return new StatusMessage(true);
     }
 
-    public StatusMessage PlayerCallsWhiteLaundry(Player player)
+    public void PlayerCallsWhiteLaundry(Player player)
     {
-        if (State != GameState.ActiveLaundryTimer)
-        {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
-        }
-
-        if (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry)
-        {
-            return new StatusMessage(false, Message.AlreadyCalledLaundry);
-        }
-
         player.CallsWhiteLaundry();
-
-        return new StatusMessage(true);
     }
 
-    public bool BlockLaundryCalls()
+    public void BlockLaundryCalls()
     {
-        if (State != GameState.ActiveLaundryTimer)
-        {
-            return false;
-        }
-
         State = GameState.ActiveTurnLaundryTimer;
-
-        return true;
     }
 
     public StatusMessage TurnsLaundry(Player turner, Player victim)
@@ -221,13 +190,8 @@ public class Set
         return true;
     }
 
-    public bool BlockLaundryTurnCallsAndStartRound()
+    public void BlockLaundryTurnCallsAndStartRound()
     {
-        if (State != GameState.ActiveTurnLaundryTimer)
-        {
-            return false;
-        }
-
         foreach (Player player in Players)
         {
             if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
@@ -247,8 +211,6 @@ public class Set
         {
             StartNewRound(true, true);
         }
-
-        return true;
     }
 
     private void StartNewRound(bool noWinner, bool roundWinner, Player? previousSetWinner = null, bool fromNewSet = false)
@@ -270,7 +232,7 @@ public class Set
 
     public WinnerStatus? PlayCard(Player player, Card card)
     {
-        CurrentRound.PlayCard(player, card);
+        StatusMessage statusMessage = CurrentRound.PlayCard(player, card); // TODO: Bubble not matching suit to UI
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;

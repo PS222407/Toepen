@@ -11,7 +11,7 @@ public class GameTests
     [SetUp]
     public void Setup()
     {
-        _game = new Game();
+        _game = new Game("123");
     }
 
     [Test]

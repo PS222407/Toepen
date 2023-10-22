@@ -1,4 +1,5 @@
 using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
 using Toepen_20_BusinessLogicLayer.Models;
 using Toepen_20_BusinessLogicLayer.States;
@@ -16,7 +17,7 @@ public class GameFlowTests
     [SetUp]
     public void Setup()
     {
-        _game = new Game();
+        _game = new Game("123");
 
         List<Player> players = new()
         {
@@ -93,31 +94,31 @@ public class GameFlowTests
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
 
-        game.PlayerPlaysCard(1, "7", "c");
-        game.PlayerPlaysCard(2, "j", "h");
-        game.PlayerPlaysCard(3, "9", "c");
+        game.PlayerPlaysCard(1, new Card(Suit.Clubs, Value.Seven));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Jack));
+        game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Nine));
 
         bool winnerSet1Round1IsCorrect = 3 == game.Sets[0].Rounds[0].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(3, "q", "d");
-        game.PlayerPlaysCard(1, "a", "d");
-        game.PlayerPlaysCard(2, "j", "d");
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Queen));
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Ace));
+        game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Jack));
 
         bool winnerSet1Round2IsCorrect = 1 == game.Sets[0].Rounds[1].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(1, "k", "d");
-        game.PlayerPlaysCard(2, "k", "h");
-        game.PlayerPlaysCard(3, "9", "d");
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.King));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.King));
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Nine));
 
         bool winnerSet1Round3IsCorrect = game.Sets[0].Rounds[2].WinnerStatus.Winner.Id == 3;
 
-        game.PlayerPlaysCard(3, "q", "h");
-        game.PlayerPlaysCard(1, "a", "s");
-        game.PlayerPlaysCard(2, "a", "h");
+        game.PlayerPlaysCard(3, new Card(Suit.Hearts, Value.Queen));
+        game.PlayerPlaysCard(1, new Card(Suit.Spades, Value.Ace));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Ace));
 
         bool winnerSet1Round4IsCorrect = game.Sets[0].Rounds[3].WinnerStatus.Winner.Id == 2;
         // sam = 1, jens = 0, mylo = 1
-
+        var a = game.GetActivePlayer();
 
         // SET 2
         for (int i = 0; i < _game.Players.Count; i++)
@@ -164,27 +165,27 @@ public class GameFlowTests
         game.BlockLaundryCalls();
         game.BlockLaundryTurnCallsAndStartRound();
 
-        game.PlayerPlaysCard(3, "a", "c");
-        game.PlayerPlaysCard(1, "j", "c");
-        game.PlayerPlaysCard(2, "q", "c");
+        game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Ace));
+        game.PlayerPlaysCard(1, new Card(Suit.Clubs, Value.Jack));
+        game.PlayerPlaysCard(2, new Card(Suit.Clubs, Value.Queen));
 
         bool winnerSet2Round1IsCorrect = 3 == game.Sets[1].Rounds[0].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(3, "9", "h");
-        game.PlayerPlaysCard(1, "10", "h");
-        game.PlayerPlaysCard(2, "7", "s");
+        game.PlayerPlaysCard(3, new Card(Suit.Hearts, Value.Nine));
+        game.PlayerPlaysCard(1, new Card(Suit.Hearts, Value.Ten));
+        game.PlayerPlaysCard(2, new Card(Suit.Spades, Value.Seven));
 
         bool winnerSet2Round2IsCorrect = 1 == game.Sets[1].Rounds[1].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(1, "k", "s");
-        game.PlayerPlaysCard(2, "8", "d");
-        game.PlayerPlaysCard(3, "9", "s");
+        game.PlayerPlaysCard(1, new Card(Suit.Spades, Value.King));
+        game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Eight));
+        game.PlayerPlaysCard(3, new Card(Suit.Spades, Value.Nine));
 
         bool winnerSet2Round3IsCorrect = 3 == game.Sets[1].Rounds[2].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(3, "8", "s");
-        game.PlayerPlaysCard(1, "j", "s");
-        game.PlayerPlaysCard(2, "10", "d");
+        game.PlayerPlaysCard(3, new Card(Suit.Spades, Value.Eight));
+        game.PlayerPlaysCard(1, new Card(Suit.Spades, Value.Jack));
+        game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Ten));
 
         bool winnerSet2Round4IsCorrect = 3 == game.Sets[1].Rounds[3].WinnerStatus.Winner.Id;
         // sam = 2, jens = 1, mylo = 1
@@ -235,27 +236,27 @@ public class GameFlowTests
         game.BlockLaundryCalls();
         game.BlockLaundryTurnCallsAndStartRound();
 
-        game.PlayerPlaysCard(1, "q", "d");
-        game.PlayerPlaysCard(2, "a", "d");
-        game.PlayerPlaysCard(3, "j", "c");
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Queen));
+        game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Ace));
+        game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Jack));
 
         bool winnerSet3Round1IsCorrect = 2 == game.Sets[2].Rounds[0].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(2, "j", "h");
-        game.PlayerPlaysCard(3, "j", "s");
-        game.PlayerPlaysCard(1, "k", "h");
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Jack));
+        game.PlayerPlaysCard(3, new Card(Suit.Spades, Value.Jack));
+        game.PlayerPlaysCard(1, new Card(Suit.Hearts, Value.King));
 
         bool winnerSet3Round2IsCorrect = 1 == game.Sets[2].Rounds[1].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(1, "9", "d");
-        game.PlayerPlaysCard(2, "7", "h");
-        game.PlayerPlaysCard(3, "a", "s");
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Nine));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Seven));
+        game.PlayerPlaysCard(3, new Card(Suit.Spades, Value.Ace));
 
         bool winnerSet3Round3IsCorrect = 1 == game.Sets[2].Rounds[2].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(1, "a", "h");
-        game.PlayerPlaysCard(2, "8", "s");
-        game.PlayerPlaysCard(3, "7", "c");
+        game.PlayerPlaysCard(1, new Card(Suit.Hearts, Value.Ace));
+        game.PlayerPlaysCard(2, new Card(Suit.Spades, Value.Eight));
+        game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Seven));
 
         bool winnerSet3Round4IsCorrect = 1 == game.Sets[2].Rounds[3].WinnerStatus.Winner.Id;
         // sam = 2, jens = 2, mylo = 2
@@ -281,7 +282,7 @@ public class GameFlowTests
     {
         Game game = _game;
 
-        Settings.MaxPenaltyPoints = 10000;
+        Settings.MaxPenaltyPoints = 10;
 
         game.BlockLaundryCalls();
         game.BlockLaundryTurnCallsAndStartRound();
@@ -298,10 +299,7 @@ public class GameFlowTests
             Player activePlayer = game.CurrentSet.CurrentRound.ActivePlayer;
             foreach (Card card in new List<Card>(activePlayer.Hand))
             {
-                string value = card.Value > Value.Ace ? ((int)card.Value).ToString() : card.Value.ToString().Substring(0, 1);
-                string suit = card.Suit.ToString().Substring(0, 1);
-
-                game.PlayerPlaysCard(activePlayer.Id, value, suit);
+                game.PlayerPlaysCard(activePlayer.Id, card);
                 if (game.State is GameIsWonAndOver)
                 {
                     gameIsOver = true;
@@ -330,39 +328,39 @@ public class GameFlowTests
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
 
-        game.Knock(1);
-        game.Check(2);
-        game.Check(3);
-        game.PlayerPlaysCard(1, "7", "c");
-        game.PlayerPlaysCard(2, "j", "h");
-        game.PlayerPlaysCard(3, "9", "c");
+        game.PlayerKnocks(1);
+        game.PlayerChecks(2);
+        game.PlayerChecks(3);
+        game.PlayerPlaysCard(1, new Card(Suit.Clubs, Value.Seven));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Jack));
+        game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Nine));
 
         bool winnerSet1Round1IsCorrect = game.Sets[0].Rounds[0].WinnerStatus.Winner.Id == 3;
 
-        game.Knock(3);
-        game.Check(1);
-        game.Check(2);
-        game.PlayerPlaysCard(3, "q", "d");
-        game.PlayerPlaysCard(1, "a", "d");
-        game.PlayerPlaysCard(2, "j", "d");
+        game.PlayerKnocks(3);
+        game.PlayerChecks(1);
+        game.PlayerChecks(2);
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Queen));
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Ace));
+        game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Jack));
 
         bool winnerSet1Round2IsCorrect = game.Sets[0].Rounds[1].WinnerStatus.Winner.Id == 1;
 
-        game.Knock(1);
-        game.Check(2);
-        game.Check(3);
-        game.PlayerPlaysCard(1, "k", "d");
-        game.PlayerPlaysCard(2, "k", "h");
-        game.PlayerPlaysCard(3, "9", "d");
+        game.PlayerKnocks(1);
+        game.PlayerChecks(2);
+        game.PlayerChecks(3);
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.King));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.King));
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Nine));
 
         bool winnerSet1Round3IsCorrect = game.Sets[0].Rounds[2].WinnerStatus.Winner.Id == 3;
 
-        game.Knock(3);
-        game.Check(1);
-        game.Check(2);
-        game.PlayerPlaysCard(3, "q", "h");
-        game.PlayerPlaysCard(1, "a", "s");
-        game.PlayerPlaysCard(2, "a", "h");
+        game.PlayerKnocks(3);
+        game.PlayerChecks(1);
+        game.PlayerChecks(2);
+        game.PlayerPlaysCard(3, new Card(Suit.Hearts, Value.Queen));
+        game.PlayerPlaysCard(1, new Card(Suit.Spades, Value.Ace));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Ace));
 
         bool winnerSet1Round4IsCorrect = 2 == game.Sets[0].Rounds[3].WinnerStatus.Winner.Id;
 
@@ -387,35 +385,35 @@ public class GameFlowTests
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
 
-        game.Knock(1);
-        game.Check(2);
-        game.Check(3);
-        game.PlayerPlaysCard(1, "7", "c");
-        game.PlayerPlaysCard(2, "j", "h");
-        game.PlayerPlaysCard(3, "9", "c");
+        game.PlayerKnocks(1);
+        game.PlayerChecks(2);
+        game.PlayerChecks(3);
+        game.PlayerPlaysCard(1, new Card(Suit.Clubs, Value.Seven));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Jack));
+        game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Nine));
 
         bool winnerSet1Round1IsCorrect = 3 == game.Sets[0].Rounds[0].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(3, "q", "d");
-        game.PlayerPlaysCard(1, "a", "d");
-        game.Knock(2);
-        game.Check(3);
-        game.Fold(1);
-        game.PlayerPlaysCard(2, "j", "d");
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Queen));
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Ace));
+        game.PlayerKnocks(2);
+        game.PlayerChecks(3);
+        game.PlayerFolds(1);
+        game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Jack));
 
         bool winnerSet1Round2IsCorrect = 1 == game.Sets[0].Rounds[1].WinnerStatus.Winner.Id;
 
-        game.PlayerPlaysCard(2, "a", "h");
-        game.Knock(3);
-        game.Check(2);
-        game.PlayerPlaysCard(3, "q", "h");
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Ace));
+        game.PlayerKnocks(3);
+        game.PlayerChecks(2);
+        game.PlayerPlaysCard(3, new Card(Suit.Hearts, Value.Queen));
 
         bool winnerSet1Round3IsCorrect = 2 == game.Sets[0].Rounds[2].WinnerStatus.Winner.Id;
 
-        game.Knock(2);
-        game.Check(3);
-        game.PlayerPlaysCard(2, "k", "h");
-        game.PlayerPlaysCard(3, "9", "d");
+        game.PlayerKnocks(2);
+        game.PlayerChecks(3);
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.King));
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Nine));
 
         bool winnerSet1Round4IsCorrect = 2 == game.Sets[0].Rounds[3].WinnerStatus.Winner.Id;
 
@@ -453,35 +451,35 @@ public class GameFlowTests
         Entity.SetActivePlayerOf(game.CurrentSet!.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1)!);
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1)!);
 
-        game.Knock(1);
-        game.Check(2);
-        game.Check(3);
-        game.PlayerPlaysCard(1, "7", "c");
-        game.PlayerPlaysCard(2, "j", "h");
-        game.PlayerPlaysCard(3, "9", "c");
+        game.PlayerKnocks(1);
+        game.PlayerChecks(2);
+        game.PlayerChecks(3);
+        game.PlayerPlaysCard(1, new Card(Suit.Clubs, Value.Seven));
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Jack));
+        game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Nine));
 
         bool winnerSet1Round1IsCorrect = 3 == game.Sets[0].Rounds[0].WinnerStatus!.Winner.Id;
 
-        game.PlayerPlaysCard(3, "q", "d");
-        game.PlayerPlaysCard(1, "a", "d");
-        game.Knock(2);
-        game.Check(3);
-        game.Fold(1);
-        game.PlayerPlaysCard(2, "j", "d");
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Queen));
+        game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Ace));
+        game.PlayerKnocks(2);
+        game.PlayerChecks(3);
+        game.PlayerFolds(1);
+        game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Jack));
 
         bool winnerSet1Round2IsCorrect = 1 == game.Sets[0].Rounds[1].WinnerStatus!.Winner.Id;
 
-        game.PlayerPlaysCard(2, "a", "h");
-        game.Knock(3);
-        game.Check(2);
-        game.PlayerPlaysCard(3, "q", "h");
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.Ace));
+        game.PlayerKnocks(3);
+        game.PlayerChecks(2);
+        game.PlayerPlaysCard(3, new Card(Suit.Hearts, Value.Queen));
 
         bool winnerSet1Round3IsCorrect = 2 == game.Sets[0].Rounds[2].WinnerStatus!.Winner.Id;
 
-        game.Knock(2);
-        game.Check(3);
-        game.PlayerPlaysCard(2, "k", "h");
-        game.PlayerPlaysCard(3, "9", "d");
+        game.PlayerKnocks(2);
+        game.PlayerChecks(3);
+        game.PlayerPlaysCard(2, new Card(Suit.Hearts, Value.King));
+        game.PlayerPlaysCard(3, new Card(Suit.Diamonds, Value.Nine));
 
         bool winnerSet1Round4IsCorrect = 2 == game.Sets[0].Rounds[3].WinnerStatus!.Winner.Id;
 

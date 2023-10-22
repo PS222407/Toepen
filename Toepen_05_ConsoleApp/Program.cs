@@ -2,7 +2,7 @@
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
 
-Game game = new();
+Game game = new("123");
 
 // =========================================================
 // readline
@@ -105,7 +105,7 @@ void Start()
     {
         game.Start();
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -177,7 +177,7 @@ void DirtyLaundry(string[] args)
     {
         game.PlayerCallsDirtyLaundry(int.Parse(args[1]));
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine(e);
         return;
@@ -201,7 +201,7 @@ void WhiteLaundry(string[] args)
     {
         game.PlayerCallsWhiteLaundry(int.Parse(args[1]));
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -219,7 +219,7 @@ void StopLaundryTimer()
     {
         game.BlockLaundryCalls();
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
     }
@@ -242,7 +242,7 @@ void TurnsLaundry(string[] args)
     {
         game.PlayerTurnsLaundry(int.Parse(args[1]), int.Parse(args[2]));
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -260,7 +260,7 @@ void StopLaundryTurnTimerAndStartLaundryTimer()
     {
         game.BlockLaundryTurnCallsAndWaitForLaundryCalls();
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -278,7 +278,7 @@ void StopLaundryTurnTimerAndStartRound()
     {
         game.BlockLaundryTurnCallsAndStartRound();
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -300,9 +300,9 @@ void Check(string[] args)
 
     try
     {
-        game.Check(int.Parse(args[1]));
+        game.PlayerChecks(int.Parse(args[1]));
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -324,9 +324,9 @@ void Fold(string[] args)
 
     try
     {
-        game.Fold(int.Parse(args[1]));
+        game.PlayerFolds(int.Parse(args[1]));
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -348,9 +348,9 @@ void Knock(string[] args)
 
     try
     {
-        game.Knock(int.Parse(args[1]));
+        game.PlayerKnocks(int.Parse(args[1]));
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -372,9 +372,16 @@ void PlayCard(string[] args)
 
     try
     {
-        game.PlayerPlaysCard(int.Parse(args[1]), args[2], args[3]);
+        Value? cardValue = TransformValue(args[2]);
+        Suit? cardSuit = TransformSuit(args[3]);
+        if (cardValue == null || cardSuit == null)
+        {
+            Console.WriteLine("Cant create card with those values");
+        }
+        
+        game.PlayerPlaysCard(int.Parse(args[1]), new Card(cardSuit.Value, cardValue.Value));
     }
-    catch (InvalidOperationException e)
+    catch (InvalidStateException e)
     {
         Console.WriteLine("Cant perform this action now");
         return;
@@ -384,4 +391,47 @@ void PlayCard(string[] args)
     Console.WriteLine("---------------------");
     Console.WriteLine($"Player {args[1]} plays {args[2]} {args[3]}");
     Console.WriteLine("---------------------");
+}
+
+
+Value? TransformValue(string value)
+{
+    switch (value.ToUpper())
+    {
+        case "J":
+            return Value.Jack;
+        case "Q":
+            return Value.Queen;
+        case "K":
+            return Value.King;
+        case "A":
+            return Value.Ace;
+        case "7":
+            return Value.Seven;
+        case "8":
+            return Value.Eight;
+        case "9":
+            return Value.Nine;
+        case "10":
+            return Value.Ten;
+    }
+
+    return null;
+}
+
+Suit? TransformSuit(string suit)
+{
+    switch (suit.ToUpper())
+    {
+        case "S":
+            return Suit.Spades;
+        case "D":
+            return Suit.Diamonds;
+        case "C":
+            return Suit.Clubs;
+        case "H":
+            return Suit.Hearts;
+    }
+
+    return null;
 }

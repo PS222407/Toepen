@@ -7,7 +7,7 @@ public class Round
 {
     private Card? _startedCard;
 
-    public Player PlayerWhoKnocked { get; private set; }
+    public Player? PlayerWhoKnocked { get; private set; }
 
     public GameState? State;
 

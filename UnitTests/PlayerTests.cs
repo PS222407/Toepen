@@ -14,10 +14,10 @@ public class PlayerTests
         Player playerWithWhiteLaundry = new("Test player");
         List<Card> cards = new()
         {
-            new(Suit.Spades, Value.Ace),
-            new(Suit.Diamonds, Value.King),
-            new(Suit.Clubs, Value.Seven),
-            new(Suit.Diamonds, Value.Ace)
+            new Card(Suit.Spades, Value.Ace),
+            new Card(Suit.Diamonds, Value.King),
+            new Card(Suit.Clubs, Value.Seven),
+            new Card(Suit.Diamonds, Value.Ace)
         };
         Entity.SetHandOf(playerWithWhiteLaundry, cards);
 
@@ -259,10 +259,10 @@ public class PlayerTests
         Player player = new("Test Player");
         List<Card> cards = new()
         {
-            new(Suit.Clubs, Value.Jack),
-            new(Suit.Spades, Value.Jack),
-            new(Suit.Diamonds, Value.Seven),
-            new(Suit.Hearts, Value.Jack)
+            new Card(Suit.Clubs, Value.Jack),
+            new Card(Suit.Spades, Value.Jack),
+            new Card(Suit.Diamonds, Value.Seven),
+            new Card(Suit.Hearts, Value.Jack)
         };
         Entity.SetHandOf(player, cards);
 
@@ -273,10 +273,10 @@ public class PlayerTests
         Assert.That(player.LaundryHasBeenTurned && result, Is.True);
     }
 
-    // MustPlayWithOpenCards():void
-    // PlayCard(Card card):void
-    // Folds():void
-    // IsDead():bool
-    // IsOutOfGame():bool
-    // HasPoverty():bool
+    // TODO: MustPlayWithOpenCards():void
+    // TODO: PlayCard(Card card):void
+    // TODO: Folds():void
+    // TODO: IsDead():bool
+    // TODO: IsOutOfGame():bool
+    // TODO: HasPoverty():bool
 }

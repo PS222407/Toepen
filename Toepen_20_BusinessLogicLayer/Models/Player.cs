@@ -135,11 +135,17 @@ public class Player
         PlayWithOpenCards = true;
     }
 
+    /// <exception cref="CardNotFoundException"></exception>
     public void PlayCard(Card card)
     {
-        Card cardFromPlayersHand = Hand.First(c => c.Value == card.Value && c.Suit == card.Suit);
-        _hand.Remove(cardFromPlayersHand);
-        _playedCards.Add(cardFromPlayersHand);
+        Card? cardFromHand = _hand.FirstOrDefault(c => c.Suit == card.Suit && c.Value == card.Value);
+        if (cardFromHand == null)
+        {
+            throw new CardNotFoundException();
+        }
+        
+        _hand.Remove(cardFromHand);
+        _playedCards.Add(cardFromHand);
     }
 
     public void Folds()

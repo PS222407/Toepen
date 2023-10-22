@@ -27,61 +27,61 @@ public class Initialized : IState
 
     public void PlayerCallsDirtyLaundry(Game game, Player player)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void PlayerCallsWhiteLaundry(Game game, Player player)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void BlockLaundryTurnCallsAndWaitForLaundryCalls(Game game)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void BlockLaundryTurnCallsAndStartRound(Game game)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void BlockLaundryCalls(Game game)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void PlayerKnocks(Game game, Player player)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void PlayerChecks(Game game, Player player)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void PlayerFolds(Game game, Player player)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void PlayerPlaysCard(Game game, Player player, Card card)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public Player GetWinner(Game game)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 
     public void StartNewSet(Game game)
     {
-        throw new InvalidOperationException();
+        throw new InvalidStateException();
     }
 }

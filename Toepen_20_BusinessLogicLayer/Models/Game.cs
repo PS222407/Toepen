@@ -23,28 +23,47 @@ public class Game
 
     public IState State { get; set; } = new Initialized();
 
-    public Game()
-    {
-    }
-
     public Game(string roomId)
     {
         RoomId = roomId;
+    }
+    
+    public Player? FindPlayerByConnectionId(string connectionId)
+    {
+        return Players.Find(p => p.ConnectionId == connectionId);
+    }
+
+    public Player? FindPlayerById(int id)
+    {
+        return Players.Find(p => p.Id == id);
     }
 
     public void AddPlayer(Player player)
     {
         State.AddPlayer(this, player);
     }
+    
+    public Player? GetActivePlayer()
+    {
+        return CurrentSet?.CurrentRound?.ActivePlayer;
+    }
 
-    // System input actions
+    public Player? GetPlayerWhoKnocked()
+    {
+        return CurrentSet?.CurrentRound?.PlayerWhoKnocked;
+    }
+
+    #region Player input actions
+    /// <exception cref="AlreadyStartedException"></exception>
+    /// <exception cref="NotEnoughPlayersException"></exception>
     public void Start()
     {
         State.Start(this);
         StartNewSet();
     }
-
-    // Player input actions
+    
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
     public void PlayerCallsDirtyLaundry(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);
@@ -56,6 +75,8 @@ public class Game
         State.PlayerCallsDirtyLaundry(this, player);
     }
 
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
     public void PlayerCallsWhiteLaundry(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);
@@ -66,7 +87,10 @@ public class Game
 
         State.PlayerCallsWhiteLaundry(this, player);
     }
-
+    
+    /// <exception cref="CantPerformToSelfException"></exception>
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
     public void PlayerTurnsLaundry(int playerId, int victimId)
     {
         if (playerId == victimId)
@@ -85,22 +109,9 @@ public class Game
         State.PlayerTurnsLaundry(this, player, victim);
     }
 
-    public void BlockLaundryTurnCallsAndWaitForLaundryCalls()
-    {
-        State.BlockLaundryTurnCallsAndWaitForLaundryCalls(this);
-    }
-
-    public void BlockLaundryTurnCallsAndStartRound()
-    {
-        State.BlockLaundryTurnCallsAndStartRound(this);
-    }
-
-    public void BlockLaundryCalls()
-    {
-        State.BlockLaundryCalls(this);
-    }
-
-    public void Knock(int playerId)
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
+    public void PlayerKnocks(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
@@ -111,7 +122,9 @@ public class Game
         State.PlayerKnocks(this, player);
     }
 
-    public void Check(int playerId)
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
+    public void PlayerChecks(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
@@ -123,34 +136,50 @@ public class Game
         State.PlayerChecks(this, player);
     }
 
-    public void Fold(int playerId)
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
+    public void PlayerFolds(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
             throw new PlayerNotFoundException();
         }
-
-
+        
         State.PlayerFolds(this, player);
     }
 
-    public void PlayerPlaysCard(int playerId, string value, string suit)
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="DoesNotMatchSuitException"></exception>
+    public void PlayerPlaysCard(int playerId, Card card)
     {
         Player? player = Players.Find(p => p.Id == playerId);
         if (player == null)
         {
             throw new PlayerNotFoundException();
         }
+        
+        State.PlayerPlaysCard(this, player, new Card(card.Suit, card.Value));
+    }
+    #endregion
+    
+    /// <exception cref="InvalidStateException"></exception>
+    public void BlockLaundryTurnCallsAndWaitForLaundryCalls()
+    {
+        State.BlockLaundryTurnCallsAndWaitForLaundryCalls(this);
+    }
 
-        Value? cardValue = TransformValue(value);
-        Suit? cardSuit = TransformSuit(suit);
-        if (cardValue == null || cardSuit == null)
-        {
-            throw new CardNotFoundException();
-        }
+    /// <exception cref="InvalidStateException"></exception>
+    public void BlockLaundryTurnCallsAndStartRound()
+    {
+        State.BlockLaundryTurnCallsAndStartRound(this);
+    }
 
-        State.PlayerPlaysCard(this, player, new Card(cardSuit.Value, cardValue.Value));
+    /// <exception cref="InvalidStateException"></exception>
+    public void BlockLaundryCalls()
+    {
+        State.BlockLaundryCalls(this);
     }
 
     public Player? GetWinner()
@@ -163,47 +192,5 @@ public class Game
         Player? winnerOfSet = _sets.LastOrDefault()?.WinnerOfSet;
         CurrentSet = new Set(Players.Where(p => !p.IsDead()).ToList(), winnerOfSet);
         _sets.Add(CurrentSet);
-    }
-
-    private Value? TransformValue(string value)
-    {
-        switch (value.ToUpper())
-        {
-            case "J":
-                return Value.Jack;
-            case "Q":
-                return Value.Queen;
-            case "K":
-                return Value.King;
-            case "A":
-                return Value.Ace;
-            case "7":
-                return Value.Seven;
-            case "8":
-                return Value.Eight;
-            case "9":
-                return Value.Nine;
-            case "10":
-                return Value.Ten;
-        }
-
-        return null;
-    }
-
-    private Suit? TransformSuit(string suit)
-    {
-        switch (suit.ToUpper())
-        {
-            case "S":
-                return Suit.Spades;
-            case "D":
-                return Suit.Diamonds;
-            case "C":
-                return Suit.Clubs;
-            case "H":
-                return Suit.Hearts;
-        }
-
-        return null;
     }
 }
