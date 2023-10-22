@@ -109,8 +109,6 @@ public class GameHub : Hub<IGameClient>
                 GameViewModel gameViewModel = GameTransformer.GameToViewModel(game, connectionId);
                 SetUserOrder(gameViewModel);
 
-                // TODO: Send Names values instead of integers
-
                 await Clients.Client(connectionId).ReceiveGame(JsonSerializer.Serialize(gameViewModel));
             }
         }
@@ -329,6 +327,21 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
             }
+        }
+    }
+
+    public async Task SkipLaundry()
+    {
+        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            
+            game.BlockLaundryCalls();
+            game.BlockLaundryTurnCallsAndStartRound();
+        }
+        else
+        {
+            await SendFlashMessage(FlashType.Error, "Speler is niet verbonden");
         }
     }
 }
