@@ -44,7 +44,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            await Clients.Group(userConnection.RoomCode).ReceiveMessage(userConnection.UserName, $"{user}: {message}");
+            await Clients.Group(userConnection.RoomCode).ReceiveMessage(userConnection.UserName, $"{message}");
         }
     }
 
