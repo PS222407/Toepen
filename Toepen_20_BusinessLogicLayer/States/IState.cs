@@ -41,7 +41,9 @@ public interface IState
     public void PlayerFolds(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
-    /// <exception cref="DoesNotMatchSuitException"></exception>
+    /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="CardNotFoundException"></exception>
+    /// <exception cref="CardDoesNotMatchSuitsException"></exception>
     public void PlayerPlaysCard(Game game, Player player, Card card);
 
     /// <exception cref="InvalidStateException"></exception>

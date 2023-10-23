@@ -1,4 +1,5 @@
 using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
 using Toepen_20_BusinessLogicLayer.Models;
 using Toepen_20_BusinessLogicLayer.States;
@@ -297,7 +298,17 @@ public class GameFlowTests
             Player activePlayer = game.CurrentSet.CurrentRound.ActivePlayer;
             foreach (Card card in new List<Card>(activePlayer.Hand))
             {
-                game.PlayerPlaysCard(activePlayer.Id, card);
+                try
+                {
+                    game.PlayerPlaysCard(activePlayer.Id, card);
+                }
+                catch (CardDoesNotMatchSuitsException)
+                {
+                }
+                catch (NotPlayersTurnException)
+                {
+                }
+                
                 if (game.State is GameIsWonAndOver)
                 {
                     gameIsOver = true;

@@ -233,9 +233,12 @@ public class Set
         }
     }
 
+    /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="CardDoesNotMatchSuitsException"></exception>
+    /// <exception cref="CardNotFoundException"></exception>
     public WinnerStatus? PlayCard(Player player, Card card)
     {
-        StatusMessage statusMessage = CurrentRound.PlayCard(player, card); // TODO: Bubble not matching suit to UI
+        CurrentRound.PlayCard(player, card);
         if (CurrentRound.WinnerStatus?.Winner != null)
         {
             WinnerStatus winnerStatus = CurrentRound.WinnerStatus;

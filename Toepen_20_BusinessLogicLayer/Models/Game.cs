@@ -152,9 +152,11 @@ public class Game
         State.PlayerFolds(this, player);
     }
 
-    /// <exception cref="PlayerNotFoundException"></exception>
     /// <exception cref="InvalidStateException"></exception>
-    /// <exception cref="DoesNotMatchSuitException"></exception>
+    /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="CardDoesNotMatchSuitsException"></exception>
+    /// <exception cref="CardNotFoundException"></exception>
     public void PlayerPlaysCard(int playerId, Card card)
     {
         Player? player = Players.Find(p => p.Id == playerId);
