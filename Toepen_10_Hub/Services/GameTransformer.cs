@@ -40,8 +40,8 @@ public class GameTransformer
             };
             playerViewModels.Add(playerViewModel);
         }
-
-        gameViewModel.State = game.State.GetType().ToString();
+        
+        gameViewModel.State = game.State.GetType().ToString().Substring(game.State.GetType().ToString().LastIndexOf('.') + 1);
         gameViewModel.Players = playerViewModels;
         gameViewModel.SetNumber = game.Sets.Count;
         gameViewModel.RoundNumber = game.CurrentSet?.Rounds.Count ?? 0;
