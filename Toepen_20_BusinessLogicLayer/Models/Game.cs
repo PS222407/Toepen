@@ -80,7 +80,8 @@ public class Game
         if (_endTimeCountDown > DateTime.Now)
         {
             TimeSpan timeLeft = _endTimeCountDown - DateTime.Now;
-            return (int)timeLeft.TotalSeconds;
+            int secondsLeft = (int)Math.Floor(timeLeft.TotalSeconds);
+            return secondsLeft;
         }
 
         return 0;   
