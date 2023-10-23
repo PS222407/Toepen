@@ -2,6 +2,8 @@
 
 public class GameViewModel
 {
+    public string State { get; set; }
+    
     public int PenaltyPoints { get; set; }
 
     public int SetNumber { get; set; }

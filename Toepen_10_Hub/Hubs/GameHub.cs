@@ -350,7 +350,7 @@ public class GameHub : Hub<IGameClient>
             try
             {
                 game.BlockLaundryCalls();
-                game.BlockLaundryTurnCallsAndStartRound();
+                game.BlockLaundryTurnCalls();
             }
             catch (InvalidStateException)
             {

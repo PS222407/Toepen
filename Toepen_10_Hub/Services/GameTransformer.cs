@@ -41,6 +41,7 @@ public class GameTransformer
             playerViewModels.Add(playerViewModel);
         }
 
+        gameViewModel.State = game.State.GetType().ToString();
         gameViewModel.Players = playerViewModels;
         gameViewModel.SetNumber = game.Sets.Count;
         gameViewModel.RoundNumber = game.CurrentSet?.Rounds.Count ?? 0;

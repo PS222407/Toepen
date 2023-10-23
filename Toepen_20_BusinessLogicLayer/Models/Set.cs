@@ -25,6 +25,8 @@ public class Set
     private Player? _lastPlayerWhoKnocked;
 
     private readonly DateTime _laundryEndTime;
+    
+    public bool LaundryCardsAreDealt { get; set; }
 
     public Set(List<Player> players, Player? previousSetWinner = null)
     {
@@ -53,7 +55,7 @@ public class Set
             return (int)Math.Floor((_laundryEndTime - DateTime.Now).TotalSeconds);
         }
 
-        return 0;
+        return -1;
     }
 
     private void InitializeDeck()
@@ -142,6 +144,7 @@ public class Set
                 turner.AddPenaltyPoints(1);
                 PlayerHandToDeck(victim);
                 DealCardsToPlayer(victim);
+                LaundryCardsAreDealt = true;
                 return new StatusMessage(true, Message.PlayerDidNotBluff);
             }
 
@@ -165,6 +168,7 @@ public class Set
                 turner.AddPenaltyPoints(1);
                 PlayerHandToDeck(victim);
                 DealCardsToPlayer(victim);
+                LaundryCardsAreDealt = true;
                 return new StatusMessage(true, Message.PlayerDidNotBluff);
             }
 
@@ -181,6 +185,11 @@ public class Set
         }
 
         return new StatusMessage(false, Message.PlayerHasNotCalledForLaundry);
+    }
+
+    public void BlockLaundryTurnCalls()
+    {
+        
     }
 
     public bool BlockLaundryTurnCallsAndWaitForLaundryCalls()

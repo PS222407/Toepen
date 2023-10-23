@@ -25,10 +25,7 @@ public interface IState
     public void PlayerTurnsLaundry(Game game, Player player, Player victim);
 
     /// <exception cref="InvalidStateException"></exception>
-    public void BlockLaundryTurnCallsAndWaitForLaundryCalls(Game game);
-
-    /// <exception cref="InvalidStateException"></exception>
-    public void BlockLaundryTurnCallsAndStartRound(Game game);
+    public void BlockLaundryTurnCalls(Game game);
 
     /// <exception cref="InvalidStateException"></exception>
     public void BlockLaundryCalls(Game game);

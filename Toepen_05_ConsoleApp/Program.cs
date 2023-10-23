@@ -26,7 +26,7 @@ AddPlayer(new[] { "mylo", "mylo" });
 
 game.Start();
 game.BlockLaundryCalls();
-game.BlockLaundryTurnCallsAndStartRound();
+game.BlockLaundryTurnCalls();
 
 while (true)
 {
@@ -258,7 +258,7 @@ void StopLaundryTurnTimerAndStartLaundryTimer()
 {
     try
     {
-        game.BlockLaundryTurnCallsAndWaitForLaundryCalls();
+        game.BlockLaundryTurnCalls();
     }
     catch (InvalidStateException e)
     {
@@ -276,7 +276,7 @@ void StopLaundryTurnTimerAndStartRound()
 {
     try
     {
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
     }
     catch (InvalidStateException e)
     {

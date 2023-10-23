@@ -31,7 +31,16 @@ public class Game
 
     public int? TimerCallback()
     {
-        return CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
+        int? secondsLeft = CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
+        if (State.GetType() == typeof(WaitingForLaundryCalls) && secondsLeft == -1)
+        {
+            State.BlockLaundryCalls(this);
+        } else if (State.GetType() == typeof(WaitingForTurnLaundryCalls) && secondsLeft == -1)
+        {
+            State.BlockLaundryTurnCalls(this);
+        }
+        
+        return secondsLeft;
     }
 
     public Player? FindPlayerByConnectionId(string connectionId)
@@ -175,15 +184,9 @@ public class Game
     #endregion
 
     /// <exception cref="InvalidStateException"></exception>
-    public void BlockLaundryTurnCallsAndWaitForLaundryCalls()
+    public void BlockLaundryTurnCalls()
     {
-        State.BlockLaundryTurnCallsAndWaitForLaundryCalls(this);
-    }
-
-    /// <exception cref="InvalidStateException"></exception>
-    public void BlockLaundryTurnCallsAndStartRound()
-    {
-        State.BlockLaundryTurnCallsAndStartRound(this);
+        State.BlockLaundryTurnCalls(this);
     }
 
     /// <exception cref="InvalidStateException"></exception>

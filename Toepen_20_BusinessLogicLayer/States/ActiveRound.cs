@@ -31,12 +31,7 @@ public class ActiveRound : IState
         throw new InvalidStateException();
     }
 
-    public void BlockLaundryTurnCallsAndWaitForLaundryCalls(Game game)
-    {
-        throw new InvalidStateException();
-    }
-
-    public void BlockLaundryTurnCallsAndStartRound(Game game)
+    public void BlockLaundryTurnCalls(Game game)
     {
         throw new InvalidStateException();
     }

@@ -89,7 +89,7 @@ public class GameFlowTests
 
         // SET 1
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
@@ -163,7 +163,7 @@ public class GameFlowTests
         }
 
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
 
         game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Ace));
         game.PlayerPlaysCard(1, new Card(Suit.Clubs, Value.Jack));
@@ -233,7 +233,7 @@ public class GameFlowTests
         }
 
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
 
         game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Queen));
         game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Ace));
@@ -284,7 +284,7 @@ public class GameFlowTests
         Settings.MaxPenaltyPoints = 10;
 
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
 
         bool gameIsOver = false;
         while (!gameIsOver)
@@ -292,7 +292,7 @@ public class GameFlowTests
             if (game.CurrentSet.CurrentRound == null)
             {
                 game.BlockLaundryCalls();
-                game.BlockLaundryTurnCallsAndStartRound();
+                game.BlockLaundryTurnCalls();
             }
 
             Player activePlayer = game.CurrentSet.CurrentRound.ActivePlayer;
@@ -332,7 +332,7 @@ public class GameFlowTests
 
         // ACT
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
@@ -389,7 +389,7 @@ public class GameFlowTests
 
         // ACT
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
@@ -446,12 +446,12 @@ public class GameFlowTests
         game.PlayerTurnsLaundry(1, 3);
         game.PlayerTurnsLaundry(2, 1);
         // sam = 1, jens = 1, mylo = 1
-        game.BlockLaundryTurnCallsAndWaitForLaundryCalls();
+        game.BlockLaundryTurnCalls();
         game.PlayerCallsDirtyLaundry(3);
         game.BlockLaundryCalls();
         game.PlayerTurnsLaundry(1, 3);
         // sam = 1, jens = 1, mylo = 2
-        game.BlockLaundryTurnCallsAndStartRound();
+        game.BlockLaundryTurnCalls();
 
         // ASSERT
         bool penaltyPointsAreCorrect = _game.Players[0].PenaltyPoints == 1 && _game.Players[1].PenaltyPoints == 1 && _game.Players[2].PenaltyPoints == 2;

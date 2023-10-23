@@ -30,16 +30,21 @@ public class WaitingForTurnLaundryCalls : IState
         game.CurrentSet!.TurnsLaundry(player, victim);
     }
 
-    public void BlockLaundryTurnCallsAndWaitForLaundryCalls(Game game)
+    public void BlockLaundryTurnCalls(Game game)
     {
-        game.CurrentSet!.BlockLaundryTurnCallsAndWaitForLaundryCalls();
-        game.State = new WaitingForLaundryCalls();
-    }
+        game.CurrentSet!.BlockLaundryTurnCalls();
+        if (game.CurrentSet.LaundryCardsAreDealt)
+        {
+            game.CurrentSet!.BlockLaundryTurnCallsAndWaitForLaundryCalls();
+            game.State = new WaitingForLaundryCalls();
+        }
+        else
+        {
+            game.CurrentSet!.BlockLaundryTurnCallsAndStartRound();
+            game.State = new ActiveRound();
+        }
 
-    public void BlockLaundryTurnCallsAndStartRound(Game game)
-    {
-        game.CurrentSet!.BlockLaundryTurnCallsAndStartRound();
-        game.State = new ActiveRound();
+        game.CurrentSet.LaundryCardsAreDealt = false;
     }
 
     public void BlockLaundryCalls(Game game)
