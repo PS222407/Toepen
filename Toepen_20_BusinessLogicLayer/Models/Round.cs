@@ -1,4 +1,5 @@
 ﻿using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
 
 namespace Toepen_20_BusinessLogicLayer.Models;
@@ -115,34 +116,25 @@ public class Round
         return new StatusMessage(true);
     }
 
-    public StatusMessage PlayCard(Player player, Card card)
+    /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="CardDoesNotMatchSuitsException"></exception>
+    /// <exception cref="CardNotFoundException"></exception>
+    public void PlayCard(Player player, Card card)
     {
-        if (State != GameState.WaitingForCardOrKnock)
-        {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
-        }
-
         if (player != ActivePlayer)
         {
-            return new StatusMessage(false, Message.NotPlayersTurn);
-        }
-
-        if (!player.Hand.Any(c => c.Value == card.Value && c.Suit == card.Suit))
-        {
-            return new StatusMessage(false, Message.CardNotInPlayersHand);
+            throw new NotPlayersTurnException();
         }
 
         if (_startedCard != null && player.Hand.Any(c => c.Suit == _startedCard.Suit) && card.Suit != _startedCard.Suit)
         {
-            return new StatusMessage(false, Message.PlayerHasMatchingSuitCard);
+            throw new CardDoesNotMatchSuitsException();
         }
 
         player.PlayCard(card);
         _table.Add(card);
         _startedCard ??= card;
         SetNextPlayer();
-
-        return new StatusMessage(true);
     }
 
     private void SetNextPlayer()

@@ -63,12 +63,12 @@ public class GameHub : Hub<IGameClient>
         {
             game.AddPlayer(new Player(Context.ConnectionId, userConnection.UserName));
         }
-        catch (AlreadyStartedException e)
+        catch (AlreadyStartedException)
         {
             await SendFlashMessage(FlashType.Error, "Game already started");
             return;
         }
-        catch (TooManyPlayersException e)
+        catch (TooManyPlayersException)
         {
             await SendFlashMessage(FlashType.Error, "Game is full");
             return;
@@ -100,7 +100,6 @@ public class GameHub : Hub<IGameClient>
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
-            GameTransformer gameTransformer = new();
 
             List<string> usersInRoom = _connections.Where(c => c.Value.RoomCode == userConnection.RoomCode).Select(c => c.Key).ToList();
 
@@ -333,13 +332,21 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
             }
-            catch (CardNotFoundException)
+            catch (NotPlayersTurnException)
             {
-                await SendFlashMessage(FlashType.Error, "Kaart niet gevonden");
+                await SendFlashMessage(FlashType.Error, "Niet jouw beurt");
             }
             catch (PlayerNotFoundException)
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
+            }
+            catch (CardDoesNotMatchSuitsException)
+            {
+                await SendFlashMessage(FlashType.Warning, "Je moet kleur bekennen");
+            }
+            catch (CardNotFoundException)
+            {
+                await SendFlashMessage(FlashType.Error, "Kaart niet gevonden");
             }
         }
     }
@@ -350,9 +357,19 @@ public class GameHub : Hub<IGameClient>
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
-            
-            game.BlockLaundryCalls();
-            game.BlockLaundryTurnCallsAndStartRound();
+
+            try
+            {
+                game.BlockLaundryCalls();
+                game.BlockLaundryTurnCallsAndStartRound();
+            }
+            catch (InvalidStateException)
+            {
+                await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+
+            await SendFlashMessage(FlashType.Success, "Was overgeslagen");
+            await SendCurrentGameInfo();
         }
         else
         {

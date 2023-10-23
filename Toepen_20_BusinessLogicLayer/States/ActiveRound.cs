@@ -62,6 +62,9 @@ public class ActiveRound : IState
         throw new InvalidStateException();
     }
 
+    /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="CardDoesNotMatchSuitsException"></exception>
+    /// <exception cref="CardNotFoundException"></exception>
     public void PlayerPlaysCard(Game game, Player player, Card card)
     {
         WinnerStatus? winnerStatus = game.CurrentSet!.PlayCard(player, card);
