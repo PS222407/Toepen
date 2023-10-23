@@ -10,6 +10,8 @@ public class PlayerViewModel
 
     public bool IsActive { get; set; }
 
+    public int PenaltyPoints { get; set; }
+
     public bool HasKnocked { get; set; }
 
     public bool CalledWhiteLaundry { get; set; }
