@@ -365,4 +365,28 @@ public class GameHub : Hub<IGameClient>
             await SendFlashMessage(FlashType.Error, "Speler is niet verbonden");
         }
     }
+    
+    public async Task SkipLaundryCalls()
+    {
+        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
+
+            try
+            {
+                game.BlockLaundryCalls();
+            }
+            catch (InvalidStateException)
+            {
+                await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+
+            await SendFlashMessage(FlashType.Success, "Was overgeslagen");
+            await SendCurrentGameInfo();
+        }
+        else
+        {
+            await SendFlashMessage(FlashType.Error, "Speler is niet verbonden");
+        }
+    }
 }
