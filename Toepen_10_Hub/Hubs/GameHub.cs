@@ -140,6 +140,9 @@ public class GameHub : Hub<IGameClient>
                 game.Start();
                 await SendCurrentGameInfo();
                 await Clients.Group(userConnection.RoomCode).ReceiveMessage(null, "Game started");
+
+                /*int timeCountdownInSeconds = game.GetTimeLeftCountdown();
+                await Clients.Group(userConnection.RoomCode).ReceiveCountdown(timeCountdownInSeconds);*/
             }
             catch (AlreadyStartedException)
             {
@@ -149,6 +152,17 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Warning, "Not enough players");
             }
+        }
+    }
+
+    public async Task GetCountdownFromGame()
+    {
+        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+
+            int timeCountdownInSeconds = game.GetTimeLeftCountdown();
+            await Clients.Client(Context.ConnectionId).ReceiveCountdown(timeCountdownInSeconds);
         }
     }
 

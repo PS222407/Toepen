@@ -12,6 +12,8 @@ public class Game
 
     public const int MaxAmountOfPlayers = 6;
 
+    private DateTime _endTimeCountDown;
+
     public GameState GameState { get; }
 
     public List<Player> Players { get; set; } = new();
@@ -61,7 +63,27 @@ public class Game
     public void Start()
     {
         State.Start(this);
+        StartCountDown();
         StartNewSet();
+    }
+    
+    private void StartCountDown()
+    {
+        int timeCountdownInSeconds = 20;
+        
+        DateTime startTime = DateTime.Now;
+        _endTimeCountDown = startTime.AddSeconds(timeCountdownInSeconds);
+    }
+
+    public int GetTimeLeftCountdown()
+    {
+        if (_endTimeCountDown > DateTime.Now)
+        {
+            TimeSpan timeLeft = _endTimeCountDown - DateTime.Now;
+            return (int)timeLeft.TotalSeconds;
+        }
+
+        return 0;   
     }
 
     /// <exception cref="PlayerNotFoundException"></exception>
