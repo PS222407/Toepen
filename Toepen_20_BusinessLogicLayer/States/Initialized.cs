@@ -23,6 +23,7 @@ public class Initialized : IState
         }
 
         game.State = new WaitingForLaundryCalls();
+        game.StartNewSet();
     }
 
     public void PlayerCallsDirtyLaundry(Game game, Player player)

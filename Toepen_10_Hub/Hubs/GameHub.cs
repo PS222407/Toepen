@@ -51,7 +51,7 @@ public class GameHub : Hub<IGameClient>
     public async Task JoinRoom(UserConnection userConnection)
     {
         bool roomExists = _connections.Any(c => c.Value.RoomCode == userConnection.RoomCode);
-        Game game = roomExists ? _gameService.Games.First(g => g.RoomId == userConnection.RoomCode) : new Game(userConnection.RoomCode);
+        Game game = roomExists ? _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode) : new Game(userConnection.RoomCode);
         if (!roomExists)
         {
             _gameService.AddGame(game);
@@ -99,7 +99,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
 
             List<string> usersInRoom = _connections.Where(c => c.Value.RoomCode == userConnection.RoomCode).Select(c => c.Key).ToList();
 
@@ -133,7 +133,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             try
             {
                 game.Start();
@@ -154,22 +154,11 @@ public class GameHub : Hub<IGameClient>
         }
     }
 
-    public async Task GetCountdownFromGame()
-    {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
-        {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
-
-            int timeCountdownInSeconds = game.GetTimeLeftCountdown();
-            await Clients.Client(Context.ConnectionId).ReceiveCountdown(timeCountdownInSeconds);
-        }
-    }
-
     public async Task CallDirtyLaundry()
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             try
             {
@@ -196,7 +185,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             try
             {
@@ -223,7 +212,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             Player? victim = game.FindPlayerById(victimId);
             try
@@ -251,7 +240,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             try
             {
@@ -274,7 +263,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             try
             {
@@ -297,7 +286,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             try
             {
@@ -320,7 +309,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
             try
             {
@@ -356,7 +345,7 @@ public class GameHub : Hub<IGameClient>
     {
         if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            Game game = _gameService.Games.First(g => g.RoomId == userConnection.RoomCode);
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
 
             try
             {

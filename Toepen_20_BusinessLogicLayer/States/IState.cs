@@ -5,9 +5,11 @@ namespace Toepen_20_BusinessLogicLayer.States;
 
 public interface IState
 {
+    /// <exception cref="TooManyPlayersException"></exception>
     /// <exception cref="AlreadyStartedException"></exception>
     public void AddPlayer(Game game, Player player);
 
+    /// <exception cref="NotEnoughPlayersException"></exception>
     /// <exception cref="AlreadyStartedException"></exception>
     public void Start(Game game);
 

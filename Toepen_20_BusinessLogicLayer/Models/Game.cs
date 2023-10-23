@@ -6,7 +6,7 @@ namespace Toepen_20_BusinessLogicLayer.Models;
 
 public class Game
 {
-    public string RoomId { get; }
+    public string RoomCode { get; }
 
     public const int MinAmountOfPlayer = 2;
 
@@ -26,9 +26,14 @@ public class Game
 
     public IState State { get; set; } = new Initialized();
 
-    public Game(string roomId)
+    public Game(string roomCode)
     {
-        RoomId = roomId;
+        RoomCode = roomCode;
+    }
+
+    public int? TimerCallback()
+    {
+        return CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
     }
 
     public Player? FindPlayerByConnectionId(string connectionId)
@@ -63,28 +68,6 @@ public class Game
     public void Start()
     {
         State.Start(this);
-        StartCountDown();
-        StartNewSet();
-    }
-    
-    private void StartCountDown()
-    {
-        int timeCountdownInSeconds = 20;
-        
-        DateTime startTime = DateTime.Now;
-        _endTimeCountDown = startTime.AddSeconds(timeCountdownInSeconds);
-    }
-
-    public int GetTimeLeftCountdown()
-    {
-        if (_endTimeCountDown > DateTime.Now)
-        {
-            TimeSpan timeLeft = _endTimeCountDown - DateTime.Now;
-            int secondsLeft = (int)Math.Floor(timeLeft.TotalSeconds);
-            return secondsLeft;
-        }
-
-        return 0;   
     }
 
     /// <exception cref="PlayerNotFoundException"></exception>

@@ -11,4 +11,6 @@ public class Settings
     public static int AmountStartCardsPlayer = 4;
 
     public static int MaxRounds = 4;
+    
+    public static int LaundryTimeInSeconds = 20;
 }
