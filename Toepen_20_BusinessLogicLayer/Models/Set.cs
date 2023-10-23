@@ -28,6 +28,8 @@ public class Set
     
     public bool LaundryCardsAreDealt { get; set; }
 
+    public bool IsFirstLaundryTimerIteration { get; private set; } = false;
+
     public Set(List<Player> players, Player? previousSetWinner = null)
     {
         if (previousSetWinner != null)
@@ -46,16 +48,28 @@ public class Set
 
         State = GameState.ActiveLaundryTimer;
         _laundryEndTime = DateTime.Now.AddSeconds(Settings.LaundryTimeInSeconds);
+        IsFirstLaundryTimerIteration = true;
     }
     
-    public int GetTimeLeftLaundryTimerInSeconds()
+    public TimerInfo GetTimeLeftLaundryTimerInSeconds()
     {
+        bool isFirstLaundryTimerIteration = IsFirstLaundryTimerIteration;
+        IsFirstLaundryTimerIteration = false;
+        
         if (_laundryEndTime > DateTime.Now)
         {
-            return (int)Math.Floor((_laundryEndTime - DateTime.Now).TotalSeconds);
+            return new TimerInfo
+            {
+                Seconds = (int)Math.Floor((_laundryEndTime - DateTime.Now).TotalSeconds),
+                First = isFirstLaundryTimerIteration,
+            };
         }
 
-        return -1;
+        return new TimerInfo
+        {
+            Seconds = -1,
+            First = isFirstLaundryTimerIteration,
+        };
     }
 
     private void InitializeDeck()

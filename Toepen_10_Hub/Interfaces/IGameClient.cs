@@ -6,7 +6,7 @@ public interface IGameClient
 
     Task ReceiveGame(string game);
     
-    Task ReceiveCountdown(int time);
+    Task ReceiveCountdown(string timerInfo);
 
     Task ReceiveUsersInRoom(IEnumerable<string> users);
 

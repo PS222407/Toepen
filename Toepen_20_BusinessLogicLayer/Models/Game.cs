@@ -29,18 +29,27 @@ public class Game
         RoomCode = roomCode;
     }
 
-    public int? TimerCallback()
+    public TimerInfo TimerCallback()
     {
-        int? secondsLeft = CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
-        if (State.GetType() == typeof(WaitingForLaundryCalls) && secondsLeft == -1)
+        TimerInfo? laundryTimerInfo = CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
+        bool done = false;
+        //TODO: TimerInfo? laundryTurnTimerInfo = CurrentSet?.GetTimeLeftLaundryTurnTimerInSeconds();
+        if (State.GetType() == typeof(WaitingForLaundryCalls) && laundryTimerInfo?.Seconds == -1)
         {
             State.BlockLaundryCalls(this);
-        } else if (State.GetType() == typeof(WaitingForTurnLaundryCalls) && secondsLeft == -1)
-        {
-            State.BlockLaundryTurnCalls(this);
+            done = true;
         }
-        
-        return secondsLeft;
+        //TODO: else if (State.GetType() == typeof(WaitingForTurnLaundryCalls) && laundryTimerInfo?.Seconds == -1)
+        // {
+        //     State.BlockLaundryTurnCalls(this);
+        // }
+
+        return new TimerInfo
+        {
+            Seconds = laundryTimerInfo?.Seconds ?? -1,
+            First = laundryTimerInfo?.First ?? false,
+            Done = done,
+        };
     }
 
     public Player? FindPlayerByConnectionId(string connectionId)
