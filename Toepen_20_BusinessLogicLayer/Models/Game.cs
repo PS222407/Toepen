@@ -12,8 +12,6 @@ public class Game
 
     public const int MaxAmountOfPlayers = 6;
 
-    private DateTime _endTimeCountDown;
-
     public GameState GameState { get; }
 
     public List<Player> Players { get; set; } = new();
