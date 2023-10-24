@@ -76,9 +76,11 @@ public class GameHub : Hub<IGameClient>
         _gameService.GetUserConnections()[Context.ConnectionId] = userConnection;
 
         await Clients.Group(userConnection.RoomCode).ReceiveMessage(null, message);
+        await SendCurrentUser(userConnection.RoomCode);
         await SendConnectedUsers(userConnection.RoomCode);
     }
 
+    // TODO: Handle exceptions
     public Task SendConnectedUsers(string room)
     {
         Game game = _gameService.Games.First(g => g.RoomCode == room);
@@ -86,6 +88,16 @@ public class GameHub : Hub<IGameClient>
         List<PlayerViewModel> players = gameViewModel.Players;
 
         return Clients.Group(room).ReceiveUsersInRoom(JsonSerializer.Serialize(players));
+    }
+    
+    // TODO: Handle exceptions
+    private Task SendCurrentUser(string room)
+    {
+        Game game = _gameService.Games.First(g => g.RoomCode == room);
+        Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
+        PlayerViewModel playerViewModel = GameTransformer.PlayerToViewModel(player, Context.ConnectionId);
+        
+        return Clients.Client(Context.ConnectionId).ReceiveConnectedUser(JsonSerializer.Serialize(playerViewModel));
     }
 
     private async Task SendFlashMessage(FlashType type, string message)

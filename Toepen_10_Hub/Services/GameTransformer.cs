@@ -52,6 +52,19 @@ public class GameTransformer
         
         return gameViewModel;
     }
+    
+    public static PlayerViewModel PlayerToViewModel(Player player, string connectionId)
+    {
+        PlayerViewModel playerViewModel = new PlayerViewModel
+        {
+            Id = player.Id,
+            Name = player.Name,
+            IsHost = player.IsHost,
+            IsYou = player.ConnectionId == connectionId,
+        };
+
+        return playerViewModel;
+    }
 
     private static void SetUserOrder(GameViewModel gameViewModel)
     {
