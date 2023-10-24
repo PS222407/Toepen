@@ -89,7 +89,6 @@ public class GameFlowTests
 
         // SET 1
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCalls();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
@@ -163,7 +162,6 @@ public class GameFlowTests
         }
 
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCalls();
 
         game.PlayerPlaysCard(3, new Card(Suit.Clubs, Value.Ace));
         game.PlayerPlaysCard(1, new Card(Suit.Clubs, Value.Jack));
@@ -233,7 +231,6 @@ public class GameFlowTests
         }
 
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCalls();
 
         game.PlayerPlaysCard(1, new Card(Suit.Diamonds, Value.Queen));
         game.PlayerPlaysCard(2, new Card(Suit.Diamonds, Value.Ace));
@@ -284,7 +281,6 @@ public class GameFlowTests
         Settings.MaxPenaltyPoints = 10;
 
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCalls();
 
         bool gameIsOver = false;
         while (!gameIsOver)
@@ -292,7 +288,6 @@ public class GameFlowTests
             if (game.CurrentSet.CurrentRound == null)
             {
                 game.BlockLaundryCalls();
-                game.BlockLaundryTurnCalls();
             }
 
             Player activePlayer = game.CurrentSet.CurrentRound.ActivePlayer;
@@ -332,7 +327,6 @@ public class GameFlowTests
 
         // ACT
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCalls();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
@@ -389,7 +383,6 @@ public class GameFlowTests
 
         // ACT
         game.BlockLaundryCalls();
-        game.BlockLaundryTurnCalls();
 
         Entity.SetActivePlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
         Entity.SetStartedPlayerOf(game.CurrentSet.CurrentRound, game.CurrentSet.CurrentRound.Players.Find(p => p.Id == 1));
