@@ -79,25 +79,29 @@ public class GameHub : Hub<IGameClient>
         await SendCurrentUser(userConnection.RoomCode);
         await SendConnectedUsers(userConnection.RoomCode);
     }
-
-    // TODO: Handle exceptions
-    public Task SendConnectedUsers(string room)
+    
+    public async Task SendConnectedUsers(string room)
     {
-        Game game = _gameService.Games.First(g => g.RoomCode == room);
-        GameViewModel gameViewModel = GameTransformer.GameToViewModel(game, Context.ConnectionId);
-        List<PlayerViewModel> players = gameViewModel.Players;
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomCode == room);
+            GameViewModel gameViewModel = GameTransformer.GameToViewModel(game, Context.ConnectionId);
+            List<PlayerViewModel> players = gameViewModel.Players;
 
-        return Clients.Group(room).ReceiveUsersInRoom(JsonSerializer.Serialize(players));
+            await Clients.Group(room).ReceiveUsersInRoom(JsonSerializer.Serialize(players));
+        }
     }
     
-    // TODO: Handle exceptions
-    private Task SendCurrentUser(string room)
+    private async Task SendCurrentUser(string room)
     {
-        Game game = _gameService.Games.First(g => g.RoomCode == room);
-        Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
-        PlayerViewModel playerViewModel = GameTransformer.PlayerToViewModel(player, Context.ConnectionId);
-        
-        return Clients.Client(Context.ConnectionId).ReceiveConnectedUser(JsonSerializer.Serialize(playerViewModel));
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomCode == room);
+            Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
+            PlayerViewModel playerViewModel = GameTransformer.PlayerToViewModel(player, Context.ConnectionId);
+
+            await Clients.Client(Context.ConnectionId).ReceiveConnectedUser(JsonSerializer.Serialize(playerViewModel));
+        }
     }
 
     private async Task SendFlashMessage(FlashType type, string message)
