@@ -308,6 +308,7 @@ public class Set
         return null;
     }
 
+    /// <exception cref="CantPerformToSelfException"></exception>
     public void Knock(Player player)
     {
         if (_lastPlayerWhoKnocked == player)

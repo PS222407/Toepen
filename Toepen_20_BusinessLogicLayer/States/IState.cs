@@ -40,6 +40,7 @@ public interface IState
     public TimerInfo LaundryTurnTimerCallback(Game game);
 
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="CantPerformToSelfException"></exception>
     public void PlayerKnocks(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
