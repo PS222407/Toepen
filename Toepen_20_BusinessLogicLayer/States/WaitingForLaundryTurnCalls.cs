@@ -3,7 +3,7 @@ using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
 
-public class WaitingForTurnLaundryCalls : IState
+public class WaitingForLaundryTurnCalls : IState
 {
     public void AddPlayer(Game game, Player player)
     {
@@ -63,7 +63,7 @@ public class WaitingForTurnLaundryCalls : IState
         bool done = false;
         TimerInfo? laundryTurnTimerInfo = game.CurrentSet?.GetTimeLeftLaundryTurnTimerInSeconds();
 
-        if (game.State.GetType() == typeof(WaitingForTurnLaundryCalls) && laundryTurnTimerInfo?.Seconds == -1)
+        if (game.State.GetType() == typeof(WaitingForLaundryTurnCalls) && laundryTurnTimerInfo?.Seconds == -1)
         {
             game.State.BlockLaundryTurnCalls(game);
             done = true;
