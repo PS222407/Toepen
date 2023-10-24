@@ -11,22 +11,20 @@ namespace Toepen_10_Hub.Hubs;
 
 public class GameHub : Hub<IGameClient>
 {
-    private readonly IDictionary<string, UserConnection> _connections; // .NET 8 constructor injection breaks this for some reason
-
     private readonly IGameService _gameService;
 
     public GameHub(IDictionary<string, UserConnection> connections, IGameService gameService)
     {
-        _connections = connections;
         _gameService = gameService;
+        _gameService.SetUserConnections(connections);
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
-            _connections.Remove(Context.ConnectionId);
-            if (_connections.Count(c => c.Value.RoomCode == userConnection.RoomCode) <= 0)
+            _gameService.GetUserConnections().Remove(Context.ConnectionId);
+            if (_gameService.GetUserConnections().Count(c => c.Value.RoomCode == userConnection.RoomCode) <= 0)
             {
                 _gameService.RemoveGame(userConnection.RoomCode);
             }
@@ -42,7 +40,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task SendMessage(string user, string message)
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             await Clients.Group(userConnection.RoomCode).ReceiveMessage(userConnection.UserName, $"{message}");
         }
@@ -50,7 +48,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task JoinRoom(UserConnection userConnection)
     {
-        bool roomExists = _connections.Any(c => c.Value.RoomCode == userConnection.RoomCode);
+        bool roomExists = _gameService.GetUserConnections().Any(c => c.Value.RoomCode == userConnection.RoomCode);
         Game game = roomExists ? _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode) : new Game(userConnection.RoomCode);
         if (!roomExists)
         {
@@ -75,7 +73,7 @@ public class GameHub : Hub<IGameClient>
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.RoomCode);
-        _connections[Context.ConnectionId] = userConnection;
+        _gameService.GetUserConnections()[Context.ConnectionId] = userConnection;
 
         await Clients.Group(userConnection.RoomCode).ReceiveMessage(null, message);
         await SendConnectedUsers(userConnection.RoomCode);
@@ -97,41 +95,24 @@ public class GameHub : Hub<IGameClient>
 
     private async Task SendCurrentGameInfo()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
 
-            List<string> usersInRoom = _connections.Where(c => c.Value.RoomCode == userConnection.RoomCode).Select(c => c.Key).ToList();
+            List<string> usersInRoom = _gameService.GetUserConnections().Where(c => c.Value.RoomCode == game.RoomCode).Select(c => c.Key).ToList();
 
             foreach (string connectionId in usersInRoom)
             {
                 GameViewModel gameViewModel = GameTransformer.GameToViewModel(game, connectionId);
-                SetUserOrder(gameViewModel);
 
                 await Clients.Client(connectionId).ReceiveGame(JsonSerializer.Serialize(gameViewModel));
             }
         }
     }
 
-    private static void SetUserOrder(GameViewModel gameViewModel)
-    {
-        int playersIndex = gameViewModel.Players.FindIndex(user => user.IsYou);
-
-        if (playersIndex != -1)
-        {
-            List<PlayerViewModel> firstPart = gameViewModel.Players.GetRange(playersIndex, gameViewModel.Players.Count - playersIndex);
-            List<PlayerViewModel> secondPart = gameViewModel.Players.GetRange(0, playersIndex);
-
-            gameViewModel.Players.Clear();
-
-            gameViewModel.Players.AddRange(firstPart);
-            gameViewModel.Players.AddRange(secondPart);
-        }
-    }
-
     public async Task StartGame()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             try
@@ -139,9 +120,6 @@ public class GameHub : Hub<IGameClient>
                 game.Start();
                 await SendCurrentGameInfo();
                 await Clients.Group(userConnection.RoomCode).ReceiveMessage(null, "Game started");
-
-                /*int timeCountdownInSeconds = game.GetTimeLeftCountdown();
-                await Clients.Group(userConnection.RoomCode).ReceiveCountdown(timeCountdownInSeconds);*/
             }
             catch (AlreadyStartedException)
             {
@@ -156,7 +134,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task CallDirtyLaundry()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
@@ -183,7 +161,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task CallWhiteLaundry()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
@@ -210,7 +188,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task TurnLaundry(int victimId)
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
@@ -225,6 +203,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
             }
+            catch (AlreadyTurnedException)
+            {
+                await SendFlashMessage(FlashType.Warning, "De was is al omgedraaid");
+            }
             catch (CantPerformToSelfException)
             {
                 await SendFlashMessage(FlashType.Error, "Kan deze actie niet op jezelf uitvoeren");
@@ -238,7 +220,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task Knock()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
@@ -261,7 +243,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task Check()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
@@ -284,7 +266,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task Fold()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
@@ -307,7 +289,7 @@ public class GameHub : Hub<IGameClient>
 
     public async Task PlayCard(CardViewModel cardViewModel)
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
             Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
@@ -343,7 +325,7 @@ public class GameHub : Hub<IGameClient>
     // TODO: remove or handle exceptions
     public async Task SkipLaundry()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
 
@@ -365,10 +347,11 @@ public class GameHub : Hub<IGameClient>
             await SendFlashMessage(FlashType.Error, "Speler is niet verbonden");
         }
     }
-    
+
+    // TODO: remove or handle exceptions
     public async Task SkipLaundryCalls()
     {
-        if (_connections.TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
 

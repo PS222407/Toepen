@@ -33,7 +33,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapHub<GameHub>("/chatHubApi");
+app.MapHub<GameHub>("/GameHub");
 
 app.UseCors();
 

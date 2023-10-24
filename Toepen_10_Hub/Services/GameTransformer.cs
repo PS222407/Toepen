@@ -41,14 +41,32 @@ public class GameTransformer
             };
             playerViewModels.Add(playerViewModel);
         }
-
-        gameViewModel.State = game.State.GetType().ToString();
+        
+        gameViewModel.State = game.State.GetType().ToString().Substring(game.State.GetType().ToString().LastIndexOf('.') + 1);
         gameViewModel.Players = playerViewModels;
         gameViewModel.SetNumber = game.Sets.Count;
         gameViewModel.RoundNumber = game.CurrentSet?.Rounds.Count ?? 0;
         gameViewModel.PenaltyPoints = game.CurrentSet?.PenaltyPoints ?? 0;
 
+        SetUserOrder(gameViewModel);
+        
         return gameViewModel;
+    }
+
+    private static void SetUserOrder(GameViewModel gameViewModel)
+    {
+        int playersIndex = gameViewModel.Players.FindIndex(user => user.IsYou);
+
+        if (playersIndex != -1)
+        {
+            List<PlayerViewModel> firstPart = gameViewModel.Players.GetRange(playersIndex, gameViewModel.Players.Count - playersIndex);
+            List<PlayerViewModel> secondPart = gameViewModel.Players.GetRange(0, playersIndex);
+
+            gameViewModel.Players.Clear();
+
+            gameViewModel.Players.AddRange(firstPart);
+            gameViewModel.Players.AddRange(secondPart);
+        }
     }
 
     /// <exception cref="CardNotFoundException"></exception>

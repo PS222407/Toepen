@@ -29,18 +29,28 @@ public class Game
         RoomCode = roomCode;
     }
 
-    public int? TimerCallback()
+    /// <exception cref="InvalidStateException"></exception>
+    public TimerInfo? TimerCallback()
     {
-        int? secondsLeft = CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
-        if (State.GetType() == typeof(WaitingForLaundryCalls) && secondsLeft == -1)
+        try
         {
-            State.BlockLaundryCalls(this);
-        } else if (State.GetType() == typeof(WaitingForTurnLaundryCalls) && secondsLeft == -1)
+            TimerInfo laundryTimerInfo = State.LaundryTimerCallback(this);
+            return laundryTimerInfo;
+        }
+        catch (InvalidStateException)
         {
-            State.BlockLaundryTurnCalls(this);
+        }
+
+        try
+        {
+            TimerInfo laundryTurnTimerInfo = State.LaundryTurnTimerCallback(this);
+            return laundryTurnTimerInfo;
+        }
+        catch (InvalidStateException)
+        {
         }
         
-        return secondsLeft;
+        return null;
     }
 
     public Player? FindPlayerByConnectionId(string connectionId)
@@ -112,6 +122,7 @@ public class Game
 
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="AlreadyTurnedException"></exception>
     /// <exception cref="InvalidStateException"></exception>
     public void PlayerTurnsLaundry(int playerId, int victimId)
     {
