@@ -212,10 +212,11 @@ public class Set
             if (Settings.LaundryOpenCards)
             {
                 victim.AddPenaltyPoints(1);
+                victim.MustPlayWithOpenCards();
             }
             else
             {
-                victim.MustPlayWithOpenCards();
+                victim.AddPenaltyPoints(1);
             }
 
             return new StatusMessage(true, Message.PlayerDidBluff);
@@ -307,6 +308,7 @@ public class Set
         return null;
     }
 
+    /// <exception cref="CantPerformToSelfException"></exception>
     public void Knock(Player player)
     {
         if (_lastPlayerWhoKnocked == player)

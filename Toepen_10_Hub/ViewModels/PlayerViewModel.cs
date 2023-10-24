@@ -11,6 +11,8 @@ public class PlayerViewModel
     public bool IsYou { get; set; }
 
     public bool IsActive { get; set; }
+    
+    public bool HasFolded { get; set; }
 
     public int PenaltyPoints { get; set; }
 

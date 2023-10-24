@@ -225,7 +225,7 @@ public class GameHub : Hub<IGameClient>
             }
             catch (CantPerformToSelfException)
             {
-                await SendFlashMessage(FlashType.Error, "Kan deze actie niet op jezelf uitvoeren");
+                await SendFlashMessage(FlashType.Warning, "Kan deze actie niet op jezelf uitvoeren");
             }
             catch (PlayerNotFoundException)
             {
@@ -249,6 +249,10 @@ public class GameHub : Hub<IGameClient>
             catch (InvalidStateException)
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+            catch (CantPerformToSelfException)
+            {
+                await SendFlashMessage(FlashType.Warning, "Kan deze actie niet op jezelf uitvoeren");
             }
             catch (PlayerNotFoundException)
             {

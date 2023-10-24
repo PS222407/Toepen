@@ -51,6 +51,8 @@ public class ActiveRound : IState
         throw new InvalidStateException();
     }
 
+    /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="CantPerformToSelfException"></exception>
     public void PlayerKnocks(Game game, Player player)
     {
         game.CurrentSet!.Knock(player);
