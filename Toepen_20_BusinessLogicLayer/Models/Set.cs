@@ -24,11 +24,15 @@ public class Set
 
     private Player? _lastPlayerWhoKnocked;
 
+    public bool LaundryCardsAreDealt { get; set; }
+    
     private readonly DateTime _laundryEndTime;
     
-    public bool LaundryCardsAreDealt { get; set; }
+    private DateTime _laundryTurnEndTime;
 
-    public bool IsFirstLaundryTimerIteration { get; private set; } = false;
+    public bool IsFirstLaundryTimerIteration { get; private set; }
+    
+    public bool IsFirstLaundryTurnTimerIteration { get; private set; }
 
     public Set(List<Player> players, Player? previousSetWinner = null)
     {
@@ -69,6 +73,27 @@ public class Set
         {
             Seconds = -1,
             First = isFirstLaundryTimerIteration,
+        };
+    }
+    
+    public TimerInfo GetTimeLeftLaundryTurnTimerInSeconds()
+    {
+        bool isFirstLaundryTurnTimerIteration = IsFirstLaundryTurnTimerIteration;
+        IsFirstLaundryTurnTimerIteration = false;
+        
+        if (_laundryTurnEndTime > DateTime.Now)
+        {
+            return new TimerInfo
+            {
+                Seconds = (int)Math.Floor((_laundryTurnEndTime - DateTime.Now).TotalSeconds),
+                First = isFirstLaundryTurnTimerIteration,
+            };
+        }
+
+        return new TimerInfo
+        {
+            Seconds = -1,
+            First = isFirstLaundryTurnTimerIteration,
         };
     }
 
@@ -137,18 +162,16 @@ public class Set
     public void BlockLaundryCalls()
     {
         State = GameState.ActiveTurnLaundryTimer;
+        _laundryTurnEndTime = DateTime.Now.AddSeconds(Settings.LaundryTurnTimeInSeconds);
+        IsFirstLaundryTurnTimerIteration = true;
     }
 
+    /// <exception cref="AlreadyTurnedException"></exception>
     public StatusMessage TurnsLaundry(Player turner, Player victim)
     {
-        if (State != GameState.ActiveTurnLaundryTimer)
-        {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
-        }
-
         if (victim.LaundryHasBeenTurned)
         {
-            return new StatusMessage(false, Message.AlreadyTurnedLaundry);
+            throw new AlreadyTurnedException();
         }
 
         if (victim.HasCalledDirtyLaundry)

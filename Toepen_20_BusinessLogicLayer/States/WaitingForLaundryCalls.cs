@@ -43,6 +43,30 @@ public class WaitingForLaundryCalls : IState
         game.State = new WaitingForTurnLaundryCalls();
     }
 
+    public TimerInfo LaundryTimerCallback(Game game)
+    {
+        bool done = false;
+        TimerInfo? laundryTimerInfo = game.CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
+
+        if (game.State.GetType() == typeof(WaitingForLaundryCalls) && laundryTimerInfo?.Seconds == -1)
+        {
+            game.State.BlockLaundryCalls(game);
+            done = true;
+        }
+
+        return new TimerInfo
+        {
+            Seconds = laundryTimerInfo?.Seconds ?? -1,
+            First = laundryTimerInfo?.First ?? false,
+            Done = done,
+        };
+    }
+
+    public TimerInfo LaundryTurnTimerCallback(Game game)
+    {
+        throw new InvalidStateException();
+    }
+
     public void PlayerKnocks(Game game, Player player)
     {
         throw new InvalidStateException();

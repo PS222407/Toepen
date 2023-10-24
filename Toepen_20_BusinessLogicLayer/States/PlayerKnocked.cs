@@ -42,6 +42,16 @@ public class PlayerKnocked : IState
         throw new InvalidStateException();
     }
 
+    public TimerInfo LaundryTimerCallback(Game game)
+    {
+        throw new InvalidStateException();
+    }
+
+    public TimerInfo LaundryTurnTimerCallback(Game game)
+    {
+        throw new InvalidStateException();
+    }
+
     public void PlayerKnocks(Game game, Player player)
     {
         throw new InvalidStateException();

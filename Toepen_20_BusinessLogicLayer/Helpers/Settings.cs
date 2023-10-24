@@ -12,5 +12,7 @@ public class Settings
 
     public static int MaxRounds = 4;
     
-    public static int LaundryTimeInSeconds = 10;
+    public static int LaundryTimeInSeconds = 20;
+    
+    public static int LaundryTurnTimeInSeconds = 20;
 }

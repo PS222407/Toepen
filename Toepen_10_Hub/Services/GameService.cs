@@ -39,7 +39,11 @@ public class GameService : IGameService
     {
         foreach (Game game in _games)
         {
-            TimerInfo timerInfo = game.TimerCallback();
+            TimerInfo? timerInfo = game.TimerCallback();
+            if (timerInfo == null)
+            {
+                continue;
+            }
 
             if (timerInfo.Seconds != -1)
             {

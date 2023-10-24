@@ -22,6 +22,7 @@ public interface IState
     public void PlayerCallsWhiteLaundry(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="AlreadyTurnedException"></exception>
     public void PlayerTurnsLaundry(Game game, Player player, Player victim);
 
     /// <exception cref="InvalidStateException"></exception>
@@ -29,6 +30,14 @@ public interface IState
 
     /// <exception cref="InvalidStateException"></exception>
     public void BlockLaundryCalls(Game game);
+
+    /// <param name="game"></param>
+    /// <exception cref="InvalidStateException"></exception>
+    public TimerInfo LaundryTimerCallback(Game game);
+
+    /// <param name="game"></param>
+    /// <exception cref="InvalidStateException"></exception>
+    public TimerInfo LaundryTurnTimerCallback(Game game);
 
     /// <exception cref="InvalidStateException"></exception>
     public void PlayerKnocks(Game game, Player player);

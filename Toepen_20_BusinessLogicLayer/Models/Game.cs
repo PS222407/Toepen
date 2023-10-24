@@ -29,27 +29,28 @@ public class Game
         RoomCode = roomCode;
     }
 
-    public TimerInfo TimerCallback()
+    /// <exception cref="InvalidStateException"></exception>
+    public TimerInfo? TimerCallback()
     {
-        TimerInfo? laundryTimerInfo = CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
-        bool done = false;
-        //TODO: TimerInfo? laundryTurnTimerInfo = CurrentSet?.GetTimeLeftLaundryTurnTimerInSeconds();
-        if (State.GetType() == typeof(WaitingForLaundryCalls) && laundryTimerInfo?.Seconds == -1)
+        try
         {
-            State.BlockLaundryCalls(this);
-            done = true;
+            TimerInfo laundryTimerInfo = State.LaundryTimerCallback(this);
+            return laundryTimerInfo;
         }
-        //TODO: else if (State.GetType() == typeof(WaitingForTurnLaundryCalls) && laundryTimerInfo?.Seconds == -1)
-        // {
-        //     State.BlockLaundryTurnCalls(this);
-        // }
-
-        return new TimerInfo
+        catch (InvalidStateException)
         {
-            Seconds = laundryTimerInfo?.Seconds ?? -1,
-            First = laundryTimerInfo?.First ?? false,
-            Done = done,
-        };
+        }
+
+        try
+        {
+            TimerInfo laundryTurnTimerInfo = State.LaundryTurnTimerCallback(this);
+            return laundryTurnTimerInfo;
+        }
+        catch (InvalidStateException)
+        {
+        }
+        
+        return null;
     }
 
     public Player? FindPlayerByConnectionId(string connectionId)
@@ -116,6 +117,7 @@ public class Game
 
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="AlreadyTurnedException"></exception>
     /// <exception cref="InvalidStateException"></exception>
     public void PlayerTurnsLaundry(int playerId, int victimId)
     {

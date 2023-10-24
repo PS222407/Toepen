@@ -203,6 +203,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
             }
+            catch (AlreadyTurnedException)
+            {
+                await SendFlashMessage(FlashType.Warning, "De was is al omgedraaid");
+            }
             catch (CantPerformToSelfException)
             {
                 await SendFlashMessage(FlashType.Error, "Kan deze actie niet op jezelf uitvoeren");
