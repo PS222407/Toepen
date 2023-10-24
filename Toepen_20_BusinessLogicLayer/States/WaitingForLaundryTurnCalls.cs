@@ -33,8 +33,7 @@ public class WaitingForLaundryTurnCalls : IState
 
     public void BlockLaundryTurnCalls(Game game)
     {
-        game.CurrentSet!.BlockLaundryTurnCalls();
-        if (game.CurrentSet.LaundryCardsAreDealt)
+        if (game.CurrentSet!.LaundryCardsAreDealt)
         {
             game.CurrentSet!.BlockLaundryTurnCallsAndWaitForLaundryCalls();
             game.State = new WaitingForLaundryCalls();

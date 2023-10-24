@@ -18,7 +18,7 @@ public class Set
 
     public Player WinnerOfSet { get; private set; }
 
-    private readonly Player? _previousSetWinner;
+    public Player? PreviousSetWinner { get; }
 
     private List<Card> _deck = new();
 
@@ -38,7 +38,7 @@ public class Set
     {
         if (previousSetWinner != null)
         {
-            _previousSetWinner = previousSetWinner;
+            PreviousSetWinner = previousSetWinner;
         }
 
         Players = players;
@@ -64,7 +64,7 @@ public class Set
         {
             return new TimerInfo
             {
-                Seconds = (int)Math.Floor((_laundryEndTime - DateTime.Now).TotalSeconds),
+                Seconds = (int)(_laundryEndTime - DateTime.Now).TotalSeconds,
                 First = isFirstLaundryTimerIteration,
             };
         }
@@ -85,7 +85,7 @@ public class Set
         {
             return new TimerInfo
             {
-                Seconds = (int)Math.Floor((_laundryTurnEndTime - DateTime.Now).TotalSeconds),
+                Seconds = (int)(_laundryTurnEndTime - DateTime.Now).TotalSeconds,
                 First = isFirstLaundryTurnTimerIteration,
             };
         }
@@ -224,11 +224,6 @@ public class Set
         return new StatusMessage(false, Message.PlayerHasNotCalledForLaundry);
     }
 
-    public void BlockLaundryTurnCalls()
-    {
-        
-    }
-
     public bool BlockLaundryTurnCallsAndWaitForLaundryCalls()
     {
         if (State != GameState.ActiveTurnLaundryTimer)
@@ -265,9 +260,9 @@ public class Set
             player.ResetLaundryVariables();
         }
 
-        if (_previousSetWinner != null)
+        if (PreviousSetWinner != null)
         {
-            StartNewRound(false, true, _previousSetWinner, true);
+            StartNewRound(false, true, PreviousSetWinner, true);
         }
         else
         {
@@ -275,7 +270,7 @@ public class Set
         }
     }
 
-    private void StartNewRound(bool noWinner, bool roundWinner, Player? previousSetWinner = null, bool fromNewSet = false)
+    public void StartNewRound(bool noWinner, bool roundWinner, Player? previousSetWinner = null, bool fromNewSet = false)
     {
         if (noWinner)
         {

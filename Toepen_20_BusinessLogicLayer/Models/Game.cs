@@ -49,7 +49,7 @@ public class Game
         catch (InvalidStateException)
         {
         }
-        
+
         return null;
     }
 
@@ -69,8 +69,13 @@ public class Game
         {
             player.SetAsHost();
         }
-        
+
         State.AddPlayer(this, player);
+    }
+
+    public bool AnyPlayerCalledLaundry()
+    {
+        return Players.Any(p => p.HasCalledDirtyLaundry || p.HasCalledWhiteLaundry);
     }
 
     public Player? GetActivePlayer()

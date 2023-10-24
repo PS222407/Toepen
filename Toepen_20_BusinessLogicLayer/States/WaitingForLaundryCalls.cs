@@ -40,7 +40,22 @@ public class WaitingForLaundryCalls : IState
     public void BlockLaundryCalls(Game game)
     {
         game.CurrentSet!.BlockLaundryCalls();
-        game.State = new WaitingForLaundryTurnCalls();
+        if (game.AnyPlayerCalledLaundry())
+        {
+            game.State = new WaitingForLaundryTurnCalls();
+        }
+        else
+        {
+            if (game.CurrentSet.PreviousSetWinner != null)
+            {
+                game.CurrentSet.StartNewRound(false, true, game.CurrentSet.PreviousSetWinner, true);
+            }
+            else
+            {
+                game.CurrentSet.StartNewRound(true, true);
+            }
+            game.State = new ActiveRound();
+        }
     }
 
     public TimerInfo LaundryTimerCallback(Game game)
