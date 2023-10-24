@@ -83,11 +83,11 @@ public class GameHub : Hub<IGameClient>
 
     public Task SendConnectedUsers(string room)
     {
-        IEnumerable<string> users = _connections.Values
-            .Where(c => c.RoomCode == room)
-            .Select(c => c.UserName);
+        Game game = _gameService.Games.First(g => g.RoomCode == room);
+        GameViewModel gameViewModel = GameTransformer.GameToViewModel(game, Context.ConnectionId);
+        List<PlayerViewModel> players = gameViewModel.Players;
 
-        return Clients.Group(room).ReceiveUsersInRoom(users);
+        return Clients.Group(room).ReceiveUsersInRoom(JsonSerializer.Serialize(players));
     }
 
     private async Task SendFlashMessage(FlashType type, string message)

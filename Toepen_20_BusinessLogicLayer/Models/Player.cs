@@ -15,6 +15,8 @@ public class Player
     public string Name { get; private set; }
 
     private List<Card> _hand = new();
+    
+    public bool IsHost { get; private set; }
 
     public IReadOnlyList<Card> Hand => _hand;
 
@@ -45,6 +47,11 @@ public class Player
         Id = Interlocked.Increment(ref _nextId);
         ConnectionId = connectionId;
         Name = name;
+    }
+    
+    public void SetAsHost()
+    {
+        IsHost = true;
     }
 
     public void ResetVariablesForNewSet()

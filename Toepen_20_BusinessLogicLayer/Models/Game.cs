@@ -55,6 +55,11 @@ public class Game
 
     public void AddPlayer(Player player)
     {
+        if (Players.Count == 0)
+        {
+            player.SetAsHost();
+        }
+        
         State.AddPlayer(this, player);
     }
 

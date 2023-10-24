@@ -8,7 +8,7 @@ public interface IGameClient
     
     Task ReceiveCountdown(int time);
 
-    Task ReceiveUsersInRoom(IEnumerable<string> users);
+    Task ReceiveUsersInRoom(string users);
 
     Task ReceiveFlashMessage(string type, string message);
 }

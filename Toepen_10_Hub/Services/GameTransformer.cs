@@ -29,6 +29,7 @@ public class GameTransformer
             {
                 Id = player.Id,
                 Name = player.Name,
+                IsHost = player.IsHost,
                 IsYou = player.ConnectionId == connectionId,
                 IsActive = game.GetActivePlayer()?.Id == player.Id,
                 PenaltyPoints = player.PenaltyPoints,
