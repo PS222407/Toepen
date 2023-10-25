@@ -102,13 +102,13 @@ public class PlayerKnocked : IState
         {
             if (game.GetWinner() != null)
             {
+                game.State = new GameIsWonAndOver();
                 return;
             }
 
-            return;
+            game.StartNewSet();
+            game.State = new WaitingForLaundryCalls();
         }
-
-        game.State = new GameIsWonAndOver();
     }
 
     public void PlayerPlaysCard(Game game, Player player, Card card)

@@ -219,7 +219,7 @@ public class Game
 
     public Player? GetWinner()
     {
-        return Players.Where(p => !p.IsOutOfGame()).ToList().Count == 1 ? Players.First(p => !p.IsOutOfGame()) : null;
+        return Players.Where(p => !p.IsDead()).ToList().Count == 1 ? Players.First(p => !p.IsDead()) : null;
     }
 
     public void StartNewSet()
