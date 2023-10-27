@@ -55,6 +55,11 @@ public class Set
         IsFirstLaundryTimerIteration = true;
     }
 
+    public Player? GetLastKnockedPlayer()
+    {
+        return _lastPlayerWhoKnocked;
+    }
+
     public TimerInfo GetTimeLeftLaundryTimerInSeconds()
     {
         bool isFirstLaundryTimerIteration = IsFirstLaundryTimerIteration;
@@ -227,18 +232,18 @@ public class Set
         throw new PlayerHasNotCalledForLaundryException();
     }
 
-    public bool BlockLaundryTurnCallsAndWaitForLaundryCalls()
+    public void BlockLaundryTurnCallsAndWaitForLaundryCalls()
     {
         if (State != GameState.ActiveTurnLaundryTimer)
         {
-            return false;
+            return;
         }
 
         _laundryEndTime = DateTime.Now.AddSeconds(Settings.LaundryTimeInSeconds);
 
         foreach (Player player in Players)
         {
-            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
+            if (PlayerHasUnturnedLaundry(player))
             {
                 PlayerHandToDeck(player);
                 DealCardsToPlayer(player);
@@ -248,23 +253,10 @@ public class Set
         }
 
         State = GameState.ActiveLaundryTimer;
-
-        return true;
     }
 
     public void BlockLaundryTurnCallsAndStartRound()
     {
-        foreach (Player player in Players)
-        {
-            if ((player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned)
-            {
-                PlayerHandToDeck(player);
-                DealCardsToPlayer(player);
-            }
-
-            player.ResetLaundryVariables();
-        }
-
         if (PreviousSetWinner != null)
         {
             StartNewRound(false, true, PreviousSetWinner, true);
@@ -273,6 +265,16 @@ public class Set
         {
             StartNewRound(true, true);
         }
+    }
+    
+    public bool AnyPlayerHasUnturnedLaundry()
+    {
+        return Players.Any(PlayerHasUnturnedLaundry);
+    }
+    
+    private bool PlayerHasUnturnedLaundry(Player player)
+    {
+        return (player.HasCalledDirtyLaundry || player.HasCalledWhiteLaundry) && !player.LaundryHasBeenTurned;
     }
 
     public void StartNewRound(bool noWinner, bool roundWinner, Player? previousSetWinner = null, bool fromNewSet = false)
