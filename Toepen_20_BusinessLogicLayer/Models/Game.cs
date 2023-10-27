@@ -127,9 +127,10 @@ public class Game
 
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
     /// <exception cref="AlreadyTurnedException"></exception>
     /// <exception cref="InvalidStateException"></exception>
-    public void PlayerTurnsLaundry(int playerId, int victimId)
+    public Message PlayerTurnsLaundry(int playerId, int victimId)
     {
         if (playerId == victimId)
         {
@@ -144,7 +145,7 @@ public class Game
             throw new PlayerNotFoundException();
         }
 
-        State.PlayerTurnsLaundry(this, player, victim);
+        return State.PlayerTurnsLaundry(this, player, victim);
     }
 
     /// <exception cref="PlayerNotFoundException"></exception>

@@ -1,4 +1,5 @@
-﻿using Toepen_20_BusinessLogicLayer.Exceptions;
+﻿using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
@@ -23,7 +24,8 @@ public interface IState
 
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="AlreadyTurnedException"></exception>
-    public void PlayerTurnsLaundry(Game game, Player player, Player victim);
+    /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
+    public Message PlayerTurnsLaundry(Game game, Player player, Player victim);
 
     /// <exception cref="InvalidStateException"></exception>
     public void BlockLaundryTurnCalls(Game game);

@@ -4,6 +4,7 @@ using Toepen_10_Hub.Enums;
 using Toepen_10_Hub.Interfaces;
 using Toepen_10_Hub.Services;
 using Toepen_10_Hub.ViewModels;
+using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
 
@@ -216,16 +217,22 @@ public class GameHub : Hub<IGameClient>
                     throw new PlayerNotFoundException();
                 }
 
-                PlayerCardViewModel victimCardViewModel = GameTransformer.PlayerCardsToViewModel(player, victim);
-                await Clients.Group(userConnection.RoomCode).ReceiveTurnedCards(JsonSerializer.Serialize(victimCardViewModel));
+                TurnLaundryViewModel turnLaundryViewModel = GameTransformer.PlayerCardsToViewModel(player, victim);
 
-                game.PlayerTurnsLaundry(player?.Id ?? 0, victim?.Id ?? 0);
+                Message message = game.PlayerTurnsLaundry(player.Id, victim.Id);
+                
+                turnLaundryViewModel.victimBluffed = message == Message.PlayerDidBluff;
 
+                await Clients.Group(userConnection.RoomCode).ReceiveTurnedCards(JsonSerializer.Serialize(turnLaundryViewModel));
                 await SendCurrentGameInfo();
             }
             catch (InvalidStateException)
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+            catch (PlayerHasNotCalledForLaundryException)
+            {
+                await SendFlashMessage(FlashType.Error, "De speler heeft geen was aangegeven");
             }
             catch (AlreadyTurnedException)
             {
@@ -347,57 +354,6 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Kaart niet gevonden");
             }
-        }
-    }
-
-    // TODO: remove or handle exceptions
-    public async Task SkipLaundry()
-    {
-        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
-        {
-            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
-
-            try
-            {
-                game.BlockLaundryCalls();
-                game.BlockLaundryTurnCalls();
-            }
-            catch (InvalidStateException)
-            {
-                await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
-            }
-
-            await SendFlashMessage(FlashType.Success, "Was overgeslagen");
-            await SendCurrentGameInfo();
-        }
-        else
-        {
-            await SendFlashMessage(FlashType.Error, "Speler is niet verbonden");
-        }
-    }
-
-    // TODO: remove or handle exceptions
-    public async Task SkipLaundryCalls()
-    {
-        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
-        {
-            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
-
-            try
-            {
-                game.BlockLaundryCalls();
-            }
-            catch (InvalidStateException)
-            {
-                await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
-            }
-
-            await SendFlashMessage(FlashType.Success, "Was overgeslagen");
-            await SendCurrentGameInfo();
-        }
-        else
-        {
-            await SendFlashMessage(FlashType.Error, "Speler is niet verbonden");
         }
     }
 }

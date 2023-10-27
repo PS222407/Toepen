@@ -1,4 +1,5 @@
-﻿using Toepen_20_BusinessLogicLayer.Exceptions;
+﻿using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
@@ -26,9 +27,10 @@ public class WaitingForLaundryTurnCalls : IState
     }
 
     /// <exception cref="AlreadyTurnedException"></exception>
-    public void PlayerTurnsLaundry(Game game, Player player, Player victim)
+    /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
+    public Message PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
-        game.CurrentSet!.TurnsLaundry(player, victim);
+        return game.CurrentSet!.TurnsLaundry(player, victim);
     }
 
     public void BlockLaundryTurnCalls(Game game)
