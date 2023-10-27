@@ -1,4 +1,5 @@
-﻿using Toepen_20_BusinessLogicLayer.Exceptions;
+﻿using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
 using Toepen_20_BusinessLogicLayer.Models;
 
@@ -26,7 +27,7 @@ public class ActiveRound : IState
         throw new InvalidStateException();
     }
 
-    public void PlayerTurnsLaundry(Game game, Player player, Player victim)
+    public Message PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
         throw new InvalidStateException();
     }

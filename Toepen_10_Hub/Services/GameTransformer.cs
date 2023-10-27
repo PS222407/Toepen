@@ -67,19 +67,16 @@ public class GameTransformer
         return playerViewModel;
     }
 
-    public static PlayerCardViewModel PlayerCardsToViewModel(Player player, Player victim)
+    public static TurnLaundryViewModel PlayerCardsToViewModel(Player player, Player victim)
     {
-        List<CardViewModel> cardViewModels = new();
-        cardViewModels.AddRange(victim.Hand.Select(card => new CardViewModel { Suit = card.Suit.ToString(), Value = card.Value.ToString() }));
+        List<CardViewModel> cardViewModels = victim.Hand.Select(card => new CardViewModel { Suit = card.Suit.ToString(), Value = card.Value.ToString() }).ToList();
 
-        PlayerCardViewModel playerViewModel = new PlayerCardViewModel
+        return new TurnLaundryViewModel
         {
             PlayerName = player.Name,
             VictimName = victim.Name,
             Hand = cardViewModels,
         };
-
-        return playerViewModel;
     }
 
     private static void SetUserOrder(GameViewModel gameViewModel)

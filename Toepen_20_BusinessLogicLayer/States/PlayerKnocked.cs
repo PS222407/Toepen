@@ -27,7 +27,7 @@ public class PlayerKnocked : IState
         throw new InvalidStateException();
     }
 
-    public void PlayerTurnsLaundry(Game game, Player player, Player victim)
+    public Message PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
         throw new InvalidStateException();
     }

@@ -1,4 +1,5 @@
-﻿using Toepen_20_BusinessLogicLayer.Exceptions;
+﻿using Toepen_20_BusinessLogicLayer.Enums;
+using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
@@ -27,7 +28,7 @@ public class WaitingForLaundryCalls : IState
         game.CurrentSet!.PlayerCallsWhiteLaundry(player);
     }
 
-    public void PlayerTurnsLaundry(Game game, Player player, Player victim)
+    public Message PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
         throw new InvalidStateException();
     }

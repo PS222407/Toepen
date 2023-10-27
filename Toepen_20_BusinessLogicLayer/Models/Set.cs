@@ -167,7 +167,8 @@ public class Set
     }
 
     /// <exception cref="AlreadyTurnedException"></exception>
-    public StatusMessage TurnsLaundry(Player turner, Player victim)
+    /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
+    public Message TurnsLaundry(Player turner, Player victim)
     {
         if (victim.LaundryHasBeenTurned)
         {
@@ -182,7 +183,8 @@ public class Set
                 PlayerHandToDeck(victim);
                 DealCardsToPlayer(victim);
                 LaundryCardsAreDealt = true;
-                return new StatusMessage(true, Message.PlayerDidNotBluff);
+                
+                return Message.PlayerDidNotBluff;
             }
 
             if (Settings.LaundryOpenCards)
@@ -195,7 +197,7 @@ public class Set
                 victim.AddPenaltyPoints(1);
             }
 
-            return new StatusMessage(true, Message.PlayerDidBluff);
+            return Message.PlayerDidBluff;
         }
 
         if (victim.HasCalledWhiteLaundry)
@@ -206,7 +208,7 @@ public class Set
                 PlayerHandToDeck(victim);
                 DealCardsToPlayer(victim);
                 LaundryCardsAreDealt = true;
-                return new StatusMessage(true, Message.PlayerDidNotBluff);
+                return Message.PlayerDidNotBluff;
             }
 
             if (Settings.LaundryOpenCards)
@@ -219,10 +221,10 @@ public class Set
                 victim.AddPenaltyPoints(1);
             }
 
-            return new StatusMessage(true, Message.PlayerDidBluff);
+            return Message.PlayerDidBluff;
         }
 
-        return new StatusMessage(false, Message.PlayerHasNotCalledForLaundry);
+        throw new PlayerHasNotCalledForLaundryException();
     }
 
     public bool BlockLaundryTurnCallsAndWaitForLaundryCalls()
