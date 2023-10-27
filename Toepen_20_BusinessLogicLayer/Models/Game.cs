@@ -151,6 +151,7 @@ public class Game
     /// <exception cref="PlayerNotFoundException"></exception>
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="CantPerformToSelfException"></exception>
+    /// <exception cref="NotPlayersTurnException"></exception>
     public void PlayerKnocks(int playerId)
     {
         Player? player = Players.Find(p => p.Id == playerId);

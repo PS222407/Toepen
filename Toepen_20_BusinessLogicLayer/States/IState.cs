@@ -43,6 +43,7 @@ public interface IState
 
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="CantPerformToSelfException"></exception>
+    /// <exception cref="NotPlayersTurnException"></exception>
     public void PlayerKnocks(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>

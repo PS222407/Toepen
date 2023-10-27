@@ -25,13 +25,13 @@ public class Set
     private Player? _lastPlayerWhoKnocked;
 
     public bool LaundryCardsAreDealt { get; set; }
-    
+
     private DateTime _laundryEndTime;
-    
+
     private DateTime _laundryTurnEndTime;
 
     public bool IsFirstLaundryTimerIteration { get; private set; }
-    
+
     public bool IsFirstLaundryTurnTimerIteration { get; private set; }
 
     public Set(List<Player> players, Player? previousSetWinner = null)
@@ -54,12 +54,12 @@ public class Set
         _laundryEndTime = DateTime.Now.AddSeconds(Settings.LaundryTimeInSeconds);
         IsFirstLaundryTimerIteration = true;
     }
-    
+
     public TimerInfo GetTimeLeftLaundryTimerInSeconds()
     {
         bool isFirstLaundryTimerIteration = IsFirstLaundryTimerIteration;
         IsFirstLaundryTimerIteration = false;
-        
+
         if (_laundryEndTime > DateTime.Now)
         {
             return new TimerInfo
@@ -75,12 +75,12 @@ public class Set
             First = isFirstLaundryTimerIteration,
         };
     }
-    
+
     public TimerInfo GetTimeLeftLaundryTurnTimerInSeconds()
     {
         bool isFirstLaundryTurnTimerIteration = IsFirstLaundryTurnTimerIteration;
         IsFirstLaundryTurnTimerIteration = false;
-        
+
         if (_laundryTurnEndTime > DateTime.Now)
         {
             return new TimerInfo
@@ -183,7 +183,7 @@ public class Set
                 PlayerHandToDeck(victim);
                 DealCardsToPlayer(victim);
                 LaundryCardsAreDealt = true;
-                
+
                 return Message.PlayerDidNotBluff;
             }
 
@@ -233,7 +233,7 @@ public class Set
         {
             return false;
         }
-        
+
         _laundryEndTime = DateTime.Now.AddSeconds(Settings.LaundryTimeInSeconds);
 
         foreach (Player player in Players)
@@ -313,6 +313,7 @@ public class Set
     }
 
     /// <exception cref="CantPerformToSelfException"></exception>
+    /// <exception cref="NotPlayersTurnException"></exception>
     public void Knock(Player player)
     {
         if (_lastPlayerWhoKnocked == player)
@@ -320,11 +321,8 @@ public class Set
             throw new CantPerformToSelfException();
         }
 
-        StatusMessage statusMessage = CurrentRound.Knock(player);
-        if (statusMessage.Success)
-        {
-            _lastPlayerWhoKnocked = player;
-        }
+        CurrentRound.Knock(player);
+        _lastPlayerWhoKnocked = player;
     }
 
     public WinnerStatus? Fold(Player player)
