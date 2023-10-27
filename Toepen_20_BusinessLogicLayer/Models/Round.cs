@@ -52,28 +52,17 @@ public class Round
         State = GameState.WaitingForCardOrKnock;
     }
 
-    public StatusMessage Knock(Player player)
+    /// <exception cref="NotPlayersTurnException"></exception>
+    public void Knock(Player player)
     {
         if (player != ActivePlayer)
         {
-            return new StatusMessage(false, Message.NotPlayersTurn);
-        }
-
-        if (State != GameState.WaitingForCardOrKnock)
-        {
-            return new StatusMessage(false, Message.CantPerformActionDuringThisGameState);
-        }
-
-        if (player == PlayerWhoKnocked)
-        {
-            return new StatusMessage(false, Message.CantDoThisActionOnYourself);
+            throw new NotPlayersTurnException();
         }
 
         PlayerWhoKnocked = player;
         State = GameState.PlayerKnocked;
         SetNextPlayer();
-
-        return new StatusMessage(true);
     }
 
     public StatusMessage Fold(Player player)

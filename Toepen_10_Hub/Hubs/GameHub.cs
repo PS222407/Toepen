@@ -7,6 +7,7 @@ using Toepen_10_Hub.ViewModels;
 using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
+using UnitTests.Utilities;
 
 namespace Toepen_10_Hub.Hubs;
 
@@ -171,6 +172,7 @@ public class GameHub : Hub<IGameClient>
             {
                 game.PlayerCallsDirtyLaundry(player?.Id ?? 0);
 
+                await SendFlashMessage(FlashType.Info, "Je hebt een vuile was aangegeven");
                 await SendCurrentGameInfo();
             }
             catch (InvalidStateException)
@@ -198,6 +200,7 @@ public class GameHub : Hub<IGameClient>
             {
                 game.PlayerCallsWhiteLaundry(player?.Id ?? 0);
 
+                await SendFlashMessage(FlashType.Info, "Je hebt een witte was aangegeven");
                 await SendCurrentGameInfo();
             }
             catch (InvalidStateException)
@@ -271,11 +274,16 @@ public class GameHub : Hub<IGameClient>
             {
                 game.PlayerKnocks(player?.Id ?? 0);
 
+                await SendFlashMessage(FlashType.Info, "Je hebt geklopt");
                 await SendCurrentGameInfo();
             }
             catch (InvalidStateException)
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+            catch (NotPlayersTurnException)
+            {
+                await SendFlashMessage(FlashType.Error, "Niet jouw beurt");
             }
             catch (CantPerformToSelfException)
             {
