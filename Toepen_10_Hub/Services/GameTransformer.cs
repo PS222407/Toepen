@@ -67,6 +67,21 @@ public class GameTransformer
         return playerViewModel;
     }
 
+    public static PlayerCardViewModel PlayerCardsToViewModel(Player player, Player victim)
+    {
+        List<CardViewModel> cardViewModels = new();
+        cardViewModels.AddRange(victim.Hand.Select(card => new CardViewModel { Suit = card.Suit.ToString(), Value = card.Value.ToString() }));
+
+        PlayerCardViewModel playerViewModel = new PlayerCardViewModel
+        {
+            PlayerName = player.Name,
+            VictimName = victim.Name,
+            Hand = cardViewModels,
+        };
+
+        return playerViewModel;
+    }
+
     private static void SetUserOrder(GameViewModel gameViewModel)
     {
         int playersIndex = gameViewModel.Players.FindIndex(user => user.IsYou);

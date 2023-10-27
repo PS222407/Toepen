@@ -211,6 +211,14 @@ public class GameHub : Hub<IGameClient>
             Player? victim = game.FindPlayerById(victimId);
             try
             {
+                if (victim == null || player == null)
+                {
+                    throw new PlayerNotFoundException();
+                }
+
+                PlayerCardViewModel victimCardViewModel = GameTransformer.PlayerCardsToViewModel(player, victim);
+                await Clients.Group(userConnection.RoomCode).ReceiveTurnedCards(JsonSerializer.Serialize(victimCardViewModel));
+
                 game.PlayerTurnsLaundry(player?.Id ?? 0, victim?.Id ?? 0);
 
                 await SendCurrentGameInfo();
