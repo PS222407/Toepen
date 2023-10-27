@@ -12,6 +12,18 @@ namespace Toepen_10_Hub.Hubs;
 
 public class GameHub : Hub<IGameClient>
 {
+    //TODO: remove this when project is done
+    // Player player = game.Players.First();
+    // List<Card> cards = new()
+    // {
+    //     new Card(Suit.Spades, Value.Ace),
+    //     new Card(Suit.Diamonds, Value.King),
+    //     new Card(Suit.Clubs, Value.Seven),
+    //     new Card(Suit.Diamonds, Value.Ace),
+    // };
+    // Entity.SetHandOf(player, cards);
+    //TODO: end remove this
+
     private readonly IGameService _gameService;
 
     public GameHub(IDictionary<string, UserConnection> connections, IGameService gameService)
@@ -80,7 +92,7 @@ public class GameHub : Hub<IGameClient>
         await SendCurrentUser(userConnection.RoomCode);
         await SendConnectedUsers(userConnection.RoomCode);
     }
-    
+
     public async Task SendConnectedUsers(string room)
     {
         if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
@@ -92,7 +104,7 @@ public class GameHub : Hub<IGameClient>
             await Clients.Group(room).ReceiveUsersInRoom(JsonSerializer.Serialize(players));
         }
     }
-    
+
     private async Task SendCurrentUser(string room)
     {
         if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
@@ -220,7 +232,7 @@ public class GameHub : Hub<IGameClient>
                 TurnLaundryViewModel turnLaundryViewModel = GameTransformer.PlayerCardsToViewModel(player, victim);
 
                 Message message = game.PlayerTurnsLaundry(player.Id, victim.Id);
-                
+
                 turnLaundryViewModel.victimBluffed = message == Message.PlayerDidBluff;
 
                 await Clients.Group(userConnection.RoomCode).ReceiveTurnedCards(JsonSerializer.Serialize(turnLaundryViewModel));

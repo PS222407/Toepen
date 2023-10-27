@@ -26,7 +26,7 @@ public class Set
 
     public bool LaundryCardsAreDealt { get; set; }
     
-    private readonly DateTime _laundryEndTime;
+    private DateTime _laundryEndTime;
     
     private DateTime _laundryTurnEndTime;
 
@@ -233,6 +233,8 @@ public class Set
         {
             return false;
         }
+        
+        _laundryEndTime = DateTime.Now.AddSeconds(Settings.LaundryTimeInSeconds);
 
         foreach (Player player in Players)
         {
