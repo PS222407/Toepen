@@ -85,7 +85,7 @@ public class Game
 
     public Player? GetPlayerWhoKnocked()
     {
-        return CurrentSet?.CurrentRound?.PlayerWhoKnocked;
+        return CurrentSet?.GetLastKnockedPlayer();
     }
 
     #region Player input actions
