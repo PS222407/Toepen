@@ -316,8 +316,14 @@ public class Set
 
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="PlayerIsAllInException"></exception>
     public void Knock(Player player)
     {
+        if ((player.PenaltyPoints + PenaltyPoints + 1) >= Settings.MaxPenaltyPoints)
+        {
+            throw new PlayerIsAllInException();
+        }
+
         if (_lastPlayerWhoKnocked == player)
         {
             throw new CantPerformToSelfException();
