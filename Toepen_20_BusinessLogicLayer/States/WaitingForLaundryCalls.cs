@@ -28,6 +28,12 @@ public class WaitingForLaundryCalls : IState
         game.CurrentSet!.PlayerCallsWhiteLaundry(player);
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
+    public void PlayerCallsNoLaundry(Game game, Player player)
+    {
+        game.CurrentSet!.PlayerCallsNoLaundry(player);
+    }
+
     public Message PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
         throw new InvalidStateException();
@@ -64,7 +70,7 @@ public class WaitingForLaundryCalls : IState
         bool done = false;
         TimerInfo? laundryTimerInfo = game.CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
 
-        if (game.State.GetType() == typeof(WaitingForLaundryCalls) && laundryTimerInfo?.Seconds == -1)
+        if (game.Players.All(p => p.HasNoLaundry) || (game.State.GetType() == typeof(WaitingForLaundryCalls) && laundryTimerInfo?.Seconds == -1))
         {
             game.State.BlockLaundryCalls(game);
             done = true;
@@ -72,7 +78,7 @@ public class WaitingForLaundryCalls : IState
 
         return new TimerInfo
         {
-            Seconds = laundryTimerInfo?.Seconds ?? -1,
+            Seconds = done ? -1 : (laundryTimerInfo?.Seconds ?? -1),
             First = laundryTimerInfo?.First ?? false,
             Done = done,
         };

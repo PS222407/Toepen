@@ -26,6 +26,11 @@ public class WaitingForLaundryTurnCalls : IState
         throw new InvalidStateException();
     }
 
+    public void PlayerCallsNoLaundry(Game game, Player player)
+    {
+        throw new InvalidStateException();
+    }
+
     /// <exception cref="AlreadyTurnedException"></exception>
     /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
     public Message PlayerTurnsLaundry(Game game, Player player, Player victim)

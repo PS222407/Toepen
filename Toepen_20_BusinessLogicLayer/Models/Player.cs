@@ -28,6 +28,8 @@ public class Player
 
     public bool HasFolded { get; private set; }
 
+    public bool HasNoLaundry { get; private set; }
+
     public bool HasCalledDirtyLaundry { get; private set; }
 
     public bool HasCalledWhiteLaundry { get; private set; }
@@ -59,6 +61,7 @@ public class Player
         _hand = new List<Card>();
         _playedCards = new List<Card>();
         HasFolded = false;
+        HasNoLaundry = false;
         HasCalledDirtyLaundry = false;
         HasCalledWhiteLaundry = false;
         LaundryHasBeenTurned = false;
@@ -89,7 +92,7 @@ public class Player
     /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void CallsDirtyLaundry()
     {
-        if (HasCalledWhiteLaundry || HasCalledDirtyLaundry)
+        if (HasCalledWhiteLaundry || HasCalledDirtyLaundry || HasNoLaundry)
         {
             throw new AlreadyCalledLaundryException();
         }
@@ -100,12 +103,23 @@ public class Player
     /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void CallsWhiteLaundry()
     {
-        if (HasCalledWhiteLaundry || HasCalledDirtyLaundry)
+        if (HasCalledWhiteLaundry || HasCalledDirtyLaundry || HasNoLaundry)
         {
             throw new AlreadyCalledLaundryException();
         }
 
         HasCalledWhiteLaundry = true;
+    }
+
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
+    public void CallsNoLaundry()
+    {
+        if (HasCalledWhiteLaundry || HasCalledDirtyLaundry || HasNoLaundry)
+        {
+            throw new AlreadyCalledLaundryException();
+        }
+
+        HasNoLaundry = true;
     }
 
     public bool HasDirtyLaundry()

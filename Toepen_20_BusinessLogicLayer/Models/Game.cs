@@ -125,6 +125,20 @@ public class Game
         State.PlayerCallsWhiteLaundry(this, player);
     }
 
+    /// <exception cref="PlayerNotFoundException"></exception>
+    /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
+    public void PlayerCallsNoLaundry(int playerId)
+    {
+        Player? player = Players.Find(p => p.Id == playerId);
+        if (player == null)
+        {
+            throw new PlayerNotFoundException();
+        }
+
+        State.PlayerCallsNoLaundry(this, player);
+    }
+
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="PlayerNotFoundException"></exception>
     /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>

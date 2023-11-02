@@ -164,6 +164,12 @@ public class Set
         player.CallsWhiteLaundry();
     }
 
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
+    public void PlayerCallsNoLaundry(Player player)
+    {
+        player.CallsNoLaundry();
+    }
+
     public void BlockLaundryCalls()
     {
         State = GameState.ActiveTurnLaundryTimer;
