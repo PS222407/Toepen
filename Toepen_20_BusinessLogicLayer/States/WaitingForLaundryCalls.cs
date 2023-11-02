@@ -118,4 +118,9 @@ public class WaitingForLaundryCalls : IState
     {
         throw new InvalidStateException();
     }
+
+    public void PlayerMovesOnToNextSet(Game game, Player player)
+    {
+        throw new InvalidStateException();
+    }
 }

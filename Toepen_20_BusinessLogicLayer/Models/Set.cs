@@ -377,6 +377,11 @@ public class Set
         return null;
     }
 
+    public void PlayerCallsMoveOnToNextSet(Player player)
+    {
+        CurrentRound.MoveOnToNextSet(player);
+    }
+
     private void HandleWinner()
     {
         bool noWinner = CurrentRound.WinnerStatus?.Winner == null;

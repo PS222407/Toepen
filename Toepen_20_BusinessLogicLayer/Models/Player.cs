@@ -38,6 +38,8 @@ public class Player
 
     public bool PlayWithOpenCards { get; private set; }
 
+    public bool HasCalledMoveOnToNextSet { get; private set; }
+
     public Player(string name)
     {
         Id = Interlocked.Increment(ref _nextId);
@@ -66,6 +68,7 @@ public class Player
         HasCalledWhiteLaundry = false;
         LaundryHasBeenTurned = false;
         PlayWithOpenCards = false;
+        HasCalledMoveOnToNextSet = false;
     }
 
     public void AddPenaltyPoints(int points)
@@ -160,6 +163,7 @@ public class Player
 
     public void ResetLaundryVariables()
     {
+        HasNoLaundry = false;
         HasCalledDirtyLaundry = false;
         HasCalledWhiteLaundry = false;
         LaundryHasBeenTurned = false;
@@ -202,5 +206,10 @@ public class Player
     public bool HasPoverty()
     {
         return PenaltyPoints == Settings.MaxPenaltyPoints - 1;
+    }
+
+    public void CallsMoveOnToNextSet()
+    {
+        HasCalledMoveOnToNextSet = true;
     }
 }

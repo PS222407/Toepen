@@ -52,6 +52,16 @@ public class Round
         State = GameState.WaitingForCardOrKnock;
     }
 
+    public void MoveOnToNextSet(Player player)
+    {
+        if (player.HasCalledMoveOnToNextSet)
+        {
+            throw new PlayerContinuedToNextSetException();
+        }
+
+        player.CallsMoveOnToNextSet();
+    }
+
     /// <exception cref="NotPlayersTurnException"></exception>
     public void Knock(Player player)
     {
