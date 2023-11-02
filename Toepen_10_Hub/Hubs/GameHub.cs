@@ -293,6 +293,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
             }
+            catch (PlayerIsAllInException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je kunt niet hoger dan je punten limiet overkloppen");
+            }
         }
     }
 
