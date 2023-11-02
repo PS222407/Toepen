@@ -218,6 +218,40 @@ public class GameHub : Hub<IGameClient>
         }
     }
 
+    public async Task CallNoLaundry()
+    {
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
+            Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
+            try
+            {
+                game.PlayerCallsNoLaundry(player?.Id ?? 0);
+
+                if (game.Players.All(p => p.HasNoLaundry))
+                {
+                    TimerInfo? timerInfo = game.TimerCallback();
+                    await Clients.Group(game.RoomCode).ReceiveCountdown(JsonSerializer.Serialize(timerInfo));
+                }
+
+                await SendFlashMessage(FlashType.Info, "Je hebt geen was aangegeven");
+                await SendCurrentGameInfo();
+            }
+            catch (InvalidStateException)
+            {
+                await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+            catch (AlreadyCalledLaundryException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je hebt al een was aangegeven");
+            }
+            catch (PlayerNotFoundException)
+            {
+                await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
+            }
+        }
+    }
+
     public async Task TurnLaundry(int victimId)
     {
         if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))

@@ -23,6 +23,10 @@ public interface IState
     public void PlayerCallsWhiteLaundry(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="AlreadyCalledLaundryException"></exception>
+    public void PlayerCallsNoLaundry(Game game, Player player);
+
+    /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="AlreadyTurnedException"></exception>
     /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
     public Message PlayerTurnsLaundry(Game game, Player player, Player victim);
