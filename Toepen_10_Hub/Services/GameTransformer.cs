@@ -48,6 +48,8 @@ public class GameTransformer
         gameViewModel.SetNumber = game.Sets.Count;
         gameViewModel.RoundNumber = game.CurrentSet?.Rounds.Count ?? 0;
         gameViewModel.PenaltyPoints = game.CurrentSet?.PenaltyPoints ?? 0;
+        gameViewModel.WinnerIdOfSet = game.CurrentSet?.WinnerOfSet?.Id ?? -1;
+        gameViewModel.WinnerIdOfGame = game.GetWinner()?.Id ?? -1;
 
         SetUserOrder(gameViewModel);
         

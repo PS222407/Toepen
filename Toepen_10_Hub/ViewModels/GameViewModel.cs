@@ -3,7 +3,11 @@
 public class GameViewModel
 {
     public string State { get; set; }
-    
+
+    public int WinnerIdOfSet { get; set; }
+
+    public int WinnerIdOfGame { get; set; }
+
     public int PenaltyPoints { get; set; }
 
     public int SetNumber { get; set; }
