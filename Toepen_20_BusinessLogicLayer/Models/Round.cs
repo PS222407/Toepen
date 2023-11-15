@@ -6,7 +6,7 @@ namespace Toepen_20_BusinessLogicLayer.Models;
 
 public class Round
 {
-    private Card? _startedCard;
+    public Card? StartedCard { get; private set; }
 
     public Player? PlayerWhoKnocked { get; private set; }
 
@@ -125,14 +125,14 @@ public class Round
             throw new NotPlayersTurnException();
         }
 
-        if (_startedCard != null && player.Hand.Any(c => c.Suit == _startedCard.Suit) && card.Suit != _startedCard.Suit)
+        if (StartedCard != null && player.Hand.Any(c => c.Suit == StartedCard.Suit) && card.Suit != StartedCard.Suit)
         {
             throw new CardDoesNotMatchSuitsException();
         }
 
         player.PlayCard(card);
         _table.Add(card);
-        _startedCard ??= card;
+        StartedCard ??= card;
         SetNextPlayer();
     }
 
@@ -177,7 +177,7 @@ public class Round
 
         if (StartedPlayer == player && State != GameState.PlayerKnocked)
         {
-            Card winningCard = _table.Where(card => card.Suit == _startedCard.Suit && card.Value >= _startedCard.Value).OrderByDescending(card => card.Value).First();
+            Card winningCard = _table.Where(card => card.Suit == StartedCard.Suit && card.Value >= StartedCard.Value).OrderByDescending(card => card.Value).First();
             Player winner = Players.First(p => p.PlayedCards.Any(pc => pc.Suit == winningCard.Suit && pc.Value == winningCard.Value));
 
             return new WinnerStatus { Winner = winner, WinnerOfSet = false };

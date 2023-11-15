@@ -14,5 +14,7 @@ public class GameViewModel
 
     public int RoundNumber { get; set; }
 
+    public CardViewModel? StartedCard { get; set; }
+
     public List<PlayerViewModel> Players { get; set; } = new();
 }
