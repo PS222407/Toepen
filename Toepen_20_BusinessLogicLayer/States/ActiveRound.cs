@@ -95,8 +95,13 @@ public class ActiveRound : IState
                 return;
             }
 
-            game.StartNewSet();
-            game.State = new WaitingForLaundryCalls();
+            //TODO: SetIsWon
+            game.State = new SetIsWonAndOver();
+
+            //TODO: place it in the SetIsWonAndOver
+
+/*            game.StartNewSet();
+            game.State = new WaitingForLaundryCalls();*/
         }
     }
 
@@ -106,6 +111,11 @@ public class ActiveRound : IState
     }
 
     public void StartNewSet(Game game)
+    {
+        throw new InvalidStateException();
+    }
+
+    public void PlayerMovesOnToNextSet(Game game, Player player)
     {
         throw new InvalidStateException();
     }

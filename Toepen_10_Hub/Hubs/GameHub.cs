@@ -414,4 +414,28 @@ public class GameHub : Hub<IGameClient>
             }
         }
     }
+
+    public async Task CallMoveOnToNextSet()
+    {
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
+            Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
+            try
+            {
+                game.PlayerCallsMoveOnToNextSet(player?.Id ?? 0);
+
+                await SendFlashMessage(FlashType.Info, "Je hebt aangegeven dat je naar de volgende set wilt gaan");
+                await SendCurrentGameInfo();
+            }
+            catch (InvalidStateException)
+            {
+                await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+            catch (PlayerContinuedToNextSetException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je hebt al aangegeven dat je naar de volgende set wilt gaan");
+            }
+        }        
+    }
 }

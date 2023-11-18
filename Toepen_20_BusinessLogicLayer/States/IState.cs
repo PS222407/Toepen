@@ -67,4 +67,7 @@ public interface IState
 
     /// <exception cref="InvalidStateException"></exception>
     public void StartNewSet(Game game);
+
+    /// <exception cref="InvalidStateException"></exception>
+    public void PlayerMovesOnToNextSet(Game game, Player player);
 }

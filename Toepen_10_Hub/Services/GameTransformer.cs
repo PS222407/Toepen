@@ -1,4 +1,5 @@
-﻿using Toepen_10_Hub.ViewModels;
+﻿using System.Numerics;
+using Toepen_10_Hub.ViewModels;
 using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
@@ -42,12 +43,21 @@ public class GameTransformer
             };
             playerViewModels.Add(playerViewModel);
         }
-        
+
+        CardViewModel? startedCard = game.CurrentSet?.CurrentRound?.StartedCard != null ? new CardViewModel
+        {
+            Suit = game.CurrentSet.CurrentRound.StartedCard.Suit.ToString(),
+            Value = game.CurrentSet.CurrentRound.StartedCard.Value.ToString()
+        } : null;
+
+        gameViewModel.StartedCard = startedCard;
         gameViewModel.State = game.State.GetType().ToString().Substring(game.State.GetType().ToString().LastIndexOf('.') + 1);
         gameViewModel.Players = playerViewModels;
         gameViewModel.SetNumber = game.Sets.Count;
         gameViewModel.RoundNumber = game.CurrentSet?.Rounds.Count ?? 0;
         gameViewModel.PenaltyPoints = game.CurrentSet?.PenaltyPoints ?? 0;
+        gameViewModel.WinnerIdOfSet = game.CurrentSet?.WinnerOfSet?.Id ?? -1;
+        gameViewModel.WinnerIdOfGame = game.GetWinner()?.Id ?? -1;
 
         SetUserOrder(gameViewModel);
         

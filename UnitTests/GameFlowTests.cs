@@ -1,3 +1,4 @@
+using System.Numerics;
 using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
@@ -119,6 +120,13 @@ public class GameFlowTests
         // sam = 1, jens = 0, mylo = 1
         Player? a = game.GetActivePlayer();
 
+        // Players ready
+        for (int i = 0; i < _game.Players.Count; i++)
+        {
+            Player player = _game.Players[i];
+            game.PlayerCallsMoveOnToNextSet(player.Id);
+        }
+
         // SET 2
         for (int i = 0; i < _game.Players.Count; i++)
         {
@@ -187,6 +195,13 @@ public class GameFlowTests
 
         bool winnerSet2Round4IsCorrect = 3 == game.Sets[1].Rounds[3].WinnerStatus.Winner.Id;
         // sam = 2, jens = 1, mylo = 1
+
+        // Players ready
+        for (int i = 0; i < _game.Players.Count; i++)
+        {
+            Player player = _game.Players[i];
+            game.PlayerCallsMoveOnToNextSet(player.Id);
+        }
 
         // SET 3
         for (int i = 0; i < _game.Players.Count; i++)
@@ -302,6 +317,15 @@ public class GameFlowTests
                 }
                 catch (NotPlayersTurnException)
                 {
+                }
+
+                if (game.State is SetIsWonAndOver)
+                {
+                    for (int i = 0; i < _game.Players.Count; i++)
+                    {
+                        Player player = _game.Players[i];
+                        game.PlayerCallsMoveOnToNextSet(player.Id);
+                    }
                 }
                 
                 if (game.State is GameIsWonAndOver)

@@ -245,4 +245,10 @@ public class Game
         CurrentSet = new Set(Players.Where(p => !p.IsDead()).ToList(), winnerOfSet);
         _sets.Add(CurrentSet);
     }
+
+    public void PlayerCallsMoveOnToNextSet(int playerId)
+    {
+        Player? player = Players.Find(p => p.Id == playerId) ?? throw new PlayerNotFoundException();
+        State.PlayerMovesOnToNextSet(this, player);
+    }
 }
