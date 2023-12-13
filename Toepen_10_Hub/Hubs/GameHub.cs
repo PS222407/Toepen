@@ -62,6 +62,13 @@ public class GameHub : Hub<IGameClient>
 
     public async Task JoinRoom(UserConnection userConnection)
     {
+        if (userConnection.UserName.Length > 22)
+        {
+            await SendFlashMessage(FlashType.Error, "Your name is too long");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
+        
         bool roomExists = _gameService.GetUserConnections().Any(c => c.Value.RoomCode == userConnection.RoomCode);
         Game game = roomExists ? _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode) : new Game(userConnection.RoomCode);
         if (!roomExists)
@@ -78,11 +85,13 @@ public class GameHub : Hub<IGameClient>
         catch (AlreadyStartedException)
         {
             await SendFlashMessage(FlashType.Error, "Game already started");
+            await ReceiveHasJoinedRoom(false);
             return;
         }
         catch (TooManyPlayersException)
         {
             await SendFlashMessage(FlashType.Error, "Game is full");
+            await ReceiveHasJoinedRoom(false);
             return;
         }
 
@@ -92,6 +101,7 @@ public class GameHub : Hub<IGameClient>
         await Clients.Group(userConnection.RoomCode).ReceiveMessage(null, message);
         await SendCurrentUser(userConnection.RoomCode);
         await SendConnectedUsers(userConnection.RoomCode);
+        await ReceiveHasJoinedRoom(true);
     }
 
     public async Task SendConnectedUsers(string room)
@@ -121,6 +131,11 @@ public class GameHub : Hub<IGameClient>
     private async Task SendFlashMessage(FlashType type, string message)
     {
         await Clients.Caller.ReceiveFlashMessage(type.ToString(), message);
+    }    
+    
+    private async Task ReceiveHasJoinedRoom(bool hasJoinedRoom)
+    {
+        await Clients.Caller.ReceiveHasJoinedRoom(hasJoinedRoom);
     }
 
     private async Task SendCurrentGameInfo()
