@@ -61,6 +61,7 @@ public class WaitingForLaundryCalls : IState
             {
                 game.CurrentSet.StartNewRound(true, true);
             }
+
             game.State = new ActiveRound();
         }
     }
