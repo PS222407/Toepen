@@ -61,6 +61,7 @@ public class WaitingForLaundryCalls : IState
             {
                 game.CurrentSet.StartNewRound(true, true);
             }
+
             game.State = new ActiveRound();
         }
     }
@@ -70,7 +71,8 @@ public class WaitingForLaundryCalls : IState
         bool done = false;
         TimerInfo? laundryTimerInfo = game.CurrentSet?.GetTimeLeftLaundryTimerInSeconds();
 
-        if (game.Players.All(p => p.HasNoLaundry) || (game.State.GetType() == typeof(WaitingForLaundryCalls) && laundryTimerInfo?.Seconds == -1))
+        if (game.Players.All(p => p.HasNoLaundry || p.HasCalledWhiteLaundry || p.HasCalledDirtyLaundry) ||
+            (game.State.GetType() == typeof(WaitingForLaundryCalls) && laundryTimerInfo?.Seconds == -1))
         {
             game.State.BlockLaundryCalls(game);
             done = true;
