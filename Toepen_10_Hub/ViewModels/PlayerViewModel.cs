@@ -25,4 +25,6 @@ public class PlayerViewModel
     public List<CardViewModel> Hand { get; set; } = new();
 
     public CardViewModel? LastPlayedCard { get; set; } = new();
+
+    public bool IsDead { get; set; }
 }

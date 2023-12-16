@@ -247,6 +247,9 @@ public class Game
     public void StartNewSet()
     {
         Player? winnerOfSet = _sets.LastOrDefault()?.WinnerOfSet;
+
+        Players.Where(p => p.IsDead()).ToList().ForEach(p => p.ResetVariablesForNewSet());
+        
         CurrentSet = new Set(Players.Where(p => !p.IsDead()).ToList(), winnerOfSet);
         _sets.Add(CurrentSet);
     }

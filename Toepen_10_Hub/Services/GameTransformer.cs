@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Toepen_10_Hub.ViewModels;
+﻿using Toepen_10_Hub.ViewModels;
 using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
@@ -40,6 +39,7 @@ public class GameTransformer
                 CalledWhiteLaundry = player.HasCalledWhiteLaundry,
                 Hand = cardViewModels,
                 LastPlayedCard = lastPlayedCardViewModel,
+                IsDead = player.IsDead(),
             };
             playerViewModels.Add(playerViewModel);
         }
@@ -66,7 +66,7 @@ public class GameTransformer
     
     public static PlayerViewModel PlayerToViewModel(Player player, string connectionId)
     {
-        PlayerViewModel playerViewModel = new PlayerViewModel
+        PlayerViewModel playerViewModel = new()
         {
             Id = player.Id,
             Name = player.Name,

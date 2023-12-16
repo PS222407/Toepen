@@ -325,7 +325,7 @@ public class Set
     /// <exception cref="PlayerIsAllInException"></exception>
     public void Knock(Player player)
     {
-        if ((player.PenaltyPoints + PenaltyPoints + 1) >= Settings.MaxPenaltyPoints)
+        if (player.PenaltyPoints + PenaltyPoints + 1 > Settings.MaxPenaltyPoints)
         {
             throw new PlayerIsAllInException();
         }
