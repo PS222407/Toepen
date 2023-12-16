@@ -8,7 +8,7 @@ namespace UnitTests;
 public class PlayerTests
 {
     [Test]
-    public void PlayerHasWhiteLaundry_ReturnsTrue()
+    public void PlayerHasDirtyLaundry_ReturnsTrue()
     {
         // Arrange
         Player playerWithWhiteLaundry = new("Test player");
@@ -22,14 +22,14 @@ public class PlayerTests
         Entity.SetHandOf(playerWithWhiteLaundry, cards);
 
         // Act
-        bool result = playerWithWhiteLaundry.HasWhiteLaundry();
+        bool result = playerWithWhiteLaundry.HasDirtyLaundry();
 
         // Assert
         Assert.That(result, Is.True);
     }
 
     [Test]
-    public void PlayerHasDirtyLaundry_ReturnsTrue()
+    public void PlayerHasWhiteLaundry_ReturnsTrue()
     {
         // Arrange
         Player playerWithDirtyLaundry = new("Test player");
@@ -43,7 +43,7 @@ public class PlayerTests
         Entity.SetHandOf(playerWithDirtyLaundry, cards);
 
         // Act
-        bool result = playerWithDirtyLaundry.HasDirtyLaundry();
+        bool result = playerWithDirtyLaundry.HasWhiteLaundry();
 
         // Assert
         Assert.That(result, Is.True);
@@ -232,7 +232,7 @@ public class PlayerTests
     }
 
     [Test]
-    public void PlayerDirtyLaundryGetsTurned_ReturnsTrue()
+    public void PlayerWhiteLaundryGetsTurned_ReturnsTrue()
     {
         // Arrange
         Player player = new("Test Player");
@@ -246,14 +246,14 @@ public class PlayerTests
         Entity.SetHandOf(player, cards);
 
         // Act
-        bool result = player.TurnsAndChecksDirtyLaundry();
+        bool result = player.TurnsAndChecksWhiteLaundry();
 
         // Assert
         Assert.That(player.LaundryHasBeenTurned && result, Is.True);
     }
 
     [Test]
-    public void PlayerWhiteLaundryGetsTurned_ReturnsTrue()
+    public void PlayerDirtyLaundryGetsTurned_ReturnsTrue()
     {
         // Arrange
         Player player = new("Test Player");
@@ -267,7 +267,7 @@ public class PlayerTests
         Entity.SetHandOf(player, cards);
 
         // Act
-        bool result = player.TurnsAndChecksWhiteLaundry();
+        bool result = player.TurnsAndChecksDirtyLaundry();
 
         // Assert
         Assert.That(player.LaundryHasBeenTurned && result, Is.True);
