@@ -73,6 +73,11 @@ public class Game
         State.AddPlayer(this, player);
     }
 
+    public void RemovePlayer(Player victim)
+    {
+        State.RemovePlayer(this, victim);
+    }
+
     public bool AnyPlayerCalledLaundry()
     {
         return Players.Any(p => p.HasCalledDirtyLaundry || p.HasCalledWhiteLaundry);

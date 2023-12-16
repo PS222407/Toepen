@@ -10,6 +10,9 @@ public interface IState
     /// <exception cref="AlreadyStartedException"></exception>
     public void AddPlayer(Game game, Player player);
 
+    /// <exception cref="AlreadyStartedException"></exception>
+    public void RemovePlayer(Game game, Player victim);
+
     /// <exception cref="NotEnoughPlayersException"></exception>
     /// <exception cref="AlreadyStartedException"></exception>
     public void Start(Game game);
