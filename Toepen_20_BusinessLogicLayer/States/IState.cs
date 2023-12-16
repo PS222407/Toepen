@@ -8,9 +8,11 @@ public interface IState
 {
     /// <exception cref="TooManyPlayersException"></exception>
     /// <exception cref="AlreadyStartedException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void AddPlayer(Game game, Player player);
 
     /// <exception cref="AlreadyStartedException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void RemovePlayer(Game game, Player victim);
 
     /// <exception cref="NotEnoughPlayersException"></exception>
@@ -19,19 +21,23 @@ public interface IState
 
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="AlreadyCalledLaundryException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerCallsDirtyLaundry(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="AlreadyCalledLaundryException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerCallsWhiteLaundry(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="AlreadyCalledLaundryException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerCallsNoLaundry(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="AlreadyTurnedException"></exception>
     /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public Message PlayerTurnsLaundry(Game game, Player player, Player victim);
 
     /// <exception cref="InvalidStateException"></exception>
@@ -51,18 +57,22 @@ public interface IState
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerKnocks(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerChecks(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerFolds(Game game, Player player);
 
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="NotPlayersTurnException"></exception>
     /// <exception cref="CardNotFoundException"></exception>
     /// <exception cref="CardDoesNotMatchSuitsException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerPlaysCard(Game game, Player player, Card card);
 
     /// <exception cref="InvalidStateException"></exception>
@@ -72,5 +82,6 @@ public interface IState
     public void StartNewSet(Game game);
 
     /// <exception cref="InvalidStateException"></exception>
+    /// <exception cref="PlayerIsDeadException"></exception>
     public void PlayerMovesOnToNextSet(Game game, Player player);
 }

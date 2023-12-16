@@ -65,8 +65,14 @@ public class ActiveRound : IState
     /// <exception cref="InvalidStateException"></exception>
     /// <exception cref="CantPerformToSelfException"></exception>
     /// <exception cref="NotPlayersTurnException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerKnocks(Game game, Player player)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+        
         game.CurrentSet!.Knock(player);
         game.State = new PlayerKnocked();
     }
@@ -84,8 +90,14 @@ public class ActiveRound : IState
     /// <exception cref="NotPlayersTurnException"></exception>
     /// <exception cref="CardDoesNotMatchSuitsException"></exception>
     /// <exception cref="CardNotFoundException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public void PlayerPlaysCard(Game game, Player player, Card card)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+
         WinnerStatus? winnerStatus = game.CurrentSet!.PlayCard(player, card);
         if (winnerStatus == null)
         {

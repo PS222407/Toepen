@@ -8,6 +8,11 @@ public class Initialized : IState
 {
     public void AddPlayer(Game game, Player player)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+        
         if (game.Players.Count >= Game.MaxAmountOfPlayers)
         {
             throw new TooManyPlayersException();

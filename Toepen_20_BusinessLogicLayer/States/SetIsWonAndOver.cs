@@ -93,9 +93,14 @@ public class SetIsWonAndOver : IState
 
     public void PlayerMovesOnToNextSet(Game game, Player player)
     {
+        if (player.IsDead())
+        {
+            throw new PlayerIsDeadException();
+        }
+        
         game.CurrentSet!.PlayerCallsMoveOnToNextSet(player);
 
-        if (game.Players.All(p => p.HasCalledMoveOnToNextSet))
+        if (game.Players.Where(p => !p.IsDead()).All(p => p.HasCalledMoveOnToNextSet))
         {
             game.StartNewSet();
             game.State = new WaitingForLaundryCalls();

@@ -10,7 +10,7 @@ public class WaitingForLaundryCalls : IState
     {
         throw new AlreadyStartedException();
     }
-    
+
     public void RemovePlayer(Game game, Player victim)
     {
         throw new AlreadyStartedException();
@@ -24,18 +24,33 @@ public class WaitingForLaundryCalls : IState
     /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsDirtyLaundry(Game game, Player player)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+
         game.CurrentSet!.PlayerCallsDirtyLaundry(player);
     }
 
     /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsWhiteLaundry(Game game, Player player)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+
         game.CurrentSet!.PlayerCallsWhiteLaundry(player);
     }
 
     /// <exception cref="AlreadyCalledLaundryException"></exception>
     public void PlayerCallsNoLaundry(Game game, Player player)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+
         game.CurrentSet!.PlayerCallsNoLaundry(player);
     }
 

@@ -7,7 +7,6 @@ using Toepen_10_Hub.ViewModels;
 using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
-using UnitTests.Utilities;
 
 namespace Toepen_10_Hub.Hubs;
 
@@ -202,6 +201,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
             }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
+            }
         }
     }
 
@@ -229,6 +232,10 @@ public class GameHub : Hub<IGameClient>
             catch (PlayerNotFoundException)
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
+            }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
             }
         }
     }
@@ -263,6 +270,10 @@ public class GameHub : Hub<IGameClient>
             catch (PlayerNotFoundException)
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
+            }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
             }
         }
     }
@@ -310,6 +321,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
             }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
+            }
         }
     }
 
@@ -346,6 +361,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Je kunt niet hoger dan je punten limiet overkloppen");
             }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
+            }
         }
     }
 
@@ -369,6 +388,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
             }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
+            }
         }
     }
 
@@ -391,6 +414,10 @@ public class GameHub : Hub<IGameClient>
             catch (PlayerNotFoundException)
             {
                 await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
+            }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
             }
         }
     }
@@ -427,6 +454,10 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Kaart niet gevonden");
             }
+            catch (PlayerIsOutOfGameException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je bent uit het spel");
+            }
         }
     }
 
@@ -447,9 +478,17 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
             }
-            catch (PlayerContinuedToNextSetException)
+            catch (PlayerAlreadyCalledMoveOnToNextSetException)
             {
                 await SendFlashMessage(FlashType.Error, "Je hebt al aangegeven dat je naar de volgende set wilt gaan");
+            }
+            catch (PlayerNotFoundException)
+            {
+                await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
+            }
+            catch (PlayerIsDeadException)
+            {
+                await SendFlashMessage(FlashType.Error, "Je kan niet naar de volgende set gaan, omdat je dood bent");
             }
         }        
     }

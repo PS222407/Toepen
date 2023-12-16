@@ -38,8 +38,14 @@ public class WaitingForLaundryTurnCalls : IState
 
     /// <exception cref="AlreadyTurnedException"></exception>
     /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
+    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public Message PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
+        if (player.IsOutOfGame() || victim.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+        
         return game.CurrentSet!.TurnsLaundry(player, victim);
     }
 

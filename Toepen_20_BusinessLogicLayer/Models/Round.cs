@@ -56,7 +56,7 @@ public class Round
     {
         if (player.HasCalledMoveOnToNextSet)
         {
-            throw new PlayerContinuedToNextSetException();
+            throw new PlayerAlreadyCalledMoveOnToNextSetException();
         }
 
         player.CallsMoveOnToNextSet();

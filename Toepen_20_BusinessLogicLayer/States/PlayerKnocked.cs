@@ -69,6 +69,11 @@ public class PlayerKnocked : IState
 
     public void PlayerChecks(Game game, Player player)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+        
         WinnerStatus? winnerStatus = game.CurrentSet!.Check(player);
 
         if (winnerStatus == null)
@@ -96,6 +101,11 @@ public class PlayerKnocked : IState
 
     public void PlayerFolds(Game game, Player player)
     {
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+        
         WinnerStatus? winnerStatus = game.CurrentSet!.Fold(player);
 
         if (winnerStatus == null)
