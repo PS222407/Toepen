@@ -461,16 +461,16 @@ public class GameFlowTests
         Game game = _game;
 
         // ACT
-        game.PlayerCallsWhiteLaundry(1);
-        game.PlayerCallsDirtyLaundry(2);
-        game.PlayerCallsDirtyLaundry(3);
+        game.PlayerCallsDirtyLaundry(1);
+        game.PlayerCallsWhiteLaundry(2);
+        game.PlayerCallsWhiteLaundry(3);
         game.BlockLaundryCalls();
         game.PlayerTurnsLaundry(1, 2);
         game.PlayerTurnsLaundry(1, 3);
         game.PlayerTurnsLaundry(2, 1);
         // sam = 1, jens = 1, mylo = 1
         game.BlockLaundryTurnCalls();
-        game.PlayerCallsDirtyLaundry(3);
+        game.PlayerCallsWhiteLaundry(3);
         game.BlockLaundryCalls();
         game.PlayerTurnsLaundry(1, 3);
         // sam = 1, jens = 1, mylo = 2
