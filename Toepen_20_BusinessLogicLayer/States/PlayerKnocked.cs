@@ -111,8 +111,7 @@ public class PlayerKnocked : IState
                 return;
             }
 
-            game.StartNewSet();
-            game.State = new WaitingForLaundryCalls();
+            game.State = new SetIsWonAndOver();
         }
     }
 
