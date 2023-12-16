@@ -16,6 +16,11 @@ public class Initialized : IState
         game.Players.Add(player);
     }
 
+    public void RemovePlayer(Game game, Player victim)
+    {
+        game.Players.Remove(victim);
+    }
+
     public void Start(Game game)
     {
         if (game.Players.Count < Game.MinAmountOfPlayer)

@@ -453,4 +453,50 @@ public class GameHub : Hub<IGameClient>
             }
         }        
     }
+
+    public async Task KickPlayerInRoom(int victimId)
+    {
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
+            Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
+            Player? victim = game.FindPlayerById(victimId);
+            try
+            {
+                if (victim == null || player == null)
+                {
+                    throw new PlayerNotFoundException();
+                }
+
+                if (!player.IsHost)
+                {
+                    throw new IsNotHostException();
+                }
+                
+                game.RemovePlayer(victim);
+                
+                Player? deletedVictim = game.FindPlayerByConnectionId(victim.ConnectionId);
+
+                if (deletedVictim == null)
+                {
+                    await Clients.Client(victim.ConnectionId).ReceiveFlashMessage(FlashType.Info.ToString(), "Je bent uit de lobby gekicked");
+                    await Clients.Client(victim.ConnectionId).ReceiveConnectedUser(null); 
+                    _gameService.GetUserConnections().Remove(victim.ConnectionId);
+                    SendConnectedUsers(userConnection.RoomCode);
+                }
+            }
+            catch (InvalidStateException)
+            {
+                await SendFlashMessage(FlashType.Error, "Deze actie kan nu niet uitgevoerd worden");
+            }
+            catch (PlayerNotFoundException)
+            {
+                await SendFlashMessage(FlashType.Error, "Speler niet gevonden");
+            }
+            catch (IsNotHostException)
+            {
+                await SendFlashMessage(FlashType.Error, "Deze actie kan niet worden uitgevoerd, omdat je geen leider bent.");
+            }
+        }
+    }
 }

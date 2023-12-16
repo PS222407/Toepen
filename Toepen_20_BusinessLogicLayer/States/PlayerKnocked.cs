@@ -11,6 +11,11 @@ public class PlayerKnocked : IState
     {
         throw new AlreadyStartedException();
     }
+    
+    public void RemovePlayer(Game game, Player victim)
+    {
+        throw new AlreadyStartedException();
+    }
 
     public void Start(Game game)
     {
