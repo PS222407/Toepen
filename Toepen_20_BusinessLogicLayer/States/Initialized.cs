@@ -21,9 +21,9 @@ public class Initialized : IState
         game.Players.Add(player);
     }
 
-    public void RemovePlayer(Game game, Player victim)
+    public void RemovePlayer(Game game, Player player)
     {
-        game.Players.Remove(victim);
+        game.Players.Remove(player);
     }
 
     public void Start(Game game)

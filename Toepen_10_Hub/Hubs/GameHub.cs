@@ -36,6 +36,21 @@ public class GameHub : Hub<IGameClient>
     {
         if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
+            Player? player = game.FindPlayerByConnectionId(Context.ConnectionId);
+
+            if (player != null)
+            {
+                try
+                {
+                    game.RemovePlayer(player);
+                    SendCurrentGameInfo();
+                }
+                catch (AlreadyStartedException)
+                {
+                }
+            }
+
             _gameService.GetUserConnections().Remove(Context.ConnectionId);
             if (_gameService.GetUserConnections().Count(c => c.Value.RoomCode == userConnection.RoomCode) <= 0)
             {
@@ -67,7 +82,7 @@ public class GameHub : Hub<IGameClient>
             await ReceiveHasJoinedRoom(false);
             return;
         }
-        
+
         bool roomExists = _gameService.GetUserConnections().Any(c => c.Value.RoomCode == userConnection.RoomCode);
         Game game = roomExists ? _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode) : new Game(userConnection.RoomCode);
         if (!roomExists)
@@ -130,8 +145,8 @@ public class GameHub : Hub<IGameClient>
     private async Task SendFlashMessage(FlashType type, string message)
     {
         await Clients.Caller.ReceiveFlashMessage(type.ToString(), message);
-    }    
-    
+    }
+
     private async Task ReceiveHasJoinedRoom(bool hasJoinedRoom)
     {
         await Clients.Caller.ReceiveHasJoinedRoom(hasJoinedRoom);
@@ -250,11 +265,8 @@ public class GameHub : Hub<IGameClient>
             {
                 game.PlayerCallsNoLaundry(player?.Id ?? 0);
 
-                if (game.Players.All(p => p.HasNoLaundry))
-                {
-                    TimerInfo? timerInfo = game.TimerCallback();
-                    await Clients.Group(game.RoomCode).ReceiveCountdown(JsonSerializer.Serialize(timerInfo));
-                }
+                TimerInfo? timerInfo = game.TimerCallback();
+                await Clients.Group(game.RoomCode).ReceiveCountdown(JsonSerializer.Serialize(timerInfo));
 
                 await SendFlashMessage(FlashType.Info, "Je hebt geen was aangegeven");
                 await SendCurrentGameInfo();
@@ -490,7 +502,7 @@ public class GameHub : Hub<IGameClient>
             {
                 await SendFlashMessage(FlashType.Error, "Je kan niet naar de volgende set gaan, omdat je dood bent");
             }
-        }        
+        }
     }
 
     public async Task KickPlayerInRoom(int victimId)
@@ -511,15 +523,15 @@ public class GameHub : Hub<IGameClient>
                 {
                     throw new IsNotHostException();
                 }
-                
+
                 game.RemovePlayer(victim);
-                
+
                 Player? deletedVictim = game.FindPlayerByConnectionId(victim.ConnectionId);
 
                 if (deletedVictim == null)
                 {
                     await Clients.Client(victim.ConnectionId).ReceiveFlashMessage(FlashType.Info.ToString(), "Je bent uit de lobby gekicked");
-                    await Clients.Client(victim.ConnectionId).ReceiveConnectedUser(null); 
+                    await Clients.Client(victim.ConnectionId).ReceiveConnectedUser(null);
                     _gameService.GetUserConnections().Remove(victim.ConnectionId);
                     SendConnectedUsers(userConnection.RoomCode);
                 }

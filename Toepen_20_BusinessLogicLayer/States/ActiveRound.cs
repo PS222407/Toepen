@@ -12,9 +12,18 @@ public class ActiveRound : IState
         throw new AlreadyStartedException();
     }
     
-    public void RemovePlayer(Game game, Player victim)
+    public void RemovePlayer(Game game, Player player)
     {
-        throw new AlreadyStartedException();
+        player.Disconnect();
+        if (game.GetWinner() != null)
+        {
+            game.State = new GameIsWonAndOver();
+        }
+
+        if (player == game.CurrentSet?.CurrentRound.ActivePlayer)
+        {
+            game.CurrentSet.CurrentRound.SetNextPlayer();
+        }
     }
 
     public void Start(Game game)

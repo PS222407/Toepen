@@ -32,8 +32,12 @@ public class Round
         int randomIndex = random.Next(0, Players.Count);
         ActivePlayer = Players[randomIndex];
 
+        if (ActivePlayer.IsOutOfGame())
+        {
+            SetNextPlayer();
+        }
+        
         StartedPlayer = ActivePlayer;
-
         State = GameState.WaitingForCardOrKnock;
     }
 
@@ -136,7 +140,7 @@ public class Round
         SetNextPlayer();
     }
 
-    private void SetNextPlayer()
+    public void SetNextPlayer()
     {
         int currentIndex = Players.IndexOf(ActivePlayer);
         int nextIndex = (currentIndex + 1) % Players.Count;

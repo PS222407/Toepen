@@ -11,9 +11,13 @@ public class SetIsWonAndOver : IState
         throw new AlreadyStartedException();
     }
     
-    public void RemovePlayer(Game game, Player victim)
+    public void RemovePlayer(Game game, Player player)
     {
-        throw new AlreadyStartedException();
+        player.Disconnect();
+        if (game.GetWinner() != null)
+        {
+            game.State = new GameIsWonAndOver();
+        }
     }
 
     public void Start(Game game)

@@ -212,4 +212,10 @@ public class Player
     {
         HasCalledMoveOnToNextSet = true;
     }
+
+    public void Disconnect()
+    {
+        PenaltyPoints = Settings.MaxPenaltyPoints;
+        Folds();
+    }
 }
