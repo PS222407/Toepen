@@ -19,6 +19,11 @@ public class PlayerKnocked : IState
         {
             game.State = new GameIsWonAndOver();
         }
+
+        if (player == game.CurrentSet?.CurrentRound.ActivePlayer)
+        {
+            game.CurrentSet.CurrentRound.SetNextPlayer();
+        }
     }
 
     public void Start(Game game)
