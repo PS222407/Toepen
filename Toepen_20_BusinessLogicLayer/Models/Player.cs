@@ -39,6 +39,8 @@ public class Player
     public bool PlayWithOpenCards { get; private set; }
 
     public bool HasCalledMoveOnToNextSet { get; private set; }
+    
+    public bool DecidedToPlayPovertyOrNot { get; private set; }
 
     public Player(string name)
     {
@@ -217,5 +219,36 @@ public class Player
     {
         PenaltyPoints = Settings.MaxPenaltyPoints;
         Folds();
+    }
+
+    public void CheckPoverty()
+    {
+        if (HasPoverty())
+        {
+            throw new CantPerformToSelfException();
+        }
+
+        if (IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+        
+        DecidedToPlayPovertyOrNot = true;
+    }
+    
+    public void FoldPoverty()
+    {
+        if (HasPoverty())
+        {
+            throw new CantPerformToSelfException();
+        }
+
+        if (IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+        
+        Folds();
+        DecidedToPlayPovertyOrNot = true;
     }
 }

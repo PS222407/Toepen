@@ -19,7 +19,7 @@ public class WaitingForLaundryCalls : IState
             game.State = new GameIsWonAndOver();
         }
 
-        if (player == game.CurrentSet?.CurrentRound.ActivePlayer)
+        if (player == game.CurrentSet?.CurrentRound?.ActivePlayer)
         {
             game.CurrentSet.CurrentRound.SetNextPlayer();
         }
@@ -79,6 +79,10 @@ public class WaitingForLaundryCalls : IState
         if (game.AnyPlayerCalledLaundry())
         {
             game.State = new WaitingForLaundryTurnCalls();
+        }
+        else if (game.CurrentSet.Players.Any(p => p.HasPoverty()) && !game.CurrentSet.Players.Where(p => p.IsOutOfGame()).All(p =>  p.HasPoverty()))
+        {
+            game.State = new Poverty();
         }
         else
         {
