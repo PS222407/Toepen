@@ -27,7 +27,7 @@ public class Game
 
     public IState State { get; set; } = new Initialized();
 
-    public List<Log> Logs { get; set; }
+    public List<Log> Logs { get; set; } = new();
 
     public Game(string roomCode)
     {
