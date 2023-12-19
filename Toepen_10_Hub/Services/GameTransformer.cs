@@ -34,6 +34,7 @@ public class GameTransformer
                 IsActive = game.GetActivePlayer()?.Id == player.Id,
                 HasFolded = player.HasFolded,
                 PenaltyPoints = player.PenaltyPoints,
+                HasPoverty = player.HasPoverty(),
                 HasKnocked = game.GetPlayerWhoKnocked()?.Id == player.Id,
                 CalledDirtyLaundry = player.HasCalledDirtyLaundry,
                 CalledWhiteLaundry = player.HasCalledWhiteLaundry,

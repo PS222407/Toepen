@@ -4,13 +4,13 @@ using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
 
-public class WaitingForLaundryTurnCalls : IState
+public class Poverty : IState
 {
     public void AddPlayer(Game game, Player player)
     {
         throw new AlreadyStartedException();
     }
-    
+
     public void RemovePlayer(Game game, Player player)
     {
         player.Disconnect();
@@ -19,7 +19,7 @@ public class WaitingForLaundryTurnCalls : IState
             game.State = new GameIsWonAndOver();
         }
 
-        if (player == game.CurrentSet?.CurrentRound.ActivePlayer)
+        if (player == game.CurrentSet?.CurrentRound?.ActivePlayer)
         {
             game.CurrentSet.CurrentRound.SetNextPlayer();
         }
@@ -45,38 +45,14 @@ public class WaitingForLaundryTurnCalls : IState
         throw new InvalidStateException();
     }
 
-    /// <exception cref="AlreadyTurnedException"></exception>
-    /// <exception cref="PlayerHasNotCalledForLaundryException"></exception>
-    /// <exception cref="PlayerIsOutOfGameException"></exception>
     public Message PlayerTurnsLaundry(Game game, Player player, Player victim)
     {
-        if (player.IsOutOfGame() || victim.IsOutOfGame())
-        {
-            throw new PlayerIsOutOfGameException();
-        }
-        
-        return game.CurrentSet!.TurnsLaundry(player, victim);
+        throw new InvalidStateException();
     }
 
     public void BlockLaundryTurnCalls(Game game)
     {
-        if (game.CurrentSet!.LaundryCardsAreDealt || game.CurrentSet.AnyPlayerHasUnturnedLaundry())
-        {
-            game.CurrentSet!.BlockLaundryTurnCallsAndWaitForLaundryCalls();
-            game.State = new WaitingForLaundryCalls();
-        }
-        else if (game.CurrentSet.Players.Any(p => p.HasPoverty()) && !game.CurrentSet.Players.Where(p => !p.IsOutOfGame()).All(p =>  p.HasPoverty()))
-        {
-            game.CurrentSet.PenaltyPoints = 2;
-            game.State = new Poverty();
-        }
-        else
-        {
-            game.CurrentSet!.StartRound();
-            game.State = new ActiveRound();
-        }
-
-        game.CurrentSet.LaundryCardsAreDealt = false;
+        throw new InvalidStateException();
     }
 
     public void BlockLaundryCalls(Game game)
@@ -91,21 +67,7 @@ public class WaitingForLaundryTurnCalls : IState
 
     public TimerInfo LaundryTurnTimerCallback(Game game)
     {
-        bool done = false;
-        TimerInfo? laundryTurnTimerInfo = game.CurrentSet?.GetTimeLeftLaundryTurnTimerInSeconds();
-
-        if (game.State.GetType() == typeof(WaitingForLaundryTurnCalls) && laundryTurnTimerInfo?.Seconds == -1)
-        {
-            game.State.BlockLaundryTurnCalls(game);
-            done = true;
-        }
-
-        return new TimerInfo
-        {
-            Seconds = laundryTurnTimerInfo?.Seconds ?? -1,
-            First = laundryTurnTimerInfo?.First ?? false,
-            Done = done,
-        };
+        throw new InvalidStateException();
     }
 
     public void PlayerKnocks(Game game, Player player)
@@ -115,12 +77,49 @@ public class WaitingForLaundryTurnCalls : IState
 
     public void PlayerChecks(Game game, Player player)
     {
-        throw new InvalidStateException();
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+
+        game.CurrentSet!.CheckPoverty(player);
+        
+        if (game.CurrentSet.Players.Where(p => !p.IsOutOfGame() && !p.HasPoverty()).All(p => p.DecidedToPlayPovertyOrNot))
+        {
+            game.CurrentSet!.StartRound();
+            game.State = new ActiveRound();
+        }
     }
 
     public void PlayerFolds(Game game, Player player)
     {
-        throw new InvalidStateException();
+        if (player.IsOutOfGame())
+        {
+            throw new PlayerIsOutOfGameException();
+        }
+
+        game.CurrentSet!.FoldPoverty(player);
+
+        if (game.CurrentSet.Players.Where(p => !p.IsOutOfGame() && !p.HasPoverty()).All(p => p.DecidedToPlayPovertyOrNot && p.HasFolded) &&
+            game.CurrentSet.Players.Count(p => !p.IsOutOfGame() && p.HasPoverty()) == 1)
+        {
+            Player? gameWinner = game.GetWinner();
+            Player? setWinner = game.CurrentSet.GetSetWinner();
+            if (gameWinner != null)
+            {
+                game.State = new GameIsWonAndOver();
+            }
+            else if (setWinner != null)
+            {
+                game.CurrentSet.WinnerOfSet = setWinner;
+                game.State = new SetIsWonAndOver();
+            }
+        }
+        else if (game.CurrentSet.Players.Where(p => !p.IsOutOfGame() && !p.HasPoverty()).All(p => p.DecidedToPlayPovertyOrNot))
+        {
+            game.CurrentSet!.StartRound();
+            game.State = new ActiveRound();
+        }
     }
 
     public void PlayerPlaysCard(Game game, Player player, Card card)

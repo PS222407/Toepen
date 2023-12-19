@@ -19,7 +19,7 @@ public class GameIsWonAndOver : IState
             game.State = new GameIsWonAndOver();
         }
 
-        if (player == game.CurrentSet?.CurrentRound.ActivePlayer)
+        if (player == game.CurrentSet?.CurrentRound?.ActivePlayer)
         {
             game.CurrentSet.CurrentRound.SetNextPlayer();
         }

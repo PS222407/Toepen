@@ -241,7 +241,7 @@ public class Game
 
     public Player? GetWinner()
     {
-        return Players.Where(p => !p.IsDead()).ToList().Count == 1 ? Players.First(p => !p.IsDead()) : null;
+        return Players.Count(p => !p.IsDead()) == 1 ? Players.First(p => !p.IsDead()) : null;
     }
 
     public void StartNewSet()

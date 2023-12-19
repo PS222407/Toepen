@@ -14,9 +14,9 @@ public class Set
 
     public List<Player> Players { get; private set; }
 
-    public int PenaltyPoints { get; private set; } = 1;
+    public int PenaltyPoints { get; set; } = 1;
 
-    public Player WinnerOfSet { get; private set; }
+    public Player WinnerOfSet { get; set; }
 
     public Player? PreviousSetWinner { get; }
 
@@ -261,7 +261,7 @@ public class Set
         State = GameState.ActiveLaundryTimer;
     }
 
-    public void BlockLaundryTurnCallsAndStartRound()
+    public void StartRound()
     {
         if (PreviousSetWinner != null)
         {
@@ -357,6 +357,18 @@ public class Set
 
         return null;
     }
+    
+    public void FoldPoverty(Player player)
+    {
+        if (player.HasPoverty())
+            throw new CantPerformToSelfException();
+
+        if (player.HasFolded)
+            throw new PlayerIsOutOfGameException();
+
+        player.Folds();
+        player.AddPenaltyPoints(PenaltyPoints);
+    }
 
     public WinnerStatus? Check(Player player)
     {
@@ -375,6 +387,11 @@ public class Set
         PenaltyPoints = CurrentRound.PenaltyPoints;
 
         return null;
+    }
+    
+    public void CheckPoverty(Player player)
+    {
+        player.CheckPoverty();
     }
 
     public void PlayerCallsMoveOnToNextSet(Player player)
@@ -407,5 +424,15 @@ public class Set
                 }
             }
         }
+    }
+
+    public Player? GetSetWinner()
+    {
+        return Players.Count(p => !p.IsOutOfGame()) == 1 ? Players.First(p => !p.IsOutOfGame()) : null;
+    }
+
+    public Player? GetGameWinner()
+    {
+        return Players.Count(p => !p.IsDead()) == 1 ? Players.First(p => !p.IsDead()) : null;
     }
 }
