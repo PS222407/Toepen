@@ -1,11 +1,9 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET build, test and deploy
+name: .NET build and tests
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -26,9 +24,3 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Deploy on production server
-      run: |
-        curl -X POST \
-          -H "Content-Type: application/json" \
-          -d "{\"secret\": \"${{ secrets.DEPLOY_SECRET }}\"}" \
-          https://puzzle.jensramakers.nl/api/v1/update-toepen-hub
