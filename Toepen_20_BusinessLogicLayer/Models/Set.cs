@@ -367,7 +367,7 @@ public class Set
             throw new PlayerIsOutOfGameException();
 
         player.Folds();
-        player.AddPenaltyPoints(PenaltyPoints);
+        player.AddPenaltyPoints(1);
     }
 
     public WinnerStatus? Check(Player player)
