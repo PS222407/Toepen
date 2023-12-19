@@ -7,6 +7,8 @@ namespace Toepen_20_BusinessLogicLayer.Models;
 
 public class Game
 {
+    public List<Log> SentLogMessages  = new();
+    
     public string RoomCode { get; }
 
     public const int MinAmountOfPlayer = 2;
