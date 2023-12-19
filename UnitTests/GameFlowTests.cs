@@ -1,4 +1,3 @@
-using System.Numerics;
 using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Helpers;
@@ -305,6 +304,26 @@ public class GameFlowTests
                 game.BlockLaundryCalls();
             }
 
+            if (game.State is Poverty)
+            {
+                foreach (Player player in game.Players)
+                {
+                    try
+                    {
+                        game.PlayerChecks(player.Id);
+                    }
+                    catch (InvalidStateException)
+                    {
+                    }
+                    catch (CantPerformToSelfException)
+                    {
+                    }
+                    catch (PlayerIsOutOfGameException)
+                    {
+                    }
+                }
+            }
+
             Player activePlayer = game.CurrentSet.CurrentRound.ActivePlayer;
             foreach (Card card in new List<Card>(activePlayer.Hand))
             {
@@ -333,7 +352,7 @@ public class GameFlowTests
                         }
                     }
                 }
-                
+
                 if (game.State is GameIsWonAndOver)
                 {
                     gameIsOver = true;

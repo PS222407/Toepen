@@ -1,6 +1,5 @@
 ﻿using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
-using Toepen_20_BusinessLogicLayer.Helpers;
 using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
@@ -84,6 +83,12 @@ public class Poverty : IState
         }
 
         game.CurrentSet!.CheckPoverty(player);
+        
+        if (game.CurrentSet.Players.Where(p => !p.IsOutOfGame() && !p.HasPoverty()).All(p => p.DecidedToPlayPovertyOrNot))
+        {
+            game.CurrentSet!.StartRound();
+            game.State = new ActiveRound();
+        }
     }
 
     public void PlayerFolds(Game game, Player player)

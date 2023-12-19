@@ -118,11 +118,6 @@ public class Round
 
         return new StatusMessage(true);
     }
-    
-    public void CheckPoverty(Player player)
-    {
-        player.CheckPoverty();
-    }
 
     /// <exception cref="NotPlayersTurnException"></exception>
     /// <exception cref="CardDoesNotMatchSuitsException"></exception>

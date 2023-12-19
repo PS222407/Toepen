@@ -391,7 +391,7 @@ public class Set
     
     public void CheckPoverty(Player player)
     {
-        CurrentRound.CheckPoverty(player);
+        player.CheckPoverty();
     }
 
     public void PlayerCallsMoveOnToNextSet(Player player)

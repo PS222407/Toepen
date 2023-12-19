@@ -82,6 +82,7 @@ public class WaitingForLaundryCalls : IState
         }
         else if (game.CurrentSet.Players.Any(p => p.HasPoverty()) && !game.CurrentSet.Players.Where(p => !p.IsOutOfGame()).All(p =>  p.HasPoverty()))
         {
+            game.CurrentSet.PenaltyPoints = 2;
             game.State = new Poverty();
         }
         else
