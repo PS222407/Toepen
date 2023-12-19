@@ -65,7 +65,7 @@ public class WaitingForLaundryTurnCalls : IState
             game.CurrentSet!.BlockLaundryTurnCallsAndWaitForLaundryCalls();
             game.State = new WaitingForLaundryCalls();
         }
-        else if (game.CurrentSet.Players.Any(p => p.HasPoverty()) && !game.CurrentSet.Players.Where(p => p.IsOutOfGame()).All(p =>  p.HasPoverty()))
+        else if (game.CurrentSet.Players.Any(p => p.HasPoverty()) && !game.CurrentSet.Players.Where(p => !p.IsOutOfGame()).All(p =>  p.HasPoverty()))
         {
             game.State = new Poverty();
         }
