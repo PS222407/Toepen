@@ -1,5 +1,6 @@
 ﻿using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
+using Toepen_20_BusinessLogicLayer.LogTypes;
 using Toepen_20_BusinessLogicLayer.Models;
 
 namespace Toepen_20_BusinessLogicLayer.States;
@@ -10,7 +11,7 @@ public class WaitingForLaundryTurnCalls : IState
     {
         throw new AlreadyStartedException();
     }
-    
+
     public void RemovePlayer(Game game, Player player)
     {
         player.Disconnect();
@@ -54,8 +55,11 @@ public class WaitingForLaundryTurnCalls : IState
         {
             throw new PlayerIsOutOfGameException();
         }
-        
-        return game.CurrentSet!.TurnsLaundry(player, victim);
+
+        Message message = game.CurrentSet!.TurnsLaundry(player, victim);
+        game.Logs.Add(new TurnLaundryLog(victim, player, message == Message.PlayerDidBluff));
+
+        return message;
     }
 
     public void BlockLaundryTurnCalls(Game game)
@@ -65,7 +69,7 @@ public class WaitingForLaundryTurnCalls : IState
             game.CurrentSet!.BlockLaundryTurnCallsAndWaitForLaundryCalls();
             game.State = new WaitingForLaundryCalls();
         }
-        else if (game.CurrentSet.Players.Any(p => p.HasPoverty()) && !game.CurrentSet.Players.Where(p => !p.IsOutOfGame()).All(p =>  p.HasPoverty()))
+        else if (game.CurrentSet.Players.Any(p => p.HasPoverty()) && !game.CurrentSet.Players.Where(p => !p.IsOutOfGame()).All(p => p.HasPoverty()))
         {
             game.CurrentSet.PenaltyPoints = 2;
             game.State = new Poverty();

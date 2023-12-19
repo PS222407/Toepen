@@ -1,5 +1,6 @@
 ﻿using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
+using Toepen_20_BusinessLogicLayer.LogTypes;
 using Toepen_20_BusinessLogicLayer.States;
 
 namespace Toepen_20_BusinessLogicLayer.Models;
@@ -23,6 +24,8 @@ public class Game
     public Set? CurrentSet { get; private set; }
 
     public IState State { get; set; } = new Initialized();
+
+    public List<Log> Logs { get; set; }
 
     public Game(string roomCode)
     {
