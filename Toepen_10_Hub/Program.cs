@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(corsPolicyBuilder =>
     {
-        corsPolicyBuilder.WithOrigins(builder.Configuration.GetValue<string>("FrontendUrl"))
+        corsPolicyBuilder.WithOrigins("http://localhost:3000", "exp://192.168.68.63:8081")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();

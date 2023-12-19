@@ -17,4 +17,6 @@ public interface IGameClient
     Task ReceiveFlashMessage(string type, string message);
     
     Task ReceiveHasJoinedRoom(bool message);
+
+    Task ReceiveGameLog(string gameLog);
 }
