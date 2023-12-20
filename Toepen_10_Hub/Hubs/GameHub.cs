@@ -185,8 +185,9 @@ public class GameHub : Hub<IGameClient>
         if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
-            List<Log> gameLog = game.Logs;
-
+            List<Log> gameLog = game.Logs.Where(l => !l.IsSent).ToList();
+            game.Logs.Where(l => !l.IsSent).ToList().ForEach(l => l.IsSent = true);
+ 
             await Clients.Group(game.RoomCode).ReceiveGameLog(JsonSerializer.Serialize(gameLog));
         }
     }

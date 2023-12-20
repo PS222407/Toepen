@@ -181,7 +181,12 @@ public class Round
 
         if (StartedPlayer == player && State != GameState.PlayerKnocked)
         {
-            Card winningCard = _table.Where(card => card.Suit == StartedCard.Suit && card.Value >= StartedCard.Value).OrderByDescending(card => card.Value).First();
+            Card? winningCard = _table.Where(card => card.Suit == StartedCard.Suit && card.Value >= StartedCard.Value).OrderByDescending(card => card.Value).FirstOrDefault();
+            if (winningCard == null)
+            {
+                return null;
+            }
+            
             Player winner = Players.First(p => p.PlayedCards.Any(pc => pc.Suit == winningCard.Suit && pc.Value == winningCard.Value));
 
             return new WinnerStatus { Winner = winner, WinnerOfSet = false };
