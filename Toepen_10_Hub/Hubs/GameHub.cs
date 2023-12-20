@@ -6,7 +6,9 @@ using Toepen_10_Hub.Services;
 using Toepen_10_Hub.ViewModels;
 using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
+using Toepen_20_BusinessLogicLayer.LogTypes;
 using Toepen_20_BusinessLogicLayer.Models;
+using Toepen_20_BusinessLogicLayer.States;
 
 namespace Toepen_10_Hub.Hubs;
 
@@ -44,7 +46,14 @@ public class GameHub : Hub<IGameClient>
                 try
                 {
                     game.RemovePlayer(player);
-                    SendCurrentGameInfo();
+                    if (game.State is not Initialized)
+                    {
+                        SendCurrentGameInfo();
+                    }
+                    else
+                    {
+                        SendConnectedUsers(userConnection.RoomCode);
+                    }
                 }
                 catch (AlreadyStartedException)
                 {
@@ -154,6 +163,8 @@ public class GameHub : Hub<IGameClient>
 
     private async Task SendCurrentGameInfo()
     {
+        await SendGameLog();
+        
         if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
         {
             Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
@@ -166,6 +177,18 @@ public class GameHub : Hub<IGameClient>
 
                 await Clients.Client(connectionId).ReceiveGame(JsonSerializer.Serialize(gameViewModel));
             }
+        }
+    }
+
+    private async Task SendGameLog()
+    {
+        if (_gameService.GetUserConnections().TryGetValue(Context.ConnectionId, out UserConnection? userConnection))
+        {
+            Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
+            List<Log> gameLog = game.Logs.Where(l => !l.IsSent).ToList();
+            game.Logs.Where(l => !l.IsSent).ToList().ForEach(l => l.IsSent = true);
+ 
+            await Clients.Group(game.RoomCode).ReceiveGameLog(JsonSerializer.Serialize(gameLog));
         }
     }
 
