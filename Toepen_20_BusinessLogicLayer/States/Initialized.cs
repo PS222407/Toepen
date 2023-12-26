@@ -13,12 +13,17 @@ public class Initialized : IState
         {
             throw new PlayerIsOutOfGameException();
         }
-        
+
         if (game.Players.Count >= Game.MaxAmountOfPlayers)
         {
             throw new TooManyPlayersException();
         }
-        
+
+        if (string.IsNullOrWhiteSpace(player.Name))
+        {
+            throw new PlayerEmptyUserName();
+        }
+
         if (game.Players.Any(p => string.Equals(Regex.Replace(p.Name, @"\s", ""), Regex.Replace(player.Name, @"\s", ""), StringComparison.OrdinalIgnoreCase)))
         {
             throw new PlayerAlreadyExistsException();

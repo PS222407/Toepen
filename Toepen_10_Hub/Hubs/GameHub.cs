@@ -123,6 +123,12 @@ public class GameHub : Hub<IGameClient>
             await ReceiveHasJoinedRoom(false);
             return;
         }
+        catch (PlayerEmptyUserName)
+        {
+            await SendFlashMessage(FlashType.Error, "Username is empty");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.RoomCode);
         _gameService.GetUserConnections()[Context.ConnectionId] = userConnection;
