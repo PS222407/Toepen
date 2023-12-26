@@ -1,4 +1,5 @@
-﻿using Toepen_20_BusinessLogicLayer.Enums;
+﻿using System.Text.RegularExpressions;
+using Toepen_20_BusinessLogicLayer.Enums;
 using Toepen_20_BusinessLogicLayer.Exceptions;
 using Toepen_20_BusinessLogicLayer.Models;
 
@@ -16,6 +17,11 @@ public class Initialized : IState
         if (game.Players.Count >= Game.MaxAmountOfPlayers)
         {
             throw new TooManyPlayersException();
+        }
+        
+        if (game.Players.Any(p => string.Equals(Regex.Replace(p.Name, @"\s", ""), Regex.Replace(player.Name, @"\s", ""), StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new PlayerAlreadyExistsException();
         }
 
         game.Players.Add(player);

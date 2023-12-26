@@ -117,6 +117,12 @@ public class GameHub : Hub<IGameClient>
             await ReceiveHasJoinedRoom(false);
             return;
         }
+        catch (PlayerAlreadyExistsException)
+        {
+            await SendFlashMessage(FlashType.Error, "Username is already taken");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.RoomCode);
         _gameService.GetUserConnections()[Context.ConnectionId] = userConnection;
