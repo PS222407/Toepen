@@ -5,7 +5,9 @@ name: .NET build and tests
 
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "develop" ]
+  push:
+    branches: [ "develop" ]
 
 jobs:
   build:
