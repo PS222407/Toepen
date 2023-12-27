@@ -8,7 +8,7 @@ public interface IGameClient
     
     Task ReceiveCountdown(string timerInfo);
 
-    Task ReceiveUsersInRoom(string users);
+    Task ReceiveUsersInRoom(string users, string roomCode);
 
     Task ReceiveTurnedCards(string cards);
 
