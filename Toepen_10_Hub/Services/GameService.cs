@@ -37,7 +37,13 @@ public class GameService : IGameService
 
     private void GameTimerCallback(object? state)
     {
-        foreach (Game game in _games)
+        List<Game> copyOfGames;
+        lock (_games)
+        {
+            copyOfGames = new List<Game>(_games);
+        }
+        
+        foreach (Game game in copyOfGames)
         {
             TimerInfo? timerInfo = game.TimerCallback();
             if (timerInfo == null)

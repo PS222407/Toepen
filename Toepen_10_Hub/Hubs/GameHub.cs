@@ -83,6 +83,79 @@ public class GameHub : Hub<IGameClient>
         }
     }
 
+    public async Task HostRoom(UserConnection userConnection)
+    {
+        if (userConnection.UserName.Length > 22)
+        {
+            await SendFlashMessage(FlashType.Error, "Your name is too long");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
+
+        string roomCode = userConnection.RoomCode;
+        if (!string.IsNullOrWhiteSpace(roomCode))
+        {
+            bool roomAlreadyExists = _gameService.GetUserConnections().Any(c => c.Value.RoomCode == roomCode);
+            if (roomAlreadyExists)
+            {
+                await SendFlashMessage(FlashType.Error, "Room already exists");
+                await ReceiveHasJoinedRoom(false);
+                return;
+            }
+        }
+        else
+        {
+            bool roomExists;
+            do
+            {
+                roomCode = GenerateRandomAlphabeticString(5);
+                roomExists = _gameService.GetUserConnections().Any(c => c.Value.RoomCode == roomCode);
+            } while (roomExists);
+        }
+
+        
+        Game game = new(roomCode);
+        _gameService.AddGame(game); 
+
+        try
+        {
+            game.AddPlayer(new Player(Context.ConnectionId, userConnection.UserName));
+        }
+        catch (AlreadyStartedException)
+        {
+            await SendFlashMessage(FlashType.Error, "Game already started");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
+        catch (TooManyPlayersException)
+        {
+            await SendFlashMessage(FlashType.Error, "Game is full");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
+        catch (PlayerAlreadyExistsException)
+        {
+            await SendFlashMessage(FlashType.Error, "Username is already taken");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
+        catch (PlayerEmptyUserName)
+        {
+            await SendFlashMessage(FlashType.Error, "Username is empty");
+            await ReceiveHasJoinedRoom(false);
+            return;
+        }
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, roomCode);
+        userConnection.RoomCode = roomCode;
+        _gameService.GetUserConnections()[Context.ConnectionId] = userConnection;
+
+        await Clients.Group(roomCode).ReceiveMessage(null, $"A new room has been created: {roomCode}");
+        await SendCurrentUser(roomCode);
+        await SendConnectedUsers(roomCode);
+        await ReceiveHasJoinedRoom(true);
+    }
+
     public async Task JoinRoom(UserConnection userConnection)
     {
         if (userConnection.UserName.Length > 22)
@@ -93,13 +166,14 @@ public class GameHub : Hub<IGameClient>
         }
 
         bool roomExists = _gameService.GetUserConnections().Any(c => c.Value.RoomCode == userConnection.RoomCode);
-        Game game = roomExists ? _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode) : new Game(userConnection.RoomCode);
         if (!roomExists)
         {
-            _gameService.AddGame(game);
+            await SendFlashMessage(FlashType.Error, "Room does not exist");
+            await ReceiveHasJoinedRoom(false);
+            return;
         }
 
-        string message = roomExists ? $"{userConnection.UserName} has joined the room" : $"A new room has been created: {userConnection.RoomCode}";
+        Game game = _gameService.Games.First(g => g.RoomCode == userConnection.RoomCode);
 
         try
         {
@@ -133,7 +207,7 @@ public class GameHub : Hub<IGameClient>
         await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.RoomCode);
         _gameService.GetUserConnections()[Context.ConnectionId] = userConnection;
 
-        await Clients.Group(userConnection.RoomCode).ReceiveMessage(null, message);
+        await Clients.Group(userConnection.RoomCode).ReceiveMessage(null, $"{userConnection.UserName} has joined the room");
         await SendCurrentUser(userConnection.RoomCode);
         await SendConnectedUsers(userConnection.RoomCode);
         await ReceiveHasJoinedRoom(true);
@@ -147,7 +221,7 @@ public class GameHub : Hub<IGameClient>
             GameViewModel gameViewModel = GameTransformer.GameToViewModel(game, Context.ConnectionId);
             List<PlayerViewModel> players = gameViewModel.Players;
 
-            await Clients.Group(room).ReceiveUsersInRoom(JsonSerializer.Serialize(players));
+            await Clients.Group(room).ReceiveUsersInRoom(JsonSerializer.Serialize(players), game.RoomCode);
         }
     }
 
@@ -584,5 +658,19 @@ public class GameHub : Hub<IGameClient>
                 await SendFlashMessage(FlashType.Error, "Deze actie kan niet worden uitgevoerd, omdat je geen leider bent.");
             }
         }
+    }
+    
+    static string GenerateRandomAlphabeticString(int length)
+    {
+        Random random = new();
+        const string alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        char[] result = new char[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = alphabet[random.Next(alphabet.Length)];
+        }
+
+        return new string(result);
     }
 }
