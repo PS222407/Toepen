@@ -1,7 +1,9 @@
 # Toepen
 
 ## Getting started
-Just clone and run  
+- clone repository
+
+### On Windows
 after running open a reverse proxy for example:
 ```bash
 iisexpress-proxy 5273 to 5555
