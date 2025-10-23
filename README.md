@@ -10,6 +10,15 @@ iisexpress-proxy 5273 to 5555
 ```
 
 ### Deployment
+Install dotnet runtime
+```bash
+sudo apt-get update
+sudo apt-get install ca-certificates libc6 libgcc-s1 libicu74 liblttng-ust1 libssl3 libstdc++6 zlib1g
+sudo add-apt-repository ppa:dotnet/backports
+sudo apt-get update && \
+  sudo apt-get install -y aspnetcore-runtime-9.0
+```
+
 Build dll release file
 ```bash
 dotnet publish --configuration Release
