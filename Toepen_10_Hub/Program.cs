@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(corsPolicyBuilder =>
     {
-        corsPolicyBuilder.WithOrigins(builder.Configuration.GetValue<string>("FrontendUrl"))
+        corsPolicyBuilder.WithOrigins(builder.Configuration.GetValue<string>("FrontendUrl") ?? throw new InvalidOperationException())
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
