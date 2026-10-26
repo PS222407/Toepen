@@ -13,14 +13,10 @@ iisexpress-proxy 5273 to 5555
 ```
 
 ## Deployment
-Install dotnet runtime
-```bash
-sudo apt-get update
-sudo apt-get install ca-certificates libc6 libgcc-s1 libicu74 liblttng-ust1 libssl3 libstdc++6 zlib1g
-sudo add-apt-repository ppa:dotnet/backports
-sudo apt-get update && \
-  sudo apt-get install -y aspnetcore-runtime-9.0
-```
+Install dotnet runtime [Follow instructions](https://learn.microsoft.com/en-us/dotnet/core/install/)
+
+Set follwing values in `appsettings.json`
+-   "FrontendUrl": "https://toepen.jensramakers.nl",
 
 Build dll release file
 ```bash
@@ -28,14 +24,14 @@ dotnet publish --configuration Release
 ```
 Copy release file to server
 ```bash
-scp Toepen_10_Hub/bin/Release/net9.0/publish/* jens@toepenhub.jensramakers.nl:/mnt/volume_ams3_02/apps/toepen/Toepen
+scp Toepen_10_Hub/bin/Release/net10.0/publish/* jens@toepenhub.jensramakers.nl:/mnt/volume_ams3_02/apps/toepen/Toepen
 ```
 On the server copy `appsettings.Development.json` to `appsettings.json` and edit the settings
 ```bash
 cp appsettings.Development.json appsettings.json
 ```
 
-Create a systemd service file `/etc/systemd/system/toepen.service`
+Create a systemd service file `/etc/systemd/system/toepenhub.service`
 ```service
 [Unit]
 Description=Toepen Service
