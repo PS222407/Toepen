@@ -1,7 +1,10 @@
 # Toepen
 
-## Getting started
-- clone repository
+## Getting started (development)
+- Clone repository
+- Have .NET SDK 10 installed [Follow instructions](https://learn.microsoft.com/en-us/dotnet/core/install/)
+- Copy `appsettings.Development.json` to `appsettings.json`
+- Run the Toepen_10_Hub, and see http://localhost:5000/GameHub if it works
 
 ### On Windows
 after running open a reverse proxy for example:
@@ -9,7 +12,7 @@ after running open a reverse proxy for example:
 iisexpress-proxy 5273 to 5555
 ```
 
-### Deployment
+## Deployment
 Install dotnet runtime
 ```bash
 sudo apt-get update
